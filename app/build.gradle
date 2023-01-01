@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -32,8 +33,15 @@ android {
 }
 
 dependencies {
-
     implementation coreLibraries
+    implementation coroutines
+    implementation dagger
+    implementation room
+
+    kapt roomKapt
+    kapt daggerAnnotationProcessor
+    runtimeOnly coroutinesRunTime
+
     testImplementation test
     androidTestImplementation androidTest
 }
