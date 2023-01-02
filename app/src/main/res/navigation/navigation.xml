@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/libraryFragment"
+    >
+
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="com.example.bookstats.LibraryFragment"
+        tools:layout="@layout/fragment_library"
+        />
+    <fragment
+        android:id="@+id/goalsFragment"
+        android:name="com.example.bookstats.GoalsFragment"
+        tools:layout="@layout/fragment_goals"
+        />
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="com.example.bookstats.StatsFragment"
+        tools:layout="@layout/fragment_stats"
+        />
+    <fragment
+        android:id="@+id/achievementsFragment"
+        android:name="com.example.bookstats.AchievementsFragment"
+        tools:layout="@layout/fragment_achievements"
+        />
+
+</navigation>

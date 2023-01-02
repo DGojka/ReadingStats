@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BookStats</string>
+    <string name="nav_library">My Library</string>
+    <string name="nav_goals">Goals</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_achievements">Achievements</string>
 </resources>
