@@ -5,16 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-/**
- * A simple [Fragment] subclass.
- * Use the [LibraryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class LibraryFragment : Fragment() {
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+class LibraryFragment : Fragment() {
+    private lateinit var addButton: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,5 +16,18 @@ class LibraryFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_library, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addButton = requireView().findViewById(R.id.button_add_book)
+
+        addButton.setOnClickListener {
+            val nextFrag = BookCreation()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(((view as ViewGroup).parent as View).id, nextFrag, "findThisFragment")
+                .addToBackStack(null)
+                .commit()
+        }
     }
 }
