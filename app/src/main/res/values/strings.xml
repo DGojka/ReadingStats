@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">BookStats</string>
+    <string name="nav_library">My Library</string>
+    <string name="nav_goals">Goals</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_achievements">Achievements</string>
+
+    //Book creation
+    <string name="book_name">Book name</string>
+    <string name="book_author">Book author</string>
+    <string name="book_pages">Number of pages</string>
+    <string name="book_save">Save book</string>
+    <string name="book_desc_image">Image of the book</string>
 </resources>
