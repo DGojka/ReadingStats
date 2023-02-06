@@ -8,7 +8,7 @@ data class BookWithSessionsEntity(
     val book: BookEntity,
     @Relation(
         parentColumn = "bookId",
-        entityColumn = "sessionId",
+        entityColumn = "bookParentId",
     )
     val sessions: List<SessionEntity>
 )

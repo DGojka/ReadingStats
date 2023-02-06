@@ -6,9 +6,9 @@ import java.util.*
 
 @Entity(tableName = "session")
 data class SessionEntity(
-    @PrimaryKey
-    val sessionId: Long,
-    val sessionTimeMs: Int,
+    @PrimaryKey val sessionId: Long,
+    val bookParentId: Long,
+    val sessionTimeSeconds: Int,
     val pagesRead: Int,
     val sessionStartDate: Date,
     val sessionEndDate: Date

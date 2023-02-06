@@ -13,10 +13,10 @@ import com.example.bookstats.database.entity.SessionEntity
 
 @Database(
     entities = [BookEntity::class, SessionEntity::class, BookSessionEntity::class],
-    version = 1
+    version = 2
 )
 @TypeConverters(DateConverter::class)
-abstract class AppDataBase : RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
 
     abstract fun sessionDao(): SessionDao
