@@ -8,13 +8,13 @@ import com.example.bookstats.database.entity.SessionEntity
 class RepositoryImpl(private val db: AppDatabase) : Repository {
     override suspend fun getBooksWithSessions(): List<BookWithSessions> {
         return db.bookWithSessionDao().getBooks().map {
-            toBookWithSession(it)
+            mapBookWithSessionsEntity(it)
         }
     }
 
     override suspend fun getBookWithSessionsById(id: Long): BookWithSessions {
         val bookWithSessions = db.bookWithSessionDao().getBooksById(id)
-        return toBookWithSession(bookWithSessions)
+        return mapBookWithSessionsEntity(bookWithSessions)
     }
 
     override suspend fun addBookWithSessions(book: BookWithSessions) {
@@ -41,36 +41,25 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
         }
     }
 
-    private fun toBookWithSession(bookWithSessions: BookWithSessionsEntity): BookWithSessions {
-        if (bookWithSessions.sessions != null) {
-            val sessionsMapped: List<Session> = bookWithSessions.sessions
-                .map {
-                    Session(
-                        it.sessionTimeSeconds,
-                        it.pagesRead,
-                        it.sessionStartDate,
-                        it.sessionEndDate
-                    ).apply {
-                        this.id = it.sessionId
-                    }
+    private fun mapBookWithSessionsEntity(bookWithSessions: BookWithSessionsEntity): BookWithSessions {
+        val sessionsMapped: List<Session> = bookWithSessions.sessions
+            .map {
+                Session(
+                    it.sessionTimeSeconds,
+                    it.pagesRead,
+                    it.sessionStartDate,
+                    it.sessionEndDate
+                ).apply {
+                    this.id = it.sessionId
                 }
-            with(bookWithSessions.book) {
-                return BookWithSessions(
-                    name,
-                    bookAuthor,
-                    totalPages,
-                    currentPage,
-                    sessionsMapped
-                ).apply { id = bookId }
             }
-        }
         with(bookWithSessions.book) {
             return BookWithSessions(
                 name,
                 bookAuthor,
                 totalPages,
                 currentPage,
-                listOf()
+                sessionsMapped
             ).apply { id = bookId }
         }
     }
