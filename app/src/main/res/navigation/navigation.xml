@@ -8,22 +8,22 @@
 
     <fragment
         android:id="@+id/libraryFragment"
-        android:name="com.example.bookstats.LibraryFragment"
+        android:name="com.example.bookstats.features.LibraryFragment"
         tools:layout="@layout/fragment_library"
         />
     <fragment
         android:id="@+id/goalsFragment"
-        android:name="com.example.bookstats.GoalsFragment"
+        android:name="com.example.bookstats.features.GoalsFragment"
         tools:layout="@layout/fragment_goals"
         />
     <fragment
         android:id="@+id/statsFragment"
-        android:name="com.example.bookstats.StatsFragment"
+        android:name="com.example.bookstats.features.StatsFragment"
         tools:layout="@layout/fragment_stats"
         />
     <fragment
         android:id="@+id/achievementsFragment"
-        android:name="com.example.bookstats.AchievementsFragment"
+        android:name="com.example.bookstats.features.AchievementsFragment"
         tools:layout="@layout/fragment_achievements"
         />
 
