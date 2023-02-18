@@ -1,10 +1,12 @@
-package com.example.bookstats
+package com.example.bookstats.features
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
+import com.example.bookstats.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class LibraryFragment : Fragment() {
@@ -21,13 +23,8 @@ class LibraryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addButton = requireView().findViewById(R.id.button_add_book)
-
         addButton.setOnClickListener {
-            val nextFrag = BookCreation()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(((view as ViewGroup).parent as View).id, nextFrag, "findThisFragment")
-                .addToBackStack(null)
-                .commit()
+            view.findNavController().navigate(R.id.action_libraryFragment_to_bookCreationFragment)
         }
     }
 }

@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookCreation">
+    tools:context=".features.creation.BookCreationFragment">
 
     <ImageView
         android:id="@+id/book_image"
-        android:layout_width="150dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="80dp"
+        android:layout_width="200dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="60dp"
         android:contentDescription="@string/book_desc_image"
         android:src="@drawable/image_place_holder"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,7 +22,9 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="24dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/book_image">
@@ -48,6 +50,8 @@
             android:id="@+id/book_author_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:windowSoftInputMode="adjustPan"
+            app:textInputLayoutFocusedRectEnabled="false"
             android:hint="@string/book_author" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -57,6 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
+        app:layout_constraintBottom_toTopOf="@id/save_book_button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/book_author">
@@ -74,7 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="24dp"
         android:text="@string/book_save"
         app:layout_constraintTop_toBottomOf="@id/page_number" />
