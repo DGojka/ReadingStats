@@ -11,4 +11,8 @@
     <string name="book_pages">Number of pages</string>
     <string name="book_save">Save book</string>
     <string name="book_desc_image">Image of the book</string>
+    <string name="creation_error_author">Missing author!</string>
+    <string name="creation_error_name">Missing book name!</string>
+    <string name="creation_error_pages">Missing number of pages!</string>
+    <string name="unknown_error">Something went wrong…</string>
 </resources>

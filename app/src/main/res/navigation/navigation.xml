@@ -10,7 +10,11 @@
         android:id="@+id/libraryFragment"
         android:name="com.example.bookstats.features.LibraryFragment"
         tools:layout="@layout/fragment_library"
-        />
+        >
+        <action
+            android:id="@+id/action_libraryFragment_to_bookCreationFragment"
+            app:destination="@id/bookCreationFragment" />
+    </fragment>
     <fragment
         android:id="@+id/goalsFragment"
         android:name="com.example.bookstats.features.GoalsFragment"
@@ -26,5 +30,14 @@
         android:name="com.example.bookstats.features.AchievementsFragment"
         tools:layout="@layout/fragment_achievements"
         />
+    <fragment
+        android:id="@+id/bookCreationFragment"
+        android:name="com.example.bookstats.features.creation.BookCreationFragment"
+        tools:layout="@layout/fragment_book_creation"
+        >
+        <action
+            android:id="@+id/action_bookCreationFragment_to_libraryFragment"
+            app:destination="@id/libraryFragment" />
+    </fragment>
 
 </navigation>
