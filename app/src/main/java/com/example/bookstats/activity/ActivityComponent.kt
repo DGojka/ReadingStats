@@ -1,0 +1,35 @@
+package com.example.bookstats.activity
+
+import androidx.activity.ComponentActivity
+import com.example.bookstats.activity.scope.ActivityScope
+import com.example.bookstats.app.di.AppComponent
+import com.example.bookstats.app.di.AppComponent.Companion.appComponent
+import com.example.bookstats.repository.Repository
+import dagger.BindsInstance
+import dagger.Component
+
+@ActivityScope
+@Component(
+    dependencies = [AppComponent::class]
+)
+interface ActivityComponent {
+    @Component.Factory
+    interface Factory {
+        fun create(
+            appComponent: AppComponent,
+            @BindsInstance activity: ComponentActivity
+        ): ActivityComponent
+    }
+
+    fun inject(activity: MainActivity)
+
+    fun repository(): Repository
+    fun activity(): ComponentActivity
+
+    companion object {
+        fun create(activity: MainActivity): ActivityComponent =
+            DaggerActivityComponent.factory().create(activity.appComponent, activity).apply {
+                inject(activity)
+            }
+    }
+}
