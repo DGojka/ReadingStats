@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.room.Room
 import com.example.bookstats.R
@@ -44,7 +42,8 @@ class BookCreationFragment : Fragment() {
             requireContext(),
             AppDatabase::class.java, AppDatabase.NAME
         ).allowMainThreadQueries().build()
-        val vm = BookCreationViewModel(RepositoryImpl(db = db)) // todo inject it
+    //    val vm = BookCreationViewModel(RepositoryImpl(db = db)) // todo inject it
+        val vm = ViewModelProvider(this)[BookCreationViewModel::class.java]
 
         binding!!.bookAuthorEditText.addTextChangedListener {
             vm.setBookAuthor(it.toString())
