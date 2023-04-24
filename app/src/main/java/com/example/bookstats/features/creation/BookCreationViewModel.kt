@@ -4,12 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.repository.BookWithSessions
-import com.example.bookstats.repository.RepositoryImpl
+import com.example.bookstats.repository.Repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BookCreationViewModel(private val repository: RepositoryImpl) : ViewModel() {
+class BookCreationViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
     private val _uiState: MutableStateFlow<BookCreationUiState> =
         MutableStateFlow(BookCreationUiState.Init)
     val uiState: StateFlow<BookCreationUiState> = _uiState

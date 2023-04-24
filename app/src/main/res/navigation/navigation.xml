@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/libraryFragment"
-        android:name="com.example.bookstats.features.LibraryFragment"
+        android:name="com.example.bookstats.features.library.LibraryFragment"
         tools:layout="@layout/fragment_library"
         >
         <action

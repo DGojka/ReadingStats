@@ -8,27 +8,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
-import androidx.room.Room
 import com.example.bookstats.R
-import com.example.bookstats.database.AppDatabase
+import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookCreationBinding
-import com.example.bookstats.repository.RepositoryImpl
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 class BookCreationFragment : Fragment() {
     private var _binding: FragmentBookCreationBinding? = null
     private val binding get() = _binding
 
+    @Inject
+    lateinit var viewModelFactory: BookCreationViewModelFactory
+    private lateinit var vm: BookCreationViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        (activity?.application as ReadingStatsApp).appComponent.inject(this)
         _binding = FragmentBookCreationBinding.inflate(inflater, container, false)
         return binding!!.root
     }
@@ -40,11 +41,7 @@ class BookCreationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val db: AppDatabase = Room.databaseBuilder(
-            requireContext(),
-            AppDatabase::class.java, AppDatabase.NAME
-        ).allowMainThreadQueries().build()
-        val vm = BookCreationViewModel(RepositoryImpl(db = db)) // todo inject it
+        vm = ViewModelProvider(this, viewModelFactory)[BookCreationViewModel::class.java]
 
         binding!!.bookAuthorEditText.addTextChangedListener {
             vm.setBookAuthor(it.toString())
@@ -88,19 +85,22 @@ class BookCreationFragment : Fragment() {
         when (reason) {
             BookCreationUiState.Error.Reason.MissingAuthor -> {
                 Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(),R.string.creation_error_author,Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.creation_error_author, Toast.LENGTH_SHORT)
+                    .show()
             }
             BookCreationUiState.Error.Reason.MissingBookName -> {
                 Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(),R.string.creation_error_name,Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.creation_error_name, Toast.LENGTH_SHORT)
+                    .show()
             }
             BookCreationUiState.Error.Reason.NoPages -> {
                 Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(),R.string.creation_error_pages,Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.creation_error_pages, Toast.LENGTH_SHORT)
+                    .show()
             }
             is BookCreationUiState.Error.Reason.Unknown -> {
                 Log.e(CREATION_ERROR, reason.exception.toString())
-                Toast.makeText(requireContext(),R.string.unknown_error,Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.unknown_error, Toast.LENGTH_SHORT).show()
             }
         }
     }
