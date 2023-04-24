@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class BookCreationViewModelFactory @Inject constructor(
     private val repository: Repository
-) : ViewModelProvider.Factory{
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(BookCreationViewModel::class.java) ->

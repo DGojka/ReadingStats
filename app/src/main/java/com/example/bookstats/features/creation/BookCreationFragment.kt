@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class BookCreationFragment : Fragment() {
     private var _binding: FragmentBookCreationBinding? = null
-    private val binding get() = _binding
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var viewModelFactory: BookCreationViewModelFactory
@@ -31,7 +31,7 @@ class BookCreationFragment : Fragment() {
     ): View {
         (activity?.application as ReadingStatsApp).appComponent.inject(this)
         _binding = FragmentBookCreationBinding.inflate(inflater, container, false)
-        return binding!!.root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -43,17 +43,16 @@ class BookCreationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         vm = ViewModelProvider(this, viewModelFactory)[BookCreationViewModel::class.java]
 
-        binding!!.bookAuthorEditText.addTextChangedListener {
+        binding.bookAuthorEditText.addTextChangedListener {
             vm.setBookAuthor(it.toString())
         }
-        binding!!.bookNameEditText.addTextChangedListener {
+        binding.bookNameEditText.addTextChangedListener {
             vm.setBookName(it.toString())
         }
-        binding!!.bookPageNumberEditText.addTextChangedListener {
+        binding.bookPageNumberEditText.addTextChangedListener {
             vm.setNumberOfPages(it.toString())
         }
-        binding!!.saveBookButton.setOnClickListener {
-            findNavController().navigate(R.id.libraryFragment)
+        binding.saveBookButton.setOnClickListener {
             vm.createBook()
         }
         observeState(viewModel = vm)
@@ -75,33 +74,25 @@ class BookCreationFragment : Fragment() {
                 handleError(reason = state.reason)
             }
             is BookCreationUiState.Success -> {
-                binding!!.saveBookButton.isEnabled = state.saveButtonEnabled
+                binding.saveBookButton.isEnabled = state.saveButtonEnabled
             }
             else -> {}
         }
     }
 
     private fun handleError(reason: BookCreationUiState.Error.Reason) {
-        when (reason) {
-            BookCreationUiState.Error.Reason.MissingAuthor -> {
-                Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(), R.string.creation_error_author, Toast.LENGTH_SHORT)
-                    .show()
-            }
-            BookCreationUiState.Error.Reason.MissingBookName -> {
-                Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(), R.string.creation_error_name, Toast.LENGTH_SHORT)
-                    .show()
-            }
-            BookCreationUiState.Error.Reason.NoPages -> {
-                Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(), R.string.creation_error_pages, Toast.LENGTH_SHORT)
-                    .show()
-            }
+        val errorMessageResId = when (reason) {
+            BookCreationUiState.Error.Reason.MissingAuthor -> R.string.creation_error_author
+            BookCreationUiState.Error.Reason.MissingBookName -> R.string.creation_error_name
+            BookCreationUiState.Error.Reason.NoPages -> R.string.creation_error_pages
             is BookCreationUiState.Error.Reason.Unknown -> {
                 Log.e(CREATION_ERROR, reason.exception.toString())
-                Toast.makeText(requireContext(), R.string.unknown_error, Toast.LENGTH_SHORT).show()
+                R.string.unknown_error
             }
+        }
+        Log.e(CREATION_ERROR, reason.toString())
+        binding.let {
+            Toast.makeText(it.root.context, errorMessageResId, Toast.LENGTH_SHORT).show()
         }
     }
 

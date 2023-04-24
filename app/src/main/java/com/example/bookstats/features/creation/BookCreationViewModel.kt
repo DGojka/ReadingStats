@@ -37,7 +37,8 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
     fun setBookAuthor(bookAuthor: String) {
         val state = _uiState.value as BookCreationUiState.Success
         with(state) {
-            _uiState.value = copy(bookAuthor = bookAuthor, saveButtonEnabled = isSaveButtonEnabled())
+            _uiState.value =
+                copy(bookAuthor = bookAuthor, saveButtonEnabled = isSaveButtonEnabled())
         }
     }
 
