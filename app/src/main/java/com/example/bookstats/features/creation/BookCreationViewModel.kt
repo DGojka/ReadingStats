@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class BookCreationViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
     private val _uiState: MutableStateFlow<BookCreationUiState> =
-        MutableStateFlow(BookCreationUiState.Init)
+        MutableStateFlow(BookCreationUiState())
     val uiState: StateFlow<BookCreationUiState> = _uiState
 
     private val Any.logTag: String
@@ -21,54 +21,37 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
             return if (tag.length <= 23) tag else tag.substring(0, 23)
         }
 
-    init {
-        viewModelScope.launch {
-            _uiState.emit(BookCreationUiState.Success("", "", 0))
-        }
+    fun setBookName(name: String) {
+        val uiState = _uiState.value.copy(bookName = name)
+        _uiState.value = uiState.copy(saveButtonEnabled = isSaveButtonEnabled(uiState))
     }
 
-    fun setBookName(bookName: String) {
-        val state = _uiState.value as BookCreationUiState.Success
-        with(state) {
-            _uiState.value = copy(bookName = bookName, saveButtonEnabled = isSaveButtonEnabled())
-        }
-    }
-
-    fun setBookAuthor(bookAuthor: String) {
-        val state = _uiState.value as BookCreationUiState.Success
-        with(state) {
-            _uiState.value =
-                copy(bookAuthor = bookAuthor, saveButtonEnabled = isSaveButtonEnabled())
-        }
+    fun setBookAuthor(author: String) {
+        val uiState = _uiState.value.copy(bookAuthor = author)
+        _uiState.value = uiState.copy(saveButtonEnabled = isSaveButtonEnabled(uiState))
     }
 
     fun setNumberOfPages(numberOfPages: String) {
-        val state = _uiState.value as BookCreationUiState.Success
-        with(state) {
-            _uiState.value = copy(numberOfPages = numberOfPages.toInt(), saveButtonEnabled = true)
-        }
+        val uiState = _uiState.value.copy(
+            numberOfPages = if (numberOfPages.isNotEmpty()) numberOfPages.toInt() else 0
+        )
+        _uiState.value = uiState.copy(saveButtonEnabled = isSaveButtonEnabled(uiState))
     }
 
     fun createBook() {
         viewModelScope.launch {
-            with(_uiState.value as BookCreationUiState.Success) {
-                if (bookAuthor.isNullOrBlank()) {
-                    _uiState.emit(BookCreationUiState.Error(BookCreationUiState.Error.Reason.MissingAuthor))
-                } else if (bookName.isNullOrBlank()) {
-                    _uiState.emit(BookCreationUiState.Error(BookCreationUiState.Error.Reason.MissingBookName))
+            with(_uiState.value) {
+                if (bookAuthor.isBlank()) {
+                    _uiState.value = copy(error = Error(Error.Reason.MissingAuthor))
+                } else if (bookName.isBlank()) {
+                    _uiState.value = copy(error = Error(Error.Reason.MissingBookName))
                 } else if (0 >= numberOfPages) {
-                    _uiState.emit(BookCreationUiState.Error(BookCreationUiState.Error.Reason.NoPages))
+                    _uiState.value = copy(error = Error(Error.Reason.NoPages))
                 } else {
                     try {
                         saveBook()
                     } catch (ex: java.lang.Exception) {
-                        _uiState.emit(
-                            BookCreationUiState.Error(
-                                BookCreationUiState.Error.Reason.Unknown(
-                                    ex
-                                )
-                            )
-                        )
+                        _uiState.value = copy(error = Error(Error.Reason.Unknown(ex)))
                     }
                 }
             }
@@ -77,28 +60,29 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
 
     private fun saveBook() {
         viewModelScope.launch {
-            with(_uiState.value as BookCreationUiState.Success) {
+            with(_uiState.value) {
                 repository.addBookWithSessions(
                     BookWithSessions(
-                        bookName!!, bookAuthor!!, numberOfPages, 0, mutableListOf()
+                        bookName, bookAuthor, numberOfPages, 0, mutableListOf()
                     )
                 )
                 Log.i(logTag, "Saved new book: $bookName")
+                _uiState.value = copy(bookCreated = true)
             }
-            _uiState.emit(BookCreationUiState.Done)
+
         }
     }
 
-    private fun isSaveButtonEnabled(): Boolean {
-        val state = _uiState.value as BookCreationUiState.Success
-        if (state.bookName.isNullOrBlank()) {
-            return false
-        } else if (state.bookAuthor.isNullOrBlank()) {
-            return false
-        } else if (state.numberOfPages < 0) {
-            return false
+    private fun isSaveButtonEnabled(state: BookCreationUiState): Boolean {
+        with(state) {
+            if (bookName.isBlank()) {
+                return false
+            } else if (bookAuthor.isBlank()) {
+                return false
+            } else if (numberOfPages <= 0) {
+                return false
+            }
+            return true
         }
-        return true
     }
-
 }

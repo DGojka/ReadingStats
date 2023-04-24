@@ -13,8 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookCreationBinding
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BookCreationFragment : Fragment() {
@@ -59,33 +58,27 @@ class BookCreationFragment : Fragment() {
     }
 
     private fun observeState(viewModel: BookCreationViewModel) {
-        viewModel.uiState
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state -> handleState(state) }
-            .launchIn(lifecycleScope)
-    }
-
-    private fun handleState(state: BookCreationUiState) {
-        when (state) {
-            BookCreationUiState.Done -> {
-                findNavController().navigate(R.id.libraryFragment)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                with(state) {
+                    if (bookCreated) {
+                        findNavController().navigate(R.id.libraryFragment)
+                    }
+                    if (error != null) {
+                        handleError(error.reason)
+                    }
+                    binding.saveBookButton.isEnabled = state.saveButtonEnabled
+                }
             }
-            is BookCreationUiState.Error -> {
-                handleError(reason = state.reason)
-            }
-            is BookCreationUiState.Success -> {
-                binding.saveBookButton.isEnabled = state.saveButtonEnabled
-            }
-            else -> {}
         }
     }
 
-    private fun handleError(reason: BookCreationUiState.Error.Reason) {
+    private fun handleError(reason: Error.Reason) {
         val errorMessageResId = when (reason) {
-            BookCreationUiState.Error.Reason.MissingAuthor -> R.string.creation_error_author
-            BookCreationUiState.Error.Reason.MissingBookName -> R.string.creation_error_name
-            BookCreationUiState.Error.Reason.NoPages -> R.string.creation_error_pages
-            is BookCreationUiState.Error.Reason.Unknown -> {
+            Error.Reason.MissingAuthor -> R.string.creation_error_author
+            Error.Reason.MissingBookName -> R.string.creation_error_name
+            Error.Reason.NoPages -> R.string.creation_error_pages
+            is Error.Reason.Unknown -> {
                 Log.e(CREATION_ERROR, reason.exception.toString())
                 R.string.unknown_error
             }
