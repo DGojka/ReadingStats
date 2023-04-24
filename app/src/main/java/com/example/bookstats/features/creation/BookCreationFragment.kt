@@ -22,7 +22,7 @@ class BookCreationFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: BookCreationViewModelFactory
-    private lateinit var vm: BookCreationViewModel
+    private lateinit var viewModel: BookCreationViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,24 +40,13 @@ class BookCreationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        vm = ViewModelProvider(this, viewModelFactory)[BookCreationViewModel::class.java]
-
-        binding.bookAuthorEditText.addTextChangedListener {
-            vm.setBookAuthor(it.toString())
-        }
-        binding.bookNameEditText.addTextChangedListener {
-            vm.setBookName(it.toString())
-        }
-        binding.bookPageNumberEditText.addTextChangedListener {
-            vm.setNumberOfPages(it.toString())
-        }
-        binding.saveBookButton.setOnClickListener {
-            vm.createBook()
-        }
-        observeState(viewModel = vm)
+        viewModel = ViewModelProvider(this, viewModelFactory)[BookCreationViewModel::class.java]
+        initEditTextListeners()
+        initSaveBookButtonListener()
+        observeState()
     }
 
-    private fun observeState(viewModel: BookCreationViewModel) {
+    private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 with(state) {
@@ -86,6 +75,24 @@ class BookCreationFragment : Fragment() {
         Log.e(CREATION_ERROR, reason.toString())
         binding.let {
             Toast.makeText(it.root.context, errorMessageResId, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun initEditTextListeners() {
+        binding.bookAuthorEditText.addTextChangedListener {
+            viewModel.setBookAuthor(it.toString())
+        }
+        binding.bookNameEditText.addTextChangedListener {
+            viewModel.setBookName(it.toString())
+        }
+        binding.bookPageNumberEditText.addTextChangedListener {
+            viewModel.setNumberOfPages(if (it.toString().isNotEmpty()) it.toString().toInt() else 0)
+        }
+    }
+
+    private fun initSaveBookButtonListener() {
+        binding.saveBookButton.setOnClickListener {
+            viewModel.createBook()
         }
     }
 
