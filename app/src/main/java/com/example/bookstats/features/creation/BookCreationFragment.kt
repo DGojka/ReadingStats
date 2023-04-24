@@ -8,29 +8,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
-import androidx.room.Room
 import com.example.bookstats.R
-import com.example.bookstats.database.AppDatabase
+import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookCreationBinding
-import com.example.bookstats.repository.RepositoryImpl
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class BookCreationFragment : Fragment() {
     private var _binding: FragmentBookCreationBinding? = null
-    private val binding get() = _binding
+    private val binding get() = _binding!!
 
+    @Inject
+    lateinit var viewModelFactory: BookCreationViewModelFactory
+    private lateinit var viewModel: BookCreationViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        (activity?.application as ReadingStatsApp).appComponent.inject(this)
         _binding = FragmentBookCreationBinding.inflate(inflater, container, false)
-        return binding!!.root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -40,68 +40,59 @@ class BookCreationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val db: AppDatabase = Room.databaseBuilder(
-            requireContext(),
-            AppDatabase::class.java, AppDatabase.NAME
-        ).allowMainThreadQueries().build()
-        val vm = BookCreationViewModel(RepositoryImpl(db = db)) // todo inject it
-
-        binding!!.bookAuthorEditText.addTextChangedListener {
-            vm.setBookAuthor(it.toString())
-        }
-        binding!!.bookNameEditText.addTextChangedListener {
-            vm.setBookName(it.toString())
-        }
-        binding!!.bookPageNumberEditText.addTextChangedListener {
-            vm.setNumberOfPages(it.toString())
-        }
-        binding!!.saveBookButton.setOnClickListener {
-            findNavController().navigate(R.id.libraryFragment)
-            vm.createBook()
-        }
-        observeState(viewModel = vm)
+        viewModel = ViewModelProvider(this, viewModelFactory)[BookCreationViewModel::class.java]
+        initEditTextListeners()
+        initSaveBookButtonListener()
+        observeState()
     }
 
-    private fun observeState(viewModel: BookCreationViewModel) {
-        viewModel.uiState
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state -> handleState(state) }
-            .launchIn(lifecycleScope)
-    }
-
-    private fun handleState(state: BookCreationUiState) {
-        when (state) {
-            BookCreationUiState.Done -> {
-                findNavController().navigate(R.id.libraryFragment)
+    private fun observeState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                with(state) {
+                    if (bookCreated) {
+                        findNavController().navigate(R.id.libraryFragment)
+                    }
+                    if (error != null) {
+                        handleError(error.reason)
+                    }
+                    binding.saveBookButton.isEnabled = state.saveButtonEnabled
+                }
             }
-            is BookCreationUiState.Error -> {
-                handleError(reason = state.reason)
-            }
-            is BookCreationUiState.Success -> {
-                binding!!.saveBookButton.isEnabled = state.saveButtonEnabled
-            }
-            else -> {}
         }
     }
 
-    private fun handleError(reason: BookCreationUiState.Error.Reason) {
-        when (reason) {
-            BookCreationUiState.Error.Reason.MissingAuthor -> {
-                Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(),R.string.creation_error_author,Toast.LENGTH_SHORT).show()
-            }
-            BookCreationUiState.Error.Reason.MissingBookName -> {
-                Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(),R.string.creation_error_name,Toast.LENGTH_SHORT).show()
-            }
-            BookCreationUiState.Error.Reason.NoPages -> {
-                Log.e(CREATION_ERROR, reason.toString())
-                Toast.makeText(requireContext(),R.string.creation_error_pages,Toast.LENGTH_SHORT).show()
-            }
-            is BookCreationUiState.Error.Reason.Unknown -> {
+    private fun handleError(reason: Error.Reason) {
+        val errorMessageResId = when (reason) {
+            Error.Reason.MissingAuthor -> R.string.creation_error_author
+            Error.Reason.MissingBookName -> R.string.creation_error_name
+            Error.Reason.NoPages -> R.string.creation_error_pages
+            is Error.Reason.Unknown -> {
                 Log.e(CREATION_ERROR, reason.exception.toString())
-                Toast.makeText(requireContext(),R.string.unknown_error,Toast.LENGTH_SHORT).show()
+                R.string.unknown_error
             }
+        }
+        Log.e(CREATION_ERROR, reason.toString())
+        binding.let {
+            Toast.makeText(it.root.context, errorMessageResId, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun initEditTextListeners() {
+        binding.bookAuthorEditText.addTextChangedListener {
+            viewModel.setBookAuthor(it.toString())
+        }
+        binding.bookNameEditText.addTextChangedListener {
+            viewModel.setBookName(it.toString())
+        }
+        binding.bookPageNumberEditText.addTextChangedListener {
+            viewModel.setNumberOfPages(if (it.toString().isNotEmpty()) it.toString().toInt() else 0)
+        }
+    }
+
+    private fun initSaveBookButtonListener() {
+        binding.saveBookButton.setOnClickListener {
+            viewModel.createBook()
         }
     }
 

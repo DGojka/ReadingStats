@@ -1,4 +1,4 @@
-package com.example.bookstats.features
+package com.example.bookstats.features.library
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
