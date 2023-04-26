@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookstats.databinding.BookItemBinding
 
-class BookAdapter() :
+class BookAdapter(private val onBookClick: (id: Int) -> Unit) :
     ListAdapter<BookItem, BookAdapter.BookViewHolder>(BookDiffCallback()) {
     private val books = mutableListOf<BookItem>()
 
@@ -16,6 +16,7 @@ class BookAdapter() :
             with(binding) {
                 bookImage.setImageResource(book.bookImage)
                 bookTitle.text = book.bookTitle
+                root.setOnClickListener { onBookClick(book.bookId) }
             }
         }
     }
@@ -30,12 +31,18 @@ class BookAdapter() :
         )
     }
 
-    fun setData(data: List<BookItem>) {
-        books.apply {
-            clear()
-            addAll(data)
+    fun setData(data: List<BookItem>?) {
+        if (data.isNullOrEmpty()) {
+            books.clear()
+            notifyDataSetChanged()
+        } else {
+            books.apply {
+                clear()
+                addAll(data)
+            }
+            submitList(data)
+            notifyDataSetChanged()
         }
-        submitList(data)
     }
 
     override fun getItem(position: Int): BookItem {

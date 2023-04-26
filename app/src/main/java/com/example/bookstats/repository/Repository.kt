@@ -8,4 +8,6 @@ interface Repository {
     suspend fun addBookWithSessions(book: BookWithSessions)
 
     suspend fun addSessionToTheBook(bookId: Long, session: Session)
+
+    suspend fun deleteBookWithSessions(bookId: Long)
 }

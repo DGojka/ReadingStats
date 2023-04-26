@@ -2,6 +2,7 @@ package com.example.bookstats.repository
 
 import com.example.bookstats.database.AppDatabase
 import com.example.bookstats.database.entity.BookEntity
+import com.example.bookstats.database.entity.BookSessionEntity
 import com.example.bookstats.database.entity.BookWithSessionsEntity
 import com.example.bookstats.database.entity.SessionEntity
 
@@ -39,6 +40,15 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
                     )
                 )
         }
+    }
+
+    override suspend fun deleteBookWithSessions(bookId: Long) {
+        val bookWithSessions = db.bookWithSessionDao().getBooksById(bookId)
+        bookWithSessions.sessions.forEach {
+            db.sessionDao().delete(it)
+            db.bookWithSessionDao().delete(BookSessionEntity(bookId,it.sessionId))
+        }
+        db.bookDao().delete(bookWithSessions.book)
     }
 
     private fun mapBookWithSessionsEntity(bookWithSessions: BookWithSessionsEntity): BookWithSessions {
