@@ -1,0 +1,53 @@
+package com.example.bookstats.features.library.list
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.example.bookstats.databinding.BookItemBinding
+
+class BookAdapter() :
+    ListAdapter<BookItem, BookAdapter.BookViewHolder>(BookDiffCallback()) {
+    private val books = mutableListOf<BookItem>()
+
+    inner class BookViewHolder(private val binding: BookItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(book: BookItem) {
+            with(binding) {
+                bookImage.setImageResource(book.bookImage)
+                bookTitle.text = book.bookTitle
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
+        return BookViewHolder(
+            BookItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
+    }
+
+    fun setData(data: List<BookItem>) {
+        books.apply {
+            clear()
+            addAll(data)
+        }
+        submitList(data)
+    }
+
+    override fun getItem(position: Int): BookItem {
+        return books[position]
+    }
+
+    override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
+        val book = getItem(position)
+        holder.bind(book)
+    }
+
+    override fun getItemCount(): Int {
+        return books.size
+    }
+}
