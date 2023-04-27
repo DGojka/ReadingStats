@@ -41,6 +41,9 @@ class LibraryFragment : Fragment() {
                 id = it,
                 navigate =  {findNavController().navigate(R.id.action_libraryFragment_to_more_details)})
         })
+        binding.buttonAddBook.setOnClickListener {
+            findNavController().navigate(R.id.action_libraryFragment_to_bookCreationFragment)
+        }
         binding.bookGrid.adapter = bookAdapter
         return binding.root
     }

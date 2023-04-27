@@ -13,6 +13,7 @@ import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
+import com.example.bookstats.features.library.managers.SessionDialogManager
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
 import kotlinx.coroutines.launch
@@ -32,6 +33,12 @@ class BookDetailsFragment() : Fragment() {
     ): View {
         (activity?.application as ReadingStatsApp).appComponent.inject(this)
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
+        val sessionDialogManager = SessionDialogManager(layoutInflater)
+        binding.addSession.setOnClickListener {
+            sessionDialogManager.showAddSessionDialog(onSubmit = {
+
+            })
+        }
         return binding.root
     }
 
@@ -39,8 +46,10 @@ class BookDetailsFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeState()
         binding.delete.setOnClickListener {
-            viewModel.deleteBook(navigate = { findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
-            Toast.makeText(requireContext(),"Book successfully deleted!",Toast.LENGTH_SHORT).show()
+            viewModel.deleteBook(navigate = {
+                findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
+                Toast.makeText(requireContext(), "Book successfully deleted!", Toast.LENGTH_SHORT)
+                    .show()
             })
         }
     }
@@ -54,5 +63,6 @@ class BookDetailsFragment() : Fragment() {
             }
         }
     }
+
 
 }
