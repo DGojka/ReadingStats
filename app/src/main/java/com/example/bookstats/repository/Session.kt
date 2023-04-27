@@ -1,12 +1,12 @@
 package com.example.bookstats.repository
 
-import java.util.*
+import java.time.LocalDateTime
 
 data class Session(
     val sessionTimeSeconds: Int,
     val pagesRead: Int,
-    val sessionStartDate: Date,
-    val sessionEndDate: Date
+    val sessionStartDate: LocalDateTime,
+    val sessionEndDate: LocalDateTime
 ) {
     var id: Long = 0
 }

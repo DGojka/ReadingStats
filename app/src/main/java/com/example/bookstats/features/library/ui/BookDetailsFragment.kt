@@ -33,11 +33,9 @@ class BookDetailsFragment() : Fragment() {
     ): View {
         (activity?.application as ReadingStatsApp).appComponent.inject(this)
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
-        val sessionDialogManager = SessionDialogManager(layoutInflater)
+        val sessionDialogManager = SessionDialogManager(layoutInflater, viewModel)
         binding.addSession.setOnClickListener {
-            sessionDialogManager.showAddSessionDialog(onSubmit = {
-
-            })
+            sessionDialogManager.showAddSessionDialog()
         }
         return binding.root
     }

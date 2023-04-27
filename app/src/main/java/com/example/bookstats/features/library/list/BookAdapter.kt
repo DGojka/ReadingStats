@@ -8,7 +8,6 @@ import com.example.bookstats.databinding.BookItemBinding
 
 class BookAdapter(private val onBookClick: (id: Int) -> Unit) :
     ListAdapter<BookItem, BookAdapter.BookViewHolder>(BookDiffCallback()) {
-    private val books = mutableListOf<BookItem>()
 
     inner class BookViewHolder(private val binding: BookItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -32,21 +31,7 @@ class BookAdapter(private val onBookClick: (id: Int) -> Unit) :
     }
 
     fun setData(data: List<BookItem>?) {
-        if (data.isNullOrEmpty()) {
-            books.clear()
-            notifyDataSetChanged()
-        } else {
-            books.apply {
-                clear()
-                addAll(data)
-            }
-            submitList(data)
-            notifyDataSetChanged()
-        }
-    }
-
-    override fun getItem(position: Int): BookItem {
-        return books[position]
+        submitList(data)
     }
 
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
@@ -54,7 +39,4 @@ class BookAdapter(private val onBookClick: (id: Int) -> Unit) :
         holder.bind(book)
     }
 
-    override fun getItemCount(): Int {
-        return books.size
-    }
 }

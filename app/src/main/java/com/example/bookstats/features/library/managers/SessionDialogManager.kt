@@ -4,46 +4,35 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.NumberPicker
+import androidx.core.widget.addTextChangedListener
 import com.example.bookstats.R
 import com.example.bookstats.databinding.AddingSessionDialogBinding
-import com.example.bookstats.features.library.managers.helpers.DialogDetails
+import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import java.time.LocalDate
 
-class SessionDialogManager(private val layoutInflater: LayoutInflater) {
+class SessionDialogManager(
+    private val layoutInflater: LayoutInflater,
+    val viewModel: LibraryViewModel
+) {
     private var dialogBinding = AddingSessionDialogBinding.inflate(layoutInflater)
-    private var selectedDate: LocalDate? = null
-    private val currentPage: Int? = null
-    private var hours: Int = 0
-    private var minutes: Int = 0
 
-    fun showAddSessionDialog(onSubmit: (DialogDetails) -> Unit) {
+    fun showAddSessionDialog() {
         dialogBinding = AddingSessionDialogBinding.inflate(layoutInflater)
         val dialogBuilder = AlertDialog.Builder(layoutInflater.context)
             .setView(dialogBinding.root)
             .setTitle(R.string.add_session)
 
-        initSubmitButton(dialogBuilder,onSubmit)
+        initSubmitButton(dialogBuilder)
         initDateControls()
+        initCurrentPage()
         initTimeControls()
-
         val dialog = dialogBuilder.create()
         dialog.show()
     }
 
-    private fun initSubmitButton(
-        dialogBuilder: AlertDialog.Builder,
-        onSubmit: (DialogDetails) -> Unit
-    ) {
+    private fun initSubmitButton(dialogBuilder: AlertDialog.Builder) {
         dialogBuilder.setPositiveButton(R.string.add) { _, _ ->
-            if (isAllFieldsFilled()) {
-                onSubmit(
-                    DialogDetails(
-                        readingSessionDate = selectedDate!!,
-                        currentPage = currentPage!!,
-                        calculateSeconds()
-                    )
-                )
-            }
+            viewModel.submitDialog()
         }
     }
 
@@ -58,11 +47,18 @@ class SessionDialogManager(private val layoutInflater: LayoutInflater) {
                 LocalDate.now().monthValue - 1,
                 LocalDate.now().dayOfMonth
             ) { view, year, monthOfYear, dayOfMonth ->
-                selectedDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
+                val selectedDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
                 dialogBinding.sessionDateEditText.setText(selectedDate.toString())
+                viewModel.setDialogDetails(readingSessionDate = selectedDate)
                 dialogBinding.datePicker.visibility = View.GONE
                 showTimeControls()
             }
+        }
+    }
+
+    private fun initCurrentPage() {
+        dialogBinding.editTextCurrentPage.addTextChangedListener {
+            viewModel.setDialogDetails(currentPage = it.toString().toInt())
         }
     }
 
@@ -77,7 +73,7 @@ class SessionDialogManager(private val layoutInflater: LayoutInflater) {
             editTextMinutes.visibility = View.GONE
             textViewHours.visibility = View.GONE
             textViewMinutes.visibility = View.GONE
-            textViewReadingTime.visibility= View.GONE
+            textViewReadingTime.visibility = View.GONE
             hoursNumberPicker.visibility = View.GONE
             minutesNumberPicker.visibility = View.GONE
         }
@@ -89,21 +85,23 @@ class SessionDialogManager(private val layoutInflater: LayoutInflater) {
             editTextMinutes.visibility = View.VISIBLE
             textViewHours.visibility = View.VISIBLE
             textViewMinutes.visibility = View.VISIBLE
-            textViewReadingTime.visibility= View.VISIBLE
+            textViewReadingTime.visibility = View.VISIBLE
         }
     }
 
     private fun initTimeEditTexts() {
         with(dialogBinding) {
             editTextHour.apply {
-                setText(hours.toString())
+                editTextHour.setText(HOURS_MIN_VALUE.toString())
+                viewModel.setDialogDetails(hoursRead = 0)
                 setOnClickListener {
                     visibility = View.INVISIBLE
                     hoursNumberPicker.visibility = View.VISIBLE
                 }
             }
             editTextMinutes.apply {
-                setText(minutes.toString())
+                setText(MINUTES_MIN_VALUE.toString())
+                viewModel.setDialogDetails(minutesRead = 0)
                 setOnClickListener {
                     visibility = View.INVISIBLE
                     minutesNumberPicker.visibility = View.VISIBLE
@@ -122,8 +120,9 @@ class SessionDialogManager(private val layoutInflater: LayoutInflater) {
                 setOnScrollListener { view, scrollState ->
                     isScrolling = scrollState != NumberPicker.OnScrollListener.SCROLL_STATE_IDLE
                     if (!isScrolling) {
-                        hours = hoursNumberPicker.value
+                        val hours = hoursNumberPicker.value
                         editTextHour.setText(hours.toString())
+                        viewModel.setDialogDetails(hoursRead = hours)
                         visibility = View.GONE
                         editTextHour.visibility = View.VISIBLE
                     }
@@ -137,8 +136,9 @@ class SessionDialogManager(private val layoutInflater: LayoutInflater) {
                 setOnScrollListener { view, scrollState ->
                     isScrolling = scrollState != NumberPicker.OnScrollListener.SCROLL_STATE_IDLE
                     if (!isScrolling) {
-                        minutes = minutesNumberPicker.value
+                        val minutes = minutesNumberPicker.value
                         editTextMinutes.setText(minutes.toString())
+                        viewModel.setDialogDetails(minutesRead = minutes)
                         visibility = View.GONE
                         editTextMinutes.visibility = View.VISIBLE
                     }
@@ -146,15 +146,6 @@ class SessionDialogManager(private val layoutInflater: LayoutInflater) {
             }
         }
     }
-
-
-    private fun calculateSeconds(): Int {
-        val totalMinutes = hours * 60 + minutes
-        return totalMinutes * 60
-    }
-
-    private fun isAllFieldsFilled(): Boolean =
-        selectedDate != null && currentPage != null && calculateSeconds() > 0
 
     companion object {
         private const val HOURS_MIN_VALUE = 0

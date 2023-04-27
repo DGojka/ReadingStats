@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.repository.BookWithSessions
 import com.example.bookstats.repository.Repository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -53,7 +54,7 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
     }
 
     private fun saveBook() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             with(_uiState.value) {
                 repository.addBookWithSessions(
                     BookWithSessions(

@@ -19,7 +19,7 @@ class AppModule(private val app: Application) {
             app.applicationContext,
             AppDatabase::class.java,
             AppDatabase.NAME
-        ).allowMainThreadQueries().build()
+        ).build()
     }
 
     @Singleton

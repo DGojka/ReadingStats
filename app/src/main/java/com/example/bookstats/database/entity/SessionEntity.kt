@@ -2,7 +2,7 @@ package com.example.bookstats.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
+import java.time.LocalDateTime
 
 @Entity(tableName = "session")
 data class SessionEntity(
@@ -10,6 +10,6 @@ data class SessionEntity(
     val bookParentId: Long,
     val sessionTimeSeconds: Int,
     val pagesRead: Int,
-    val sessionStartDate: Date,
-    val sessionEndDate: Date
+    val sessionStartDate: LocalDateTime,
+    val sessionEndDate: LocalDateTime
 )

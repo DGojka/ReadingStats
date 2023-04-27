@@ -62,6 +62,10 @@ class LibraryFragment : Fragment() {
             }
         }
     }
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchBooksFromDb()
+    }
 
     //TEMPORARY METHOD: see BookItem.class
     private fun List<BookWithSessions>.mapToBookItem(): List<BookItem> {
