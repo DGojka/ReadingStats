@@ -1,7 +1,8 @@
 package com.example.bookstats.app.di
 
 import com.example.bookstats.features.creation.BookCreationFragment
-import com.example.bookstats.features.library.LibraryFragment
+import com.example.bookstats.features.library.ui.BookDetailsFragment
+import com.example.bookstats.features.library.ui.LibraryFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -11,4 +12,6 @@ interface AppComponent {
     fun inject(fragment: BookCreationFragment)
 
     fun inject(fragment: LibraryFragment)
+
+    fun inject(fragment: BookDetailsFragment)
 }

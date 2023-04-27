@@ -8,12 +8,15 @@
 
     <fragment
         android:id="@+id/libraryFragment"
-        android:name="com.example.bookstats.features.library.LibraryFragment"
+        android:name="com.example.bookstats.features.library.ui.LibraryFragment"
         tools:layout="@layout/fragment_library"
         >
         <action
             android:id="@+id/action_libraryFragment_to_bookCreationFragment"
             app:destination="@id/bookCreationFragment" />
+        <action
+            android:id="@+id/action_libraryFragment_to_more_details"
+            app:destination="@id/bookDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/goalsFragment"
@@ -37,6 +40,15 @@
         >
         <action
             android:id="@+id/action_bookCreationFragment_to_libraryFragment"
+            app:destination="@id/libraryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookDetailsFragment"
+        android:name="com.example.bookstats.features.library.ui.BookDetailsFragment"
+        tools:layout="@layout/fragment_book_details"
+        >
+        <action
+            android:id="@+id/action_bookDetailsFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
     </fragment>
 

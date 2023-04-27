@@ -15,4 +15,11 @@
     <string name="creation_error_name">Missing book name!</string>
     <string name="creation_error_pages">Missing number of pages!</string>
     <string name="unknown_error">Something went wrong…</string>
+    <string name="current_page">Current page</string>
+    <string name="session_date">Session date</string>
+    <string name="reading_time">Reading time</string>
+    <string name="hours">Hours</string>
+    <string name="minutes">Minutes</string>
+    <string name="add">Add</string>
+    <string name="add_session">Add new session</string>
 </resources>
