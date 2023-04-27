@@ -12,7 +12,7 @@ import java.time.LocalDate
 
 class SessionDialogManager(
     private val layoutInflater: LayoutInflater,
-    val viewModel: LibraryViewModel
+    private val viewModel: LibraryViewModel
 ) {
     private var dialogBinding = AddingSessionDialogBinding.inflate(layoutInflater)
 

@@ -1,11 +1,11 @@
 package com.example.bookstats.features.library.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.library.managers.helpers.DialogDetails
 import com.example.bookstats.features.library.viewmodel.uistate.LibraryUiState
 import com.example.bookstats.repository.Repository
+import com.example.bookstats.repository.Session
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +21,8 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
     init {
         fetchBooksFromDb()
     }
-    fun fetchBooksFromDb(){
+
+    fun fetchBooksFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value =
                 _uiState.value.copy(isLoading = false, bookList = repository.getBooksWithSessions())
@@ -71,7 +72,6 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
                 minutesRead != null -> _uiState.value =
                     copy(dialogDetails = currentDialogDetails.copy(minutesRead = minutesRead))
             }
-            Log.e("aha spoko", _uiState.value.dialogDetails.toString())
         }
     }
 
@@ -79,16 +79,25 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
         if (isAllFieldsFilled()) {
             with(_uiState.value) {
                 viewModelScope.launch(Dispatchers.IO) {
-                    if (bookClicked != null) {
-                        dialogDetails.apply {
-                  /*          repository.addSessionToTheBook(
-                                bookId = bookClicked.id,
-                                Session(sessionEndDate = readingSessionDate!!)
-                            )*/
-                        }
+                    if (bookClicked != null && dialogDetails != null) {
+                        saveSessionByDialog(dialogDetails)
                     }
                 }
             }
+        }
+    }
+
+    private suspend fun saveSessionByDialog(dialogDetails: DialogDetails) {
+        dialogDetails.apply {
+            repository.addSessionToTheBook(
+                bookId = _uiState.value.bookClicked!!.id,
+                Session(
+                    sessionTimeSeconds = calculateSeconds(hoursRead, minutesRead),
+                    pagesRead = calculatePagesRead(),
+                    sessionEndDate = readingSessionDate!!.atStartOfDay(),
+                    sessionStartDate = readingSessionDate.atStartOfDay()
+                )
+            )
         }
     }
 
@@ -97,16 +106,27 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
         return totalMinutes * 60
     }
 
+    private fun calculatePagesRead(): Int =
+        _uiState.value.dialogDetails!!.currentPage!! - _uiState.value.bookClicked?.currentPage!!
+
     private fun isAllFieldsFilled(): Boolean {
         with(_uiState.value.dialogDetails) {
             if (this != null) {
-                readingSessionDate != null && currentPage != null && calculateSeconds(
+                return readingSessionDate != null && currentPage != null && calculateSeconds(
                     hoursRead,
                     minutesRead
-                ) > 0
+                ) > 0 && isNewCurrentPageGreaterThanOld(currentPage)
             }
             return false
         }
+    }
+
+    private fun isNewCurrentPageGreaterThanOld(newCurrentPage: Int): Boolean {
+        val oldPage = _uiState.value.bookClicked?.currentPage
+        if (oldPage != null) {
+            return newCurrentPage > oldPage
+        }
+        return false
     }
 
 }
