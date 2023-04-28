@@ -6,33 +6,93 @@
     android:layout_height="match_parent"
     tools:context=".features.library.ui.BookDetailsFragment">
 
-    <TextView
-        android:id="@+id/temp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#353333"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Details fragment" />
+        app:layout_constraintTop_toBottomOf="@id/details_image" />
+
+    <ImageView
+        android:id="@+id/details_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="12dp"
+        android:contentDescription="TODO"
+        android:src="@drawable/image_place_holder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/details_book_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toRightOf="@id/details_image"
+        app:layout_constraintTop_toTopOf="@id/details_image"
+        tools:text="Harry potter" />
+
+    <TextView
+        android:id="@+id/details_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toRightOf="@id/details_image"
+        app:layout_constraintTop_toBottomOf="@id/details_book_name"
+        tools:text="J.K Rowling" />
 
     <Button
         android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:text="Delete book"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/temp" />
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/add_session"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="add session"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/delete"
+        app:layout_constraintRight_toRightOf="@id/delete"
+        app:layout_constraintTop_toBottomOf="@id/delete" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@android:color/darker_gray"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/delete" />
+        app:layout_constraintTop_toBottomOf="@id/details_image" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_margin="12dp"
+        android:background="#353333"
+        app:contentPadding="12dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#353333"
+            android:textColor="@color/white"
+            android:text="Pages:"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </androidx.cardview.widget.CardView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
