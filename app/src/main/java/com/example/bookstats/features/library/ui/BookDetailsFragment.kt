@@ -5,19 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.library.managers.SessionDialogManager
+import com.example.bookstats.features.library.tabs.adapter.ViewPagerAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 class BookDetailsFragment() : Fragment() {
     private var _binding: FragmentBookDetailsBinding? = null
@@ -37,12 +44,14 @@ class BookDetailsFragment() : Fragment() {
         binding.addSession.setOnClickListener {
             sessionDialogManager.showAddSessionDialog()
         }
+        initPages()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeState()
+
         binding.delete.setOnClickListener {
             viewModel.deleteBook(navigate = {
                 findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
@@ -62,5 +71,35 @@ class BookDetailsFragment() : Fragment() {
         }
     }
 
+    private fun initPages(){
+        val viewPager = binding.viewPager2
+        val tabLayout = binding.tabLayout
+        tabLayout.addTab(tabLayout.newTab().setText("Settings"))
+        tabLayout.addTab(tabLayout.newTab().setText("General"))
+        tabLayout.addTab(tabLayout.newTab().setText("Sessions"))
+        tabLayout.setTabTextColors( ContextCompat.getColor(requireContext(), R.color.whisper),ContextCompat.getColor(requireContext(), R.color.dark_violet))
+        viewPager.adapter = ViewPagerAdapter(requireActivity())
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = "Settings"
+                1 -> tab.text = "General"
+                2 -> tab.text = "Sessions"
+            }
+        }.attach()
+        viewPager.currentItem = 1
+        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                viewPager.currentItem = tab.position
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+        viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                tabLayout.selectTab(tabLayout.getTabAt(position))
+            }
+        })
+    }
 
 }
