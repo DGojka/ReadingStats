@@ -6,9 +6,9 @@
     android:layout_height="wrap_content"
     android:layout_weight="1"
     android:orientation="vertical"
-    android:paddingStart="20dp"
+    android:paddingStart="12dp"
     android:paddingTop="8dp"
-    android:paddingEnd="20dp"
+    android:paddingEnd="12dp"
     android:paddingBottom="64dp"
     tools:layout_height="400dp">
 
@@ -19,19 +19,75 @@
         android:layout_weight="1"
         android:elevation="12dp"
         app:cardCornerRadius="12dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
+
             <View
-                android:layout_width="44dp"
+                android:id="@+id/separator"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:background="@color/violet"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/general_tab_book_image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:scaleType="fitEnd"
+                android:src="@drawable/image_place_holder"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@id/separator"
+                app:layout_constraintRight_toRightOf="@id/separator"
+                android:contentDescription="@string/book_desc_image"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/general_tab_book_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/dark_violet"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/separator"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Book name" />
+
+            <TextView
+                android:id="@+id/general_tab_book_author"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textColor="@color/whisper"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/separator"
+                app:layout_constraintTop_toBottomOf="@id/general_tab_book_name"
+                tools:text="Book author" />
+
+            <View
+                android:id="@+id/click_here"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/separator"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
@@ -43,8 +99,112 @@
         android:elevation="12dp"
         app:cardCornerRadius="12dp">
 
-        <!-- Zawartość drugiej karty -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/general_avg_session_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/avg_read_time"
+                android:textColor="@color/whisper"
+                android:textSize="12sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/general_avg_pages_hour"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/general_avg_pages_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/avg_pages_h"
+                android:textColor="@color/whisper"
+                android:textSize="12sp"
+                app:layout_constraintLeft_toRightOf="@id/general_avg_session_time"
+                app:layout_constraintRight_toLeftOf="@id/general_avg_pages_min"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/general_avg_pages_min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/avg_min_page"
+                android:textColor="@color/whisper"
+                android:textSize="12sp"
+                app:layout_constraintLeft_toRightOf="@id/general_avg_pages_hour"
+                app:layout_constraintRight_toLeftOf="@id/general_total_read_time"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/general_total_read_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/avg_total_read_time"
+                android:textColor="@color/whisper"
+                android:textSize="12sp"
+                app:layout_constraintLeft_toRightOf="@id/general_avg_pages_min"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/general_avg_session_time_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="4dp"
+                tools:text="28min 35s"
+                android:textColor="@color/dark_violet"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/general_avg_pages_hour"
+                app:layout_constraintTop_toBottomOf="@id/general_avg_session_time" />
+
+            <TextView
+                android:id="@+id/general_avg_pages_hour_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                tools:text="40"
+                android:textColor="@color/dark_violet"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/general_avg_session_time"
+                app:layout_constraintRight_toLeftOf="@id/general_avg_pages_min"
+                app:layout_constraintTop_toBottomOf="@id/general_avg_session_time" />
+
+            <TextView
+                android:id="@+id/general_avg_min_page_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                tools:text="1.6"
+                android:textColor="@color/dark_violet"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/general_avg_pages_hour"
+                app:layout_constraintRight_toLeftOf="@id/general_total_read_time"
+                app:layout_constraintTop_toBottomOf="@id/general_avg_pages_min" />
+
+            <TextView
+                android:id="@+id/general_total_read_time_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                tools:text="2h 43min"
+                android:textColor="@color/dark_violet"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/general_avg_pages_min"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/general_total_read_time" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -55,8 +215,40 @@
         android:elevation="12dp"
         app:cardCornerRadius="12dp">
 
-        <!-- Zawartość trzeciej karty -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/general_tab_continue_reading_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:text="@string/continue_reading"
+                android:textColor="@color/dark_violet"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/general_tab_continue_reading_text_view_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:text="@string/click_to_add_reading_session"
+                android:textColor="@color/whisper"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/general_tab_continue_reading_text_view" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
 </LinearLayout>
