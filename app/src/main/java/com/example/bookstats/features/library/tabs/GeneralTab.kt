@@ -17,6 +17,6 @@ class GeneralTab : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_general_tab, container, false)
+        return inflater.inflate(R.layout.tab_general, container, false)
     }
 }

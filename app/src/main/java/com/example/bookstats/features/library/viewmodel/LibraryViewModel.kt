@@ -1,5 +1,6 @@
 package com.example.bookstats.features.library.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.library.managers.helpers.DialogDetails
@@ -26,6 +27,7 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value =
                 _uiState.value.copy(isLoading = false, bookList = repository.getBooksWithSessions())
+            Log.e("asd", repository.getBooksWithSessions().toString())
         }
     }
 
@@ -87,13 +89,65 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
         }
     }
 
+    fun getBookPercentage(): Int {
+        with(_uiState.value) {
+            if (bookClicked != null) {
+                bookClicked.apply {
+                    return ((currentPage.toFloat() / totalPages.toFloat()) * 100).toInt()
+                }
+            }
+        }
+        return 0
+    }
+
+    fun getAvgReadingTime(sessions: List<Session>): String =
+        calculateAvgReadingTime(sessions).toMinutesAndSec()
+
+    fun getTotalReadTime(sessions: List<Session>): String =
+        calculateTotalReadingTimeSec(sessions).toMinutesAndSec()
+
+    fun getAvgMinPerPage(sessions: List<Session>): String =
+        String.format("%.2f", calculateMinPerPage(sessions))
+
+
+    fun getAvgPagesPerHour(sessions: List<Session>): String =
+        String.format("%.2f", calculateAvgPagesPerHour(sessions))
+
+    private fun calculateAvgPagesPerHour(sessions: List<Session>): Double {
+        val totalTimeInH = calculateTotalReadingTimeSec(sessions) / 3600.0
+        return calculateTotalPagesRead(sessions) / totalTimeInH
+    }
+
+    private fun calculateMinPerPage(sessions: List<Session>): Double {
+        val totalTime = calculateTotalReadingTimeSec(sessions).toDouble() / 60.0
+        return (totalTime / calculateTotalPagesRead(sessions))
+    }
+
+    private fun calculateTotalPagesRead(sessions: List<Session>): Int {
+        return sessions.sumOf { it.pagesRead }
+    }
+
+    private fun calculateAvgReadingTime(sessions: List<Session>): Int {
+        return if (sessions.isNotEmpty()) {
+            calculateTotalReadingTimeSec(sessions) / sessions.size
+        } else {
+            0
+        }
+    }
+
+    private fun calculateTotalReadingTimeSec(sessions: List<Session>): Int {
+        var totalTime = 0
+        sessions.forEach { totalTime += it.sessionTimeSeconds }
+        return totalTime
+    }
+
     private suspend fun saveSessionByDialog(dialogDetails: DialogDetails) {
         dialogDetails.apply {
             repository.addSessionToTheBook(
                 bookId = _uiState.value.bookClicked!!.id,
                 Session(
                     sessionTimeSeconds = calculateSeconds(hoursRead, minutesRead),
-                    pagesRead = calculatePagesRead(),
+                    pagesRead = calculatePagesReadInSession(),
                     sessionEndDate = readingSessionDate!!.atStartOfDay(),
                     sessionStartDate = readingSessionDate.atStartOfDay()
                 )
@@ -106,7 +160,7 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
         return totalMinutes * 60
     }
 
-    private fun calculatePagesRead(): Int =
+    private fun calculatePagesReadInSession(): Int =
         _uiState.value.dialogDetails!!.currentPage!! - _uiState.value.bookClicked?.currentPage!!
 
     private fun isAllFieldsFilled(): Boolean {
@@ -129,4 +183,13 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
         return false
     }
 
+    private fun Int.toMinutesAndSec(): String {
+        val minutes = this / 60
+        val seconds = this % 60
+        return if (minutes > 0) {
+            "${minutes}min ${seconds}s"
+        } else {
+            "${seconds}s"
+        }
+    }
 }

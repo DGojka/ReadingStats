@@ -29,6 +29,7 @@ import javax.inject.Inject
 class BookDetailsFragment() : Fragment() {
     private var _binding: FragmentBookDetailsBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
 
     @Inject
     lateinit var viewModelFactory: LibraryViewModelFactory
@@ -44,14 +45,15 @@ class BookDetailsFragment() : Fragment() {
         binding.addSession.setOnClickListener {
             sessionDialogManager.showAddSessionDialog()
         }
+        viewPagerAdapter = ViewPagerAdapter(viewModel)
         initPages()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initPercentage()
         observeState()
-
         binding.delete.setOnClickListener {
             viewModel.deleteBook(navigate = {
                 findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
@@ -65,20 +67,28 @@ class BookDetailsFragment() : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 with(state) {
-                    binding.temp.text = bookClicked?.name
+                        viewPagerAdapter.updateBookInfo(bookClicked!!)
                 }
             }
         }
     }
 
-    private fun initPages(){
+    private fun initPercentage() {
+        binding.bookProgressbar.progress = viewModel.getBookPercentage()
+        binding.percentageTextView.text = viewModel.getBookPercentage().toString() + "%"
+    }
+
+    private fun initPages() {
         val viewPager = binding.viewPager2
         val tabLayout = binding.tabLayout
         tabLayout.addTab(tabLayout.newTab().setText("Settings"))
         tabLayout.addTab(tabLayout.newTab().setText("General"))
         tabLayout.addTab(tabLayout.newTab().setText("Sessions"))
-        tabLayout.setTabTextColors( ContextCompat.getColor(requireContext(), R.color.whisper),ContextCompat.getColor(requireContext(), R.color.dark_violet))
-        viewPager.adapter = ViewPagerAdapter(requireActivity())
+        tabLayout.setTabTextColors(
+            ContextCompat.getColor(requireContext(), R.color.whisper),
+            ContextCompat.getColor(requireContext(), R.color.dark_violet)
+        )
+        viewPager.adapter = viewPagerAdapter
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             when (position) {
                 0 -> tab.text = "Settings"

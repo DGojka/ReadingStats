@@ -14,6 +14,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:text="general fragment"/>
+        android:text="settings fragment"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
