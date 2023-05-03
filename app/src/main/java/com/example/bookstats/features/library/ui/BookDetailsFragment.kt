@@ -26,14 +26,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class BookDetailsFragment() : Fragment() {
+class BookDetailsFragment : Fragment() {
     private var _binding: FragmentBookDetailsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewPagerAdapter: ViewPagerAdapter
 
     @Inject
     lateinit var viewModelFactory: LibraryViewModelFactory
     private val viewModel by viewModels<LibraryViewModel>({ activity as MainActivity }) { viewModelFactory }
+
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,37 +42,28 @@ class BookDetailsFragment() : Fragment() {
     ): View {
         (activity?.application as ReadingStatsApp).appComponent.inject(this)
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
-        val sessionDialogManager = SessionDialogManager(layoutInflater, viewModel)
-        binding.addSession.setOnClickListener {
-            sessionDialogManager.showAddSessionDialog()
-        }
         viewPagerAdapter = ViewPagerAdapter(viewModel)
-        initPages()
+        initViewPager()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initSessionDialogManager()
         initPercentage()
         observeState()
-        binding.delete.setOnClickListener {
-            viewModel.deleteBook(navigate = {
-                findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
-                Toast.makeText(requireContext(), "Book successfully deleted!", Toast.LENGTH_SHORT)
-                    .show()
-            })
-        }
+        initDeleteButton()
     }
 
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 with(state) {
-                    bookClicked!!.apply {
-                        viewPagerAdapter.updateBookInfo(this)
+                    bookClicked?.let { book ->
+                        viewPagerAdapter.updateBookInfo(book)
                         viewPagerAdapter.updateSessionsList(
                             viewModel.mapSessionsToSessionListItem(
-                                sessions
+                                book.sessions
                             )
                         )
                     }
@@ -86,7 +78,7 @@ class BookDetailsFragment() : Fragment() {
             getString(R.string.book_percentage, viewModel.getBookPercentage())
     }
 
-    private fun initPages() {
+    private fun initViewPager() {
         val viewPager = binding.viewPager2
         val tabLayout = binding.tabLayout
         tabLayout.addTab(tabLayout.newTab().setText(SETTINGS))
@@ -118,6 +110,22 @@ class BookDetailsFragment() : Fragment() {
                 tabLayout.selectTab(tabLayout.getTabAt(position))
             }
         })
+    }
+
+    private fun initSessionDialogManager() {
+        binding.addSession.setOnClickListener {
+            SessionDialogManager(layoutInflater, viewModel).showAddSessionDialog()
+        }
+    }
+
+    private fun initDeleteButton() {
+        binding.delete.setOnClickListener {
+            viewModel.deleteBook(navigate = {
+                findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
+                Toast.makeText(requireContext(), "Book successfully deleted!", Toast.LENGTH_SHORT)
+                    .show()
+            })
+        }
     }
 
     companion object {
