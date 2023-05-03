@@ -15,6 +15,9 @@ class SessionAdapter(private var sessionList: List<SessionListItem>) :
                 session.apply {
                     pagesReadValue.text = pagesRead
                     readTimeValue.text = readTime
+                    avgMinPageValue.text = avgMinPerPage
+                    avgPagesHourValue.text = avgPagesPerHour
+                    dateTextView.text = date
                 }
             }
         }

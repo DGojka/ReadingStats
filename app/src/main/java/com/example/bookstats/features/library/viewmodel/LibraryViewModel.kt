@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
@@ -145,7 +146,10 @@ class LibraryViewModel @Inject constructor(
                 return readingSessionDate != null && currentPage != null && sessionCalculator.calculateSeconds(
                     hoursRead,
                     minutesRead
-                ) > 0 && sessionCalculator.isNewCurrentPageGreaterThanOld(newCurrentPage = currentPage, oldCurrentPage = _uiState.value.bookClicked!!.currentPage)
+                ) > 0 && sessionCalculator.isNewCurrentPageGreaterThanOld(
+                    newCurrentPage = currentPage,
+                    oldCurrentPage = _uiState.value.bookClicked!!.currentPage
+                )
             }
             return false
         }
@@ -155,11 +159,11 @@ class LibraryViewModel @Inject constructor(
         sessions.map {
             with(it) {
                 SessionListItem(
-                    date = sessionStartDate.toString(),
+                    date = sessionStartDate.toLocalDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
                     pagesRead.toString(),
                     sessionCalculator.convertSecondsToMinutesAndSeconds(sessionTimeSeconds),
-                    "",
-                    ""
+                    sessionCalculator.getAvgMinPerPage(sessions),
+                    sessionCalculator.getAvgPagesPerHour(sessions)
                 )
             }
         }

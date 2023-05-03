@@ -4,13 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp">
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:layout_margin="8dp"
         android:layout_weight="1"
         android:elevation="12dp"
@@ -45,11 +43,11 @@
                         android:id="@+id/read_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="24sp"
-                        android:layout_marginBottom="38dp"
+                        android:layout_marginStart="40sp"
+                        android:layout_marginBottom="60dp"
                         android:text="Read time"
                         android:textColor="@color/whisper"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -58,24 +56,24 @@
                         android:id="@+id/read_time_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="24sp"
-                        android:layout_marginBottom="40dp"
+                        android:layout_marginBottom="60dp"
                         android:textColor="@color/violet"
-                        android:textSize="12sp"
+                        android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintLeft_toLeftOf="@id/read_time"
+                        app:layout_constraintRight_toRightOf="@id/read_time"
                         app:layout_constraintTop_toBottomOf="@id/read_time"
-                        tools:text="2h 23min 26s" />
+                        tools:text="28 min" />
 
                     <TextView
                         android:id="@+id/pages_read"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="40sp"
-                        android:layout_marginBottom="38dp"
+                        android:layout_marginBottom="60dp"
                         android:text="Pages read"
                         android:textColor="@color/whisper"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -84,14 +82,66 @@
                         android:id="@+id/pages_read_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="40dp"
+                        android:layout_marginBottom="60dp"
                         android:textColor="@color/violet"
-                        android:textSize="12sp"
-                        app:layout_constraintLeft_toLeftOf="@id/pages_read"
+                        android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="@id/pages_read"
                         app:layout_constraintRight_toRightOf="@id/pages_read"
                         app:layout_constraintTop_toBottomOf="@id/pages_read"
                         tools:text="87" />
+
+                    <TextView
+                        android:id="@+id/avg_pages_hour"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="36dp"
+                        android:text="Avg. pages/h"
+                        android:textColor="@color/whisper"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintRight_toRightOf="@id/read_time"
+                        app:layout_constraintLeft_toLeftOf="@id/read_time"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/avg_pages_hour_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:textColor="@color/violet"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="@id/avg_pages_hour"
+                        app:layout_constraintRight_toRightOf="@id/avg_pages_hour"
+                        app:layout_constraintTop_toBottomOf="@id/avg_pages_hour"
+                        tools:text="46" />
+
+                    <TextView
+                        android:id="@+id/avg_min_page"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="36dp"
+                        android:text="Avg. min/page"
+                        android:textColor="@color/whisper"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="@id/pages_read"
+                        app:layout_constraintRight_toRightOf="@id/pages_read"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/avg_min_page_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:textColor="@color/violet"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="@id/avg_min_page"
+                        app:layout_constraintRight_toRightOf="@id/avg_min_page"
+                        app:layout_constraintTop_toBottomOf="@id/avg_min_page"
+                        tools:text="1.24" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -106,6 +156,16 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <TextView
+                    android:id="@+id/date_text_view"
+                    android:layout_marginStart="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:textColor="@color/whisper"
+                    tools:text="01.01.2001"
+                    android:textSize="12sp"
+                    />
                 <ImageView
                     android:id="@+id/settings_button"
                     android:layout_width="32dp"
@@ -114,7 +174,6 @@
                     android:contentDescription="settings"
                     android:padding="8dp"
                     android:src="@drawable/ic_settings" />
-                />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
