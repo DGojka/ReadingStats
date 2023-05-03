@@ -27,6 +27,9 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
 
     override suspend fun addSessionToTheBook(bookId: Long, session: Session) {
         val sId = generateSessionId()
+        with(db.bookWithSessionDao().getBooksById(bookId).book){
+            db.bookDao().update(BookEntity(bookId,name, bookAuthor, totalPages, currentPage + session.pagesRead, photoPath))
+        }
         with(session) {
             db.sessionDao()
                 .add(

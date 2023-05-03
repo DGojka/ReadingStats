@@ -16,7 +16,7 @@ import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.library.managers.SessionDialogManager
-import com.example.bookstats.features.library.tabs.adapter.ViewPagerAdapter
+import com.example.bookstats.features.library.tabs.ViewPagerAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
 import com.google.android.material.tabs.TabLayout
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class BookDetailsFragment() : Fragment() {
+class BookDetailsFragment : Fragment() {
     private var _binding: FragmentBookDetailsBinding? = null
     private val binding get() = _binding!!
 
@@ -34,56 +34,66 @@ class BookDetailsFragment() : Fragment() {
     lateinit var viewModelFactory: LibraryViewModelFactory
     private val viewModel by viewModels<LibraryViewModel>({ activity as MainActivity }) { viewModelFactory }
 
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         (activity?.application as ReadingStatsApp).appComponent.inject(this)
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
-        val sessionDialogManager = SessionDialogManager(layoutInflater, viewModel)
-        binding.addSession.setOnClickListener {
-            sessionDialogManager.showAddSessionDialog()
-        }
-        initPages()
+        viewPagerAdapter = ViewPagerAdapter(viewModel)
+        initViewPager()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initSessionDialogManager()
+        initPercentage()
         observeState()
-
-        binding.delete.setOnClickListener {
-            viewModel.deleteBook(navigate = {
-                findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
-                Toast.makeText(requireContext(), "Book successfully deleted!", Toast.LENGTH_SHORT)
-                    .show()
-            })
-        }
+        initDeleteButton()
     }
 
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 with(state) {
-                    binding.temp.text = bookClicked?.name
+                    bookClicked?.let { book ->
+                        viewPagerAdapter.updateBookInfo(book)
+                        viewPagerAdapter.updateSessionsList(
+                            viewModel.mapSessionsToSessionListItem(
+                                book.sessions
+                            )
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun initPages(){
+    private fun initPercentage() {
+        binding.bookProgressbar.progress = viewModel.getBookPercentage()
+        binding.percentageTextView.text =
+            getString(R.string.book_percentage, viewModel.getBookPercentage())
+    }
+
+    private fun initViewPager() {
         val viewPager = binding.viewPager2
         val tabLayout = binding.tabLayout
-        tabLayout.addTab(tabLayout.newTab().setText("Settings"))
-        tabLayout.addTab(tabLayout.newTab().setText("General"))
-        tabLayout.addTab(tabLayout.newTab().setText("Sessions"))
-        tabLayout.setTabTextColors( ContextCompat.getColor(requireContext(), R.color.whisper),ContextCompat.getColor(requireContext(), R.color.dark_violet))
-        viewPager.adapter = ViewPagerAdapter(requireActivity())
+        tabLayout.addTab(tabLayout.newTab().setText(SETTINGS))
+        tabLayout.addTab(tabLayout.newTab().setText(GENERAL))
+        tabLayout.addTab(tabLayout.newTab().setText(SESSIONS))
+        tabLayout.setTabTextColors(
+            ContextCompat.getColor(requireContext(), R.color.whisper),
+            ContextCompat.getColor(requireContext(), R.color.dark_violet)
+        )
+        viewPager.adapter = viewPagerAdapter
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "Settings"
-                1 -> tab.text = "General"
-                2 -> tab.text = "Sessions"
+                0 -> tab.text = SETTINGS
+                1 -> tab.text = GENERAL
+                2 -> tab.text = SESSIONS
             }
         }.attach()
         viewPager.currentItem = 1
@@ -102,4 +112,25 @@ class BookDetailsFragment() : Fragment() {
         })
     }
 
+    private fun initSessionDialogManager() {
+        binding.addSession.setOnClickListener {
+            SessionDialogManager(layoutInflater, viewModel).showAddSessionDialog()
+        }
+    }
+
+    private fun initDeleteButton() {
+        binding.delete.setOnClickListener {
+            viewModel.deleteBook(navigate = {
+                findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
+                Toast.makeText(requireContext(), "Book successfully deleted!", Toast.LENGTH_SHORT)
+                    .show()
+            })
+        }
+    }
+
+    companion object {
+        private const val SETTINGS = "Settings"
+        private const val GENERAL = "General"
+        private const val SESSIONS = "Sessions"
+    }
 }

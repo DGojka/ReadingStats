@@ -3,6 +3,8 @@ package com.example.bookstats.app.di
 import android.app.Application
 import androidx.room.Room
 import com.example.bookstats.database.AppDatabase
+import com.example.bookstats.features.library.managers.SessionCalculator
+import com.example.bookstats.features.library.managers.SessionCalculatorImpl
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.RepositoryImpl
 import dagger.Module
@@ -26,5 +28,11 @@ class AppModule(private val app: Application) {
     @Provides
     fun provideRepository(database: AppDatabase): Repository {
         return RepositoryImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSessionCalculator(): SessionCalculator {
+        return SessionCalculatorImpl()
     }
 }

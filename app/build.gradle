@@ -42,10 +42,12 @@ dependencies {
     implementation coreLibraries
     implementation coroutines
     implementation dagger
+    implementation glide
     implementation room
 
     kapt roomKapt
     kapt daggerAnnotationProcessor
+    annotationProcessor glideAnnotationProcessor
     runtimeOnly coroutinesRunTime
 
     testImplementation test

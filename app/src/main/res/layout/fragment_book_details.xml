@@ -89,40 +89,10 @@
             app:tabIndicatorGravity="stretch"
             app:tabMode="fixed"
             app:tabSelectedTextColor="@color/white">
-
-            <!--            <com.google.android.material.tabs.TabItem
-                            android:id="@+id/tabSettings"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Settings" />
-
-                        <com.google.android.material.tabs.TabItem
-                            android:id="@+id/tabGeneral"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="General" />
-
-                        <com.google.android.material.tabs.TabItem
-                            android:id="@+id/tabSessions"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sessions" />-->
         </com.google.android.material.tabs.TabLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/temp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Details fragment"
-        android:visibility="gone"/> <!--CHANGE IT AND REMOVE IT-->
-
 
     <Button
         android:id="@+id/delete"
@@ -132,7 +102,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/temp"
+        app:layout_constraintTop_toBottomOf="parent"
         android:visibility="gone"/> <!--CHANGE IT AND REMOVE IT-->
 
     <Button
@@ -143,7 +113,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/delete"
+        app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/> <!--CHANGE IT AND REMOVE IT-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
