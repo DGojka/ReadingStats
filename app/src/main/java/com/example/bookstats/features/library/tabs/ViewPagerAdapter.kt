@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.example.bookstats.R
 import com.example.bookstats.databinding.TabGeneralBinding
 import com.example.bookstats.databinding.TabSessionsBinding
 import com.example.bookstats.databinding.TabSettingsBinding
@@ -24,19 +23,14 @@ class ViewPagerAdapter(
 
     inner class ViewHolder(viewBinding: ViewBinding) : RecyclerView.ViewHolder(viewBinding.root)
 
-    private val layoutIds = arrayOf(
-        R.layout.tab_settings,
-        R.layout.tab_general,
-        R.layout.tab_sessions
-    )
+    private val viewTypeList = listOf(ViewType.TabSettings, ViewType.TabGeneral, ViewType.TabSessions)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = when (viewType) {
-            0 -> TabSettingsBinding.inflate(inflater, parent, false)
-            1 -> TabGeneralBinding.inflate(inflater, parent, false)
-            2 -> TabSessionsBinding.inflate(inflater, parent, false)
-            else -> throw IllegalArgumentException("Invalid viewType")
+        val binding = when (viewTypeList[viewType]) {
+            ViewType.TabSettings -> TabSettingsBinding.inflate(inflater, parent, false)
+            ViewType.TabGeneral -> TabGeneralBinding.inflate(inflater, parent, false)
+            ViewType.TabSessions -> TabSessionsBinding.inflate(inflater, parent, false)
         }
         return ViewHolder(binding)
     }
@@ -44,7 +38,7 @@ class ViewPagerAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (position) {
             0 -> {
-                //TODO later
+                //TODO: Implement
             }
             1 -> {
                 val binding = TabGeneralBinding.bind(holder.itemView)
@@ -64,7 +58,7 @@ class ViewPagerAdapter(
             generalBookInfo = GeneralBookInfo(
                 bookName = name,
                 bookAuthor = author,
-                bookImage = "", //TODO later
+                bookImage = "", //TODO: Implement
                 avgReadingTime = viewModel.getAvgReadingTime(sessions),
                 avgPagesPerHour = viewModel.getAvgPagesPerHour(sessions),
                 avgMinutesPerPage = viewModel.getAvgMinPerPage(sessions),
@@ -79,13 +73,11 @@ class ViewPagerAdapter(
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int {
-        return layoutIds.size
-    }
+    override fun getItemCount(): Int = viewTypeList.size
 
-    override fun getItemViewType(position: Int): Int {
-        return position
-    }
+
+    override fun getItemViewType(position: Int): Int = position
+
 }
 
 
