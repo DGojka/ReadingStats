@@ -3,6 +3,7 @@ package com.example.bookstats.features.library.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookstats.features.library.managers.SessionCalculator
 import com.example.bookstats.features.library.managers.helpers.DialogDetails
 import com.example.bookstats.features.library.tabs.sessions.SessionListItem
 import com.example.bookstats.features.library.viewmodel.uistate.LibraryUiState
@@ -16,7 +17,10 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
 
-class LibraryViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+class LibraryViewModel @Inject constructor(
+    private val repository: Repository,
+    private val sessionCalculator: SessionCalculator
+) : ViewModel() {
     private val _uiState = MutableStateFlow(LibraryUiState(isLoading = true))
     val uiState: StateFlow<LibraryUiState> = _uiState
 
@@ -102,101 +106,48 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
     }
 
     fun getAvgReadingTime(sessions: List<Session>): String =
-        calculateAvgReadingTime(sessions).toHoursMinutesAndSec()
+        sessionCalculator.getAvgReadingTime(sessions)
 
     fun getTotalReadTime(sessions: List<Session>): String =
-        calculateTotalReadingTimeSec(sessions).toHoursMinutesAndSec()
+        sessionCalculator.getTotalReadTime(sessions)
 
     fun getAvgMinPerPage(sessions: List<Session>): String =
-        String.format("%.2f", calculateMinPerPage(sessions))
+        sessionCalculator.getAvgMinPerPage(sessions)
 
     fun getAvgPagesPerHour(sessions: List<Session>): String =
-        String.format("%.2f", calculateAvgPagesPerHour(sessions))
-
-    private fun calculateAvgPagesPerHour(sessions: List<Session>): Double {
-        val totalTimeInH = calculateTotalReadingTimeSec(sessions) / 3600.0
-        return calculateTotalPagesRead(sessions) / totalTimeInH
-    }
-
-    private fun calculateMinPerPage(sessions: List<Session>): Double {
-        val totalTime = calculateTotalReadingTimeSec(sessions).toDouble() / 60.0
-        return (totalTime / calculateTotalPagesRead(sessions))
-    }
-
-    private fun calculateTotalPagesRead(sessions: List<Session>): Int {
-        return sessions.sumOf { it.pagesRead }
-    }
-
-    private fun calculateAvgReadingTime(sessions: List<Session>): Int {
-        return if (sessions.isNotEmpty()) {
-            calculateTotalReadingTimeSec(sessions) / sessions.size
-        } else {
-            0
-        }
-    }
-
-    private fun calculateTotalReadingTimeSec(sessions: List<Session>): Int {
-        var totalTime = 0
-        sessions.forEach { totalTime += it.sessionTimeSeconds }
-        return totalTime
-    }
+        sessionCalculator.getAvgPagesPerHour(sessions)
 
     private suspend fun saveSessionByDialog(dialogDetails: DialogDetails) {
         dialogDetails.apply {
-            repository.addSessionToTheBook(
-                bookId = _uiState.value.bookClicked!!.id,
-                Session(
-                    sessionTimeSeconds = calculateSeconds(hoursRead, minutesRead),
-                    pagesRead = calculatePagesReadInSession(),
-                    sessionEndDate = readingSessionDate!!.atStartOfDay(),
-                    sessionStartDate = readingSessionDate.atStartOfDay()
+            with(_uiState.value) {
+                repository.addSessionToTheBook(
+                    bookId = _uiState.value.bookClicked!!.id,
+                    Session(
+                        sessionTimeSeconds = sessionCalculator.calculateSeconds(
+                            hoursRead,
+                            minutesRead
+                        ),
+                        pagesRead = sessionCalculator.calculatePagesReadInSession(
+                            dialogDetails.currentPage!!,
+                            bookClicked?.currentPage!!
+                        ),
+                        sessionEndDate = readingSessionDate!!.atStartOfDay(),
+                        sessionStartDate = readingSessionDate.atStartOfDay()
+                    )
                 )
-            )
+            }
         }
     }
-
-    private fun calculateSeconds(hours: Int, minutes: Int): Int {
-        val totalMinutes = hours * 60 + minutes
-        return totalMinutes * 60
-    }
-
-    private fun calculatePagesReadInSession(): Int =
-        _uiState.value.dialogDetails!!.currentPage!! - _uiState.value.bookClicked?.currentPage!!
 
     private fun isAllFieldsFilled(): Boolean {
         with(_uiState.value.dialogDetails) {
             if (this != null) {
-                return readingSessionDate != null && currentPage != null && calculateSeconds(
+                return readingSessionDate != null && currentPage != null && sessionCalculator.calculateSeconds(
                     hoursRead,
                     minutesRead
-                ) > 0 && isNewCurrentPageGreaterThanOld(currentPage)
+                ) > 0 && sessionCalculator.isNewCurrentPageGreaterThanOld(newCurrentPage = currentPage, oldCurrentPage = _uiState.value.bookClicked!!.currentPage)
             }
             return false
-        }
-    }
-
-    private fun isNewCurrentPageGreaterThanOld(newCurrentPage: Int): Boolean {
-        val oldPage = _uiState.value.bookClicked?.currentPage
-        if (oldPage != null) {
-            return newCurrentPage > oldPage
-        }
-        return false
-    }
-
-    private fun Int.toHoursMinutesAndSec(): String {
-        val hours = this / 3600
-        val minutes = (this % 3600) / 60
-        val seconds = this % 60
-        return when {
-            hours > 0 -> {
-                "$hours h ${minutes.toString().padStart(2, '0')} min"
-            }
-            minutes > 0 -> {
-                "$minutes min"
-            }
-            else -> {
-                "$seconds s"
-            }
         }
     }
 
@@ -206,7 +157,7 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
                 SessionListItem(
                     date = sessionStartDate.toString(),
                     pagesRead.toString(),
-                    sessionTimeSeconds.toHoursMinutesAndSec(),
+                    sessionCalculator.convertSecondsToMinutesAndSeconds(sessionTimeSeconds),
                     "",
                     ""
                 )
