@@ -16,7 +16,7 @@ import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.library.managers.SessionDialogManager
-import com.example.bookstats.features.library.tabs.general.ViewPagerAdapter
+import com.example.bookstats.features.library.tabs.ViewPagerAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
 import com.google.android.material.tabs.TabLayout
@@ -67,7 +67,14 @@ class BookDetailsFragment() : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 with(state) {
-                        viewPagerAdapter.updateBookInfo(bookClicked!!)
+                    bookClicked!!.apply {
+                        viewPagerAdapter.updateBookInfo(this)
+                        viewPagerAdapter.updateSessionsList(
+                            viewModel.mapSessionsToSessionListItem(
+                                sessions
+                            )
+                        )
+                    }
                 }
             }
         }

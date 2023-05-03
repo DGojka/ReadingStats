@@ -4,18 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookstats.databinding.SessionListItemBinding
-import com.example.bookstats.repository.Session
 
-class SessionAdapter(private val sessionList: List<Session>) :
+class SessionAdapter(private var sessionList: List<SessionListItem>) :
     RecyclerView.Adapter<SessionAdapter.SessionViewHolder>() {
 
     inner class SessionViewHolder(private val binding: SessionListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(session: Session) {
+        fun bind(session: SessionListItem) {
             with(binding) {
                 session.apply {
-                    pagesReadValue.text = pagesRead.toString()
-                    readTimeValue.text = sessionTimeSeconds.toString()
+                    pagesReadValue.text = pagesRead
+                    readTimeValue.text = readTime
                 }
             }
         }

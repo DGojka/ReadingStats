@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.tabs.general
+package com.example.bookstats.features.library.tabs
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,6 +10,8 @@ import com.example.bookstats.databinding.TabSessionsBinding
 import com.example.bookstats.databinding.TabSettingsBinding
 import com.example.bookstats.features.library.tabs.general.helpers.GeneralBookInfo
 import com.example.bookstats.features.library.tabs.general.viewholders.GeneralTabViewHolder
+import com.example.bookstats.features.library.tabs.sessions.SessionListItem
+import com.example.bookstats.features.library.tabs.sessions.SessionsTabViewHolder
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.repository.BookWithSessions
 
@@ -18,6 +20,8 @@ class ViewPagerAdapter(
 ) :
     RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {
     private var generalBookInfo = GeneralBookInfo()
+    private var sessionsList: List<SessionListItem> = mutableListOf()
+
     inner class ViewHolder(viewBinding: ViewBinding) : RecyclerView.ViewHolder(viewBinding.root)
 
     private val layoutIds = arrayOf(
@@ -48,6 +52,9 @@ class ViewPagerAdapter(
                 generalTabViewHolder.bind(generalBookInfo)
             }
             2 -> {
+                val binding = TabSessionsBinding.bind(holder.itemView)
+                val sessionTabViewHolder = SessionsTabViewHolder(binding)
+                sessionTabViewHolder.bind(sessionsList)
             }
         }
     }
@@ -61,9 +68,15 @@ class ViewPagerAdapter(
                 avgReadingTime = viewModel.getAvgReadingTime(sessions),
                 avgPagesPerHour = viewModel.getAvgPagesPerHour(sessions),
                 avgMinutesPerPage = viewModel.getAvgMinPerPage(sessions),
-                totalReadTime = viewModel.getTotalReadTime(sessions))
+                totalReadTime = viewModel.getTotalReadTime(sessions)
+            )
             notifyDataSetChanged()
         }
+    }
+
+    fun updateSessionsList(sessions: List<SessionListItem>) {
+        sessionsList = sessions
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.library.managers.helpers.DialogDetails
+import com.example.bookstats.features.library.tabs.sessions.SessionListItem
 import com.example.bookstats.features.library.viewmodel.uistate.LibraryUiState
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.Session
@@ -101,14 +102,13 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
     }
 
     fun getAvgReadingTime(sessions: List<Session>): String =
-        calculateAvgReadingTime(sessions).toMinutesAndSec()
+        calculateAvgReadingTime(sessions).toHoursMinutesAndSec()
 
     fun getTotalReadTime(sessions: List<Session>): String =
-        calculateTotalReadingTimeSec(sessions).toMinutesAndSec()
+        calculateTotalReadingTimeSec(sessions).toHoursMinutesAndSec()
 
     fun getAvgMinPerPage(sessions: List<Session>): String =
         String.format("%.2f", calculateMinPerPage(sessions))
-
 
     fun getAvgPagesPerHour(sessions: List<Session>): String =
         String.format("%.2f", calculateAvgPagesPerHour(sessions))
@@ -183,13 +183,34 @@ class LibraryViewModel @Inject constructor(private val repository: Repository) :
         return false
     }
 
-    private fun Int.toMinutesAndSec(): String {
-        val minutes = this / 60
+    private fun Int.toHoursMinutesAndSec(): String {
+        val hours = this / 3600
+        val minutes = (this % 3600) / 60
         val seconds = this % 60
-        return if (minutes > 0) {
-            "${minutes}min ${seconds}s"
-        } else {
-            "${seconds}s"
+        return when {
+            hours > 0 -> {
+                "$hours h ${minutes.toString().padStart(2, '0')} min"
+            }
+            minutes > 0 -> {
+                "$minutes min"
+            }
+            else -> {
+                "$seconds s"
+            }
         }
     }
+
+    fun mapSessionsToSessionListItem(sessions: List<Session>): List<SessionListItem> =
+        sessions.map {
+            with(it) {
+                SessionListItem(
+                    date = sessionStartDate.toString(),
+                    pagesRead.toString(),
+                    sessionTimeSeconds.toHoursMinutesAndSec(),
+                    "",
+                    ""
+                )
+            }
+        }
+
 }
