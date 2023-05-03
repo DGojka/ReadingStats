@@ -29,9 +29,14 @@
     <string name="add_session_button">Add session</string>
     //general tab
     <string name="avg_read_time">Avg: read time</string>
-    <string name="avg_pages_h">pages/h</string>
-    <string name="avg_min_page">min/page</string>
+    <string name="pages_h">pages/h</string>
+    <string name="min_page">min/page</string>
     <string name="avg_total_read_time">Total read time</string>
     <string name="continue_reading">Continue reading!</string>
     <string name="click_to_add_reading_session">Click here to start reading session</string>
+    //sessions tab
+    <string name="settings">settings</string>
+    <string name="read_time">Read time</string>
+    <string name="pages_read">Pages read</string>
+    <string name="book_percentage">%d%%</string>
 </resources>

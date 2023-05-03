@@ -37,12 +37,12 @@
                 android:id="@+id/general_tab_book_image"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:contentDescription="@string/book_desc_image"
                 android:scaleType="fitEnd"
                 android:src="@drawable/image_place_holder"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="@id/separator"
                 app:layout_constraintRight_toRightOf="@id/separator"
-                android:contentDescription="@string/book_desc_image"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -120,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/avg_pages_h"
+                android:text="@string/pages_h"
                 android:textColor="@color/whisper"
                 android:textSize="12sp"
                 app:layout_constraintLeft_toRightOf="@id/general_avg_session_time"
@@ -132,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/avg_min_page"
+                android:text="@string/min_page"
                 android:textColor="@color/whisper"
                 android:textSize="12sp"
                 app:layout_constraintLeft_toRightOf="@id/general_avg_pages_hour"
@@ -155,54 +155,54 @@
                 android:id="@+id/general_avg_session_time_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
                 android:layout_marginStart="4dp"
-                tools:text="28min 35s"
+                android:layout_marginTop="12dp"
                 android:textColor="@color/dark_violet"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/general_avg_pages_hour"
-                app:layout_constraintTop_toBottomOf="@id/general_avg_session_time" />
+                app:layout_constraintTop_toBottomOf="@id/general_avg_session_time"
+                tools:text="28min 35s" />
 
             <TextView
                 android:id="@+id/general_avg_pages_hour_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                tools:text="40"
                 android:textColor="@color/dark_violet"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/general_avg_session_time"
                 app:layout_constraintRight_toLeftOf="@id/general_avg_pages_min"
-                app:layout_constraintTop_toBottomOf="@id/general_avg_session_time" />
+                app:layout_constraintTop_toBottomOf="@id/general_avg_session_time"
+                tools:text="40" />
 
             <TextView
                 android:id="@+id/general_avg_min_page_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                tools:text="1.6"
                 android:textColor="@color/dark_violet"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/general_avg_pages_hour"
                 app:layout_constraintRight_toLeftOf="@id/general_total_read_time"
-                app:layout_constraintTop_toBottomOf="@id/general_avg_pages_min" />
+                app:layout_constraintTop_toBottomOf="@id/general_avg_pages_min"
+                tools:text="1.6" />
 
             <TextView
                 android:id="@+id/general_total_read_time_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                tools:text="2h 43min"
                 android:textColor="@color/dark_violet"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/general_avg_pages_min"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/general_total_read_time" />
+                app:layout_constraintTop_toBottomOf="@id/general_total_read_time"
+                tools:text="2h 43min" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

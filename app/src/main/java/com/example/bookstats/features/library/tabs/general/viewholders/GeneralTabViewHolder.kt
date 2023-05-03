@@ -17,7 +17,8 @@ class GeneralTabViewHolder(private val binding: TabGeneralBinding) :
                 generalAvgMinPageValue.text = avgMinutesPerPage
                 generalAvgPagesHourValue.text = avgPagesPerHour
                 generalTotalReadTimeValue.text = totalReadTime
-                Glide.with(itemView).load(bookImage).placeholder(R.drawable.image_place_holder).into(generalTabBookImage)
+                Glide.with(itemView).load(bookImage).placeholder(R.drawable.image_place_holder)
+                    .into(generalTabBookImage)
             }
         }
     }

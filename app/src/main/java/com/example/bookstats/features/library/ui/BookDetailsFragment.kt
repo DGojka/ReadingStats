@@ -82,15 +82,16 @@ class BookDetailsFragment() : Fragment() {
 
     private fun initPercentage() {
         binding.bookProgressbar.progress = viewModel.getBookPercentage()
-        binding.percentageTextView.text = viewModel.getBookPercentage().toString() + "%"
+        binding.percentageTextView.text =
+            getString(R.string.book_percentage, viewModel.getBookPercentage())
     }
 
     private fun initPages() {
         val viewPager = binding.viewPager2
         val tabLayout = binding.tabLayout
-        tabLayout.addTab(tabLayout.newTab().setText("Settings"))
-        tabLayout.addTab(tabLayout.newTab().setText("General"))
-        tabLayout.addTab(tabLayout.newTab().setText("Sessions"))
+        tabLayout.addTab(tabLayout.newTab().setText(SETTINGS))
+        tabLayout.addTab(tabLayout.newTab().setText(GENERAL))
+        tabLayout.addTab(tabLayout.newTab().setText(SESSIONS))
         tabLayout.setTabTextColors(
             ContextCompat.getColor(requireContext(), R.color.whisper),
             ContextCompat.getColor(requireContext(), R.color.dark_violet)
@@ -98,9 +99,9 @@ class BookDetailsFragment() : Fragment() {
         viewPager.adapter = viewPagerAdapter
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "Settings"
-                1 -> tab.text = "General"
-                2 -> tab.text = "Sessions"
+                0 -> tab.text = SETTINGS
+                1 -> tab.text = GENERAL
+                2 -> tab.text = SESSIONS
             }
         }.attach()
         viewPager.currentItem = 1
@@ -119,4 +120,9 @@ class BookDetailsFragment() : Fragment() {
         })
     }
 
+    companion object {
+        private const val SETTINGS = "Settings"
+        private const val GENERAL = "General"
+        private const val SESSIONS = "Sessions"
+    }
 }

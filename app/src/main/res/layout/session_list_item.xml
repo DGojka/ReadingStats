@@ -45,7 +45,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="40sp"
                         android:layout_marginBottom="60dp"
-                        android:text="Read time"
+                        android:text="@string/read_time"
                         android:textColor="@color/whisper"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -71,7 +71,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="40sp"
                         android:layout_marginBottom="60dp"
-                        android:text="Pages read"
+                        android:text="@string/pages_read"
                         android:textColor="@color/whisper"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -96,12 +96,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="36dp"
-                        android:text="Avg. pages/h"
+                        android:text="@string/pages_h"
                         android:textColor="@color/whisper"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="@id/read_time"
                         app:layout_constraintLeft_toLeftOf="@id/read_time"
+                        app:layout_constraintRight_toRightOf="@id/read_time"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -122,7 +122,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="36dp"
-                        android:text="Avg. min/page"
+                        android:text="@string/min_page"
                         android:textColor="@color/whisper"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -158,20 +158,20 @@
 
                 <TextView
                     android:id="@+id/date_text_view"
-                    android:layout_marginStart="12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="12dp"
                     android:textColor="@color/whisper"
-                    tools:text="01.01.2001"
                     android:textSize="12sp"
-                    />
+                    tools:text="01.01.2001" />
+
                 <ImageView
                     android:id="@+id/settings_button"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="end|center_vertical"
-                    android:contentDescription="settings"
+                    android:contentDescription="@string/settings"
                     android:padding="8dp"
                     android:src="@drawable/ic_settings" />
             </androidx.cardview.widget.CardView>
