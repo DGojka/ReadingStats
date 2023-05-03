@@ -1,10 +1,10 @@
-package com.example.bookstats.features.library.tabs.adapter.viewholders
+package com.example.bookstats.features.library.tabs.general.viewholders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookstats.R
 import com.example.bookstats.databinding.TabGeneralBinding
-import com.example.bookstats.features.library.tabs.adapter.helpers.GeneralBookInfo
+import com.example.bookstats.features.library.tabs.general.helpers.GeneralBookInfo
 
 class GeneralTabViewHolder(private val binding: TabGeneralBinding) :
     RecyclerView.ViewHolder(binding.root) {

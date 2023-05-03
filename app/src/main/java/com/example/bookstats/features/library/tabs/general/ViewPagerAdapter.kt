@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.tabs.adapter
+package com.example.bookstats.features.library.tabs.general
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,8 +8,8 @@ import com.example.bookstats.R
 import com.example.bookstats.databinding.TabGeneralBinding
 import com.example.bookstats.databinding.TabSessionsBinding
 import com.example.bookstats.databinding.TabSettingsBinding
-import com.example.bookstats.features.library.tabs.adapter.helpers.GeneralBookInfo
-import com.example.bookstats.features.library.tabs.adapter.viewholders.GeneralTabViewHolder
+import com.example.bookstats.features.library.tabs.general.helpers.GeneralBookInfo
+import com.example.bookstats.features.library.tabs.general.viewholders.GeneralTabViewHolder
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.repository.BookWithSessions
 

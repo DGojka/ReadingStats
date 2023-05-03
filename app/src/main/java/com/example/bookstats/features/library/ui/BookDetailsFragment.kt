@@ -16,7 +16,7 @@ import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.library.managers.SessionDialogManager
-import com.example.bookstats.features.library.tabs.adapter.ViewPagerAdapter
+import com.example.bookstats.features.library.tabs.general.ViewPagerAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
 import com.google.android.material.tabs.TabLayout

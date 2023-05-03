@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.tabs.adapter.helpers
+package com.example.bookstats.features.library.tabs.general.helpers
 
 data class GeneralBookInfo(
     val bookName: String = "",
