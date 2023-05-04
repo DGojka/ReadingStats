@@ -15,7 +15,8 @@ import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.repository.BookWithSessions
 
 class ViewPagerAdapter(
-    private val viewModel: LibraryViewModel
+    private val viewModel: LibraryViewModel,
+    private val onStartSessionClick: () -> Unit
 ) :
     RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {
     private var generalBookInfo = GeneralBookInfo()
@@ -23,7 +24,8 @@ class ViewPagerAdapter(
 
     inner class ViewHolder(viewBinding: ViewBinding) : RecyclerView.ViewHolder(viewBinding.root)
 
-    private val viewTypeList = listOf(ViewType.TabSettings, ViewType.TabGeneral, ViewType.TabSessions)
+    private val viewTypeList =
+        listOf(ViewType.TabSettings, ViewType.TabGeneral, ViewType.TabSessions)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -42,7 +44,7 @@ class ViewPagerAdapter(
             }
             1 -> {
                 val binding = TabGeneralBinding.bind(holder.itemView)
-                val generalTabViewHolder = GeneralTabViewHolder(binding)
+                val generalTabViewHolder = GeneralTabViewHolder(binding,onStartSessionClick)
                 generalTabViewHolder.bind(generalBookInfo)
             }
             2 -> {

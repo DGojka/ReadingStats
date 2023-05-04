@@ -35,6 +35,7 @@ class BookDetailsFragment : Fragment() {
     private val viewModel by viewModels<LibraryViewModel>({ activity as MainActivity }) { viewModelFactory }
 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
+    private var bookIdBundle: Bundle = Bundle()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +43,14 @@ class BookDetailsFragment : Fragment() {
     ): View {
         (activity?.application as ReadingStatsApp).appComponent.inject(this)
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
-        viewPagerAdapter = ViewPagerAdapter(viewModel)
+        viewPagerAdapter = ViewPagerAdapter(
+            viewModel,
+            onStartSessionClick = {
+                findNavController().navigate(
+                    R.id.action_bookDetailsFragment_to_sessionFragment,
+                    bookIdBundle
+                )
+            })
         initViewPager()
         return binding.root
     }
@@ -60,6 +68,7 @@ class BookDetailsFragment : Fragment() {
             viewModel.uiState.collect { state ->
                 with(state) {
                     bookClicked?.let { book ->
+                        bookIdBundle.putString("id", book.id.toString())
                         viewPagerAdapter.updateBookInfo(book)
                         viewPagerAdapter.updateSessionsList(
                             viewModel.mapSessionsToSessionListItem(
