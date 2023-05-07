@@ -15,6 +15,7 @@ import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,6 +34,8 @@ class RealTimeSessionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         (activity?.application as ReadingStatsApp).appComponent.inject(this)
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.GONE
         _binding = FragmentRealTimeSessionBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -106,5 +109,9 @@ class RealTimeSessionFragment : Fragment() {
         pagesReadDialog = dialogBuilder.create()
         pagesReadDialog.show()
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.VISIBLE
+    }
 }

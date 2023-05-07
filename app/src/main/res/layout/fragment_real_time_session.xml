@@ -30,7 +30,7 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/dark_violet"
+        android:background="@color/violet"
         android:layout_marginTop="200dp">
 
         <TextView
@@ -89,11 +89,11 @@
             android:id="@+id/pause_or_resume_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="72dp"
+            android:layout_marginBottom="36dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/stop"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@color/dark_violet"
+            android:background="@color/violet"
             android:src="@drawable/ic_pause_session"
             android:contentDescription="@string/pause_session"
             />
@@ -101,11 +101,11 @@
             android:id="@+id/stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="72dp"
+            android:layout_marginBottom="36dp"
             app:layout_constraintLeft_toRightOf="@id/pause_or_resume_button"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@color/dark_violet"
+            android:background="@color/violet"
             android:src="@drawable/ic_stop_session"
             android:contentDescription="@string/end_session"
             />
