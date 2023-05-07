@@ -21,8 +21,10 @@ class RealTimeSessionsViewModel @Inject constructor(private val repository: Repo
     private val timer: Timer = Timer()
     private lateinit var sessionStartDate: LocalDateTime
     private lateinit var sessionEndDate: LocalDateTime
+    private var isPaused = true
 
     fun startSession() {
+        isPaused = false
         sessionStartDate = LocalDateTime.now()
         viewModelScope.launch(Dispatchers.IO) {
             timer.start()
@@ -36,6 +38,12 @@ class RealTimeSessionsViewModel @Inject constructor(private val repository: Repo
 
     fun pauseTimer() {
         timer.pause()
+        isPaused = true
+    }
+
+    fun resumeTimer(){
+        timer.start()
+        isPaused = false
     }
 
     fun stopSession() {
@@ -59,5 +67,7 @@ class RealTimeSessionsViewModel @Inject constructor(private val repository: Repo
             }
         }
     }
+
+    fun isTimerPaused(): Boolean = isPaused
 
 }

@@ -42,7 +42,7 @@ class RealTimeSessionFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory)[RealTimeSessionsViewModel::class.java]
         viewModel.startSession()
         initStopButton()
-        initPauseButton()
+        initPauseResumeButton()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
@@ -64,11 +64,18 @@ class RealTimeSessionFragment : Fragment() {
         }
     }
 
-    private fun initPauseButton(){
-        binding.pause.setOnClickListener {
-            viewModel.pauseTimer()
+    private fun initPauseResumeButton() {
+        binding.pauseOrResumeButton.setOnClickListener {
+            if (viewModel.isTimerPaused()) {
+                binding.pauseOrResumeButton.setImageResource(R.drawable.ic_pause_session)
+                viewModel.resumeTimer()
+            } else {
+                binding.pauseOrResumeButton.setImageResource(R.drawable.ic_resume_session)
+                viewModel.pauseTimer()
+            }
         }
     }
+
 
     private fun getTimerText(currentMs: Float): CharSequence {
         val totalSeconds = (currentMs / 1000).toInt()
