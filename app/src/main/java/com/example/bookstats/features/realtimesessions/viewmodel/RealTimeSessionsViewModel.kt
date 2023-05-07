@@ -41,7 +41,7 @@ class RealTimeSessionsViewModel @Inject constructor(private val repository: Repo
         isPaused = true
     }
 
-    fun resumeTimer(){
+    fun resumeTimer() {
         timer.start()
         isPaused = false
     }
@@ -62,7 +62,7 @@ class RealTimeSessionsViewModel @Inject constructor(private val repository: Repo
                     sessionEndDate = sessionEndDate
                 )
             )
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 navigate()
             }
         }

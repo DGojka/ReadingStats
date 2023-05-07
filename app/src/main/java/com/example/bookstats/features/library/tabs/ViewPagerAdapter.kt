@@ -44,7 +44,7 @@ class ViewPagerAdapter(
             }
             1 -> {
                 val binding = TabGeneralBinding.bind(holder.itemView)
-                val generalTabViewHolder = GeneralTabViewHolder(binding,onStartSessionClick)
+                val generalTabViewHolder = GeneralTabViewHolder(binding, onStartSessionClick)
                 generalTabViewHolder.bind(generalBookInfo)
             }
             2 -> {

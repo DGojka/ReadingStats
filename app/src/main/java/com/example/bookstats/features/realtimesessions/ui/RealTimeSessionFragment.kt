@@ -46,6 +46,7 @@ class RealTimeSessionFragment : Fragment() {
         viewModel.startSession()
         initStopButton()
         initPauseResumeButton()
+        initShowPagesDialog()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
@@ -63,22 +64,25 @@ class RealTimeSessionFragment : Fragment() {
     private fun initStopButton() {
         binding.stop.setOnClickListener {
             viewModel.stopSession()
-            showPagesReadDialog()
+            pagesReadDialog.show()
         }
     }
 
     private fun initPauseResumeButton() {
         binding.pauseOrResumeButton.setOnClickListener {
-            if (viewModel.isTimerPaused()) {
-                binding.pauseOrResumeButton.setImageResource(R.drawable.ic_pause_session)
-                viewModel.resumeTimer()
-            } else {
-                binding.pauseOrResumeButton.setImageResource(R.drawable.ic_resume_session)
-                viewModel.pauseTimer()
+            with(viewModel) {
+                binding.pauseOrResumeButton.apply {
+                    if (isTimerPaused()) {
+                        setImageResource(R.drawable.ic_pause_session)
+                        resumeTimer()
+                    } else {
+                        setImageResource(R.drawable.ic_resume_session)
+                        pauseTimer()
+                    }
+                }
             }
         }
     }
-
 
     private fun getTimerText(currentMs: Float): CharSequence {
         val totalSeconds = (currentMs / 1000).toInt()
@@ -89,7 +93,7 @@ class RealTimeSessionFragment : Fragment() {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
-    private fun showPagesReadDialog() {
+    private fun initShowPagesDialog() {
         val dialogBinding = PagesReadDialogBinding.inflate(layoutInflater)
         val dialogBuilder = AlertDialog.Builder(layoutInflater.context)
             .setView(dialogBinding.root)
@@ -105,10 +109,9 @@ class RealTimeSessionFragment : Fragment() {
                 pagesReadDialog.dismiss()
             }
         }
-
         pagesReadDialog = dialogBuilder.create()
-        pagesReadDialog.show()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
