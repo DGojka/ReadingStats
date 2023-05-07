@@ -39,4 +39,15 @@
     <string name="read_time">Read time</string>
     <string name="pages_read">Pages read</string>
     <string name="book_percentage">%d%%</string>
+
+    //Real-time session
+    <string name="back_button">Back button</string>
+    <string name="hours_capital">HOURS</string>
+    <string name="minutes_capital">MINUTES</string>
+    <string name="seconds_capital">SECONDS</string>
+    <string name="pause_session">Pause session</string>
+    <string name="resume_session">Resume session</string>
+    <string name="end_session">End session</string>
+    <string name="save">Save</string>
+    <string name="pages_read_in_this_session">Pages read in this session</string>
 </resources>
