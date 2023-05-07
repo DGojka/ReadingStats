@@ -3,14 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/libraryFragment"
-    >
+    app:startDestination="@id/libraryFragment">
 
     <fragment
         android:id="@+id/libraryFragment"
         android:name="com.example.bookstats.features.library.ui.LibraryFragment"
-        tools:layout="@layout/fragment_library"
-        >
+        tools:layout="@layout/fragment_library">
         <action
             android:id="@+id/action_libraryFragment_to_bookCreationFragment"
             app:destination="@id/bookCreationFragment" />
@@ -21,23 +19,19 @@
     <fragment
         android:id="@+id/goalsFragment"
         android:name="com.example.bookstats.features.GoalsFragment"
-        tools:layout="@layout/fragment_goals"
-        />
+        tools:layout="@layout/fragment_goals" />
     <fragment
         android:id="@+id/statsFragment"
         android:name="com.example.bookstats.features.StatsFragment"
-        tools:layout="@layout/fragment_stats"
-        />
+        tools:layout="@layout/fragment_stats" />
     <fragment
         android:id="@+id/achievementsFragment"
         android:name="com.example.bookstats.features.AchievementsFragment"
-        tools:layout="@layout/fragment_achievements"
-        />
+        tools:layout="@layout/fragment_achievements" />
     <fragment
         android:id="@+id/bookCreationFragment"
         android:name="com.example.bookstats.features.creation.BookCreationFragment"
-        tools:layout="@layout/fragment_book_creation"
-        >
+        tools:layout="@layout/fragment_book_creation">
         <action
             android:id="@+id/action_bookCreationFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
@@ -45,11 +39,22 @@
     <fragment
         android:id="@+id/bookDetailsFragment"
         android:name="com.example.bookstats.features.library.ui.BookDetailsFragment"
-        tools:layout="@layout/fragment_book_details"
-        >
+        tools:layout="@layout/fragment_book_details">
         <action
             android:id="@+id/action_bookDetailsFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
+        <action
+            android:id="@+id/action_bookDetailsFragment_to_sessionFragment"
+            app:destination="@id/sessionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sessionFragment"
+        android:name="com.example.bookstats.features.realtimesessions.ui.RealTimeSessionFragment"
+        tools:layout="@layout/fragment_real_time_session"
+        >
+        <action
+            android:id="@+id/action_to_bookDetailsFragment"
+            app:destination="@id/bookDetailsFragment" />
     </fragment>
 
 </navigation>
