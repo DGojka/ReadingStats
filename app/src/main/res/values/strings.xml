@@ -49,5 +49,7 @@
     <string name="resume_session">Resume session</string>
     <string name="end_session">End session</string>
     <string name="save">Save</string>
-    <string name="pages_read_in_this_session">Pages read in this session</string>
+    <string name="current_page_in_this_session">Type the page you stopped reading on</string>
+    <string name="page_is_too_high">Current page is higher than book total pages</string>
+    <string name="page_must_be_higher">Current page must be higher than %s</string>
 </resources>
