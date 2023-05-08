@@ -58,7 +58,9 @@ class SessionDialogManager(
 
     private fun initCurrentPage() {
         dialogBinding.editTextCurrentPage.addTextChangedListener {
-            viewModel.setDialogDetails(currentPage = it.toString().toInt())
+            if(!it.isNullOrBlank()) {
+                viewModel.setDialogDetails(currentPage = it.toString().toInt())
+            }
         }
     }
 
