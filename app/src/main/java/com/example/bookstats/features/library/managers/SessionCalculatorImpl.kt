@@ -66,6 +66,9 @@ class SessionCalculatorImpl : SessionCalculator {
             hours > 0 -> {
                 "$hours h ${minutes.toString().padStart(2, '0')} min"
             }
+            minutes > 0 && seconds > 0 -> {
+                "$minutes min ${seconds}s"
+            }
             minutes > 0 -> {
                 "$minutes min"
             }
