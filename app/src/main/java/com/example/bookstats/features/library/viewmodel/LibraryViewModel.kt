@@ -118,6 +118,32 @@ class LibraryViewModel @Inject constructor(
     fun getAvgPagesPerHour(sessions: List<Session>): String =
         sessionCalculator.getAvgPagesPerHour(sessions)
 
+    fun mapSessionsToSessionListItem(sessions: List<Session>): List<SessionListItem> =
+        sessions.map {
+            with(it) {
+                SessionListItem(
+                    date = sessionStartDate.toLocalDate()
+                        .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                    pagesRead.toString(),
+                    sessionCalculator.convertSecondsToMinutesAndSeconds(sessionTimeSeconds),
+                    sessionCalculator.getAvgMinPerPage(sessions),
+                    sessionCalculator.getAvgPagesPerHour(sessions)
+                )
+            }
+        }
+
+    fun refreshBookClicked() {
+        viewModelScope.launch(Dispatchers.IO) {
+            with(_uiState.value) {
+                if (bookClicked != null) {
+                    _uiState.value = copy(
+                        bookClicked = repository.getBookWithSessionsById(id = bookClicked.id)
+                    )
+                }
+            }
+        }
+    }
+
     private suspend fun saveSessionByDialog(dialogDetails: DialogDetails) {
         dialogDetails.apply {
             with(_uiState.value) {
@@ -154,18 +180,5 @@ class LibraryViewModel @Inject constructor(
             return false
         }
     }
-
-    fun mapSessionsToSessionListItem(sessions: List<Session>): List<SessionListItem> =
-        sessions.map {
-            with(it) {
-                SessionListItem(
-                    date = sessionStartDate.toLocalDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-                    pagesRead.toString(),
-                    sessionCalculator.convertSecondsToMinutesAndSeconds(sessionTimeSeconds),
-                    sessionCalculator.getAvgMinPerPage(sessions),
-                    sessionCalculator.getAvgPagesPerHour(sessions)
-                )
-            }
-        }
 
 }

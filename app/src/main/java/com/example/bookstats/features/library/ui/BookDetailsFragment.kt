@@ -51,6 +51,7 @@ class BookDetailsFragment : Fragment() {
                     bookIdBundle
                 )
             })
+        viewModel.refreshBookClicked()
         initViewPager()
         return binding.root
     }
