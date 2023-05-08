@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,7 @@ import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
+import com.example.bookstats.features.realtimesessions.viewmodel.Error
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -47,10 +49,33 @@ class RealTimeSessionFragment : Fragment() {
         initStopButton()
         initPauseResumeButton()
         initShowPagesDialog()
+        observeState()
+    }
 
+    private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 setTime(currentMs = state.currentMs)
+                with(state.error) {
+                    if (this != null) {
+                        if (reason is Error.Reason.NewPageIsLowerThanOld) {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(
+                                    R.string.page_must_be_higher,
+                                    reason.currentPage.toString()
+                                ),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else if (reason is Error.Reason.NewPageIsGreaterThanTotalBookPages) {
+                            Toast.makeText(
+                                requireContext(),
+                                R.string.page_is_too_high,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                }
             }
         }
     }
@@ -97,16 +122,19 @@ class RealTimeSessionFragment : Fragment() {
         val dialogBinding = PagesReadDialogBinding.inflate(layoutInflater)
         val dialogBuilder = AlertDialog.Builder(layoutInflater.context)
             .setView(dialogBinding.root)
-            .setTitle(R.string.pages_read_in_this_session)
+            .setTitle(R.string.current_page_in_this_session)
+
         with(dialogBinding) {
             dialogBinding.save.setOnClickListener {
-                viewModel.saveSession(
-                    bookId = requireArguments().getString("id")!!.toLong(),
-                    pagesRead = pagesReadTextView.text.toString()
-                ) {
-                    findNavController().popBackStack()
+                if (pagesReadTextView.text.toString().isNotEmpty()) {
+                    viewModel.saveSession(
+                        bookId = requireArguments().getString("id")!!.toLong(),
+                        newCurrentPage = pagesReadTextView.text.toString().toInt()
+                    ) {
+                        pagesReadDialog.dismiss()
+                        findNavController().popBackStack()
+                    }
                 }
-                pagesReadDialog.dismiss()
             }
         }
         pagesReadDialog = dialogBuilder.create()
