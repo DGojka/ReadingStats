@@ -14,7 +14,6 @@ class BookAdapter(private val onBookClick: (id: Int) -> Unit) :
         fun bind(book: BookItem) {
             with(binding) {
                 bookImage.setImageResource(book.bookImage)
-                bookTitle.text = book.bookTitle
                 root.setOnClickListener { onBookClick(book.bookId) }
             }
         }
