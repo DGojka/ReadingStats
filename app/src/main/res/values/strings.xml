@@ -5,6 +5,11 @@
     <string name="nav_stats">Stats</string>
     <string name="nav_achievements">Achievements</string>
 
+    //Library
+    <string name="current_streak">Current streak</string>
+    <string name="last_read">Last read</string>
+    <string name="streak_icon">Streak icon</string>
+
     //Book creation
     <string name="book_name">Book name</string>
     <string name="book_author">Book author</string>

@@ -13,7 +13,91 @@
         android:background="@drawable/library_background"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/current_streak_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:fontFamily="@font/futura_pt_light"
+            android:text="@string/current_streak"
+            android:textColor="@color/whisper"
+            android:textSize="28sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/separator"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/current_streak_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/futura_pt_light"
+            android:textColor="@color/whisper"
+            android:textSize="32sp"
+            app:layout_constraintLeft_toLeftOf="@id/current_streak_text_view"
+            app:layout_constraintRight_toRightOf="@id/current_streak_text_view"
+            app:layout_constraintTop_toBottomOf="@id/current_streak_text_view"
+            tools:text="24 days" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/streak_icon"
+            android:src="@drawable/ic_streak"
+            app:layout_constraintLeft_toLeftOf="@id/current_streak_text_view"
+            app:layout_constraintRight_toRightOf="@id/current_streak_text_view"
+            app:layout_constraintTop_toBottomOf="@id/current_streak_value" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/separator"
+            android:layout_width="4dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:elevation="0dp"
+            app:cardBackgroundColor="@color/whisper"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/last_book_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:fontFamily="@font/futura_pt_light"
+            android:text="@string/last_read"
+            android:textColor="@color/whisper"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/last_book_container"
+            app:layout_constraintLeft_toLeftOf="@id/separator"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/last_book_container"
+            android:layout_width="140dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp"
+            app:layout_constraintLeft_toRightOf="@id/separator"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/last_book_text_view">
+            <include
+                layout="@layout/book_item"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,9 +128,9 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="80dp"
         android:backgroundTint="@color/violet"
-        app:borderWidth="0dp"
         android:contentDescription="@string/book_save"
         android:src="@drawable/ic_add"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
