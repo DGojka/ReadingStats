@@ -16,6 +16,6 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/book_desc_image"
         android:scaleType="centerCrop"
-        android:src="@drawable/image_place_holder" />
+        tools:src="@drawable/image_place_holder" />
 
 </androidx.cardview.widget.CardView>

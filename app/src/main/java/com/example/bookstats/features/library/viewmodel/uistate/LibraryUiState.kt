@@ -6,7 +6,8 @@ import com.example.bookstats.repository.BookWithSessions
 data class LibraryUiState(
     val isLoading: Boolean,
     val bookList: List<BookWithSessions> = mutableListOf(),
-    val bookClicked : BookWithSessions? = null,
+    val bookClicked: BookWithSessions? = null,
+    val lastBook: BookWithSessions?,
     val dialogDetails: DialogDetails? = null
 )
 

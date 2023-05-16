@@ -10,4 +10,6 @@ interface Repository {
     suspend fun addSessionToTheBook(bookId: Long, session: Session)
 
     suspend fun deleteBookWithSessions(bookId: Long)
+
+    suspend fun getLastBook(): BookWithSessions?
 }

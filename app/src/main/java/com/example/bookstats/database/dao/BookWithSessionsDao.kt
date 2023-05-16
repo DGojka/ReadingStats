@@ -15,7 +15,7 @@ interface BookWithSessionsDao {
 
     @Transaction
     @Query("SELECT * FROM book WHERE bookId LIKE :id ")
-    fun getBooksById(id: Long): BookWithSessionsEntity
+    fun getBookById(id: Long): BookWithSessionsEntity
 
     @Delete
     fun delete(bookSession: BookSessionEntity)

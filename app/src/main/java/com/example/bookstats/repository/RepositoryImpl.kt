@@ -7,28 +7,36 @@ import com.example.bookstats.database.entity.BookWithSessionsEntity
 import com.example.bookstats.database.entity.SessionEntity
 
 class RepositoryImpl(private val db: AppDatabase) : Repository {
+
     override suspend fun getBooksWithSessions(): List<BookWithSessions> {
         return db.bookWithSessionDao().getBooks().map {
-            mapBookWithSessionsEntity(it)
+            it.mapToBookWithSession()
         }
     }
 
-    override suspend fun getBookWithSessionsById(id: Long): BookWithSessions {
-        val bookWithSessions = db.bookWithSessionDao().getBooksById(id)
-        return mapBookWithSessionsEntity(bookWithSessions)
-    }
+    override suspend fun getBookWithSessionsById(id: Long): BookWithSessions =
+        db.bookWithSessionDao().getBookById(id).mapToBookWithSession()
 
     override suspend fun addBookWithSessions(book: BookWithSessions) {
         val bookId = generateBookId()
         with(book) {
-            db.bookDao().add(BookEntity(bookId, name, author, totalPages, currentPage,""))
+            db.bookDao().add(BookEntity(bookId, name, author, totalPages, currentPage, ""))
         }
     }
 
     override suspend fun addSessionToTheBook(bookId: Long, session: Session) {
         val sId = generateSessionId()
-        with(db.bookWithSessionDao().getBooksById(bookId).book){
-            db.bookDao().update(BookEntity(bookId,name, bookAuthor, totalPages, currentPage + session.pagesRead, photoPath))
+        with(db.bookWithSessionDao().getBookById(bookId).book) {
+            db.bookDao().update(
+                BookEntity(
+                    bookId,
+                    name,
+                    bookAuthor,
+                    totalPages,
+                    currentPage + session.pagesRead,
+                    photoPath
+                )
+            )
         }
         with(session) {
             db.sessionDao()
@@ -46,15 +54,44 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
     }
 
     override suspend fun deleteBookWithSessions(bookId: Long) {
-        val bookWithSessions = db.bookWithSessionDao().getBooksById(bookId)
+        val bookWithSessions = db.bookWithSessionDao().getBookById(bookId)
         bookWithSessions.sessions.forEach {
             db.sessionDao().delete(it)
-            db.bookWithSessionDao().delete(BookSessionEntity(bookId,it.sessionId))
+            db.bookWithSessionDao().delete(BookSessionEntity(bookId, it.sessionId))
         }
         db.bookDao().delete(bookWithSessions.book)
     }
 
-    private fun mapBookWithSessionsEntity(bookWithSessions: BookWithSessionsEntity): BookWithSessions {
+    override suspend fun getLastBook(): BookWithSessions? {
+        val allSessions = db.sessionDao().getAll()
+        val lastSession = if (allSessions.isNotEmpty()) allSessions.last() else return null
+        return db.bookWithSessionDao().getBookById(lastSession.bookParentId).mapToBookWithSession()
+    }
+
+    private fun BookWithSessionsEntity.mapToBookWithSession(): BookWithSessions {
+        val sessionsMapped: List<Session> = this.sessions
+            .map {
+                Session(
+                    it.sessionTimeSeconds,
+                    it.pagesRead,
+                    it.sessionStartDate,
+                    it.sessionEndDate
+                ).apply {
+                    this.id = it.sessionId
+                }
+            }
+        with(this.book) {
+            return BookWithSessions(
+                name,
+                bookAuthor,
+                totalPages,
+                currentPage,
+                sessionsMapped
+            ).apply { id = bookId }
+        }
+    }
+
+/*    private fun mapBookWithSessionsEntity(bookWithSessions: BookWithSessionsEntity): BookWithSessions {
         val sessionsMapped: List<Session> = bookWithSessions.sessions
             .map {
                 Session(
@@ -75,7 +112,7 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
                 sessionsMapped
             ).apply { id = bookId }
         }
-    }
+    }*/
 
     private fun generateBookId(): Long =
         db.bookDao().getAll().maxOfOrNull { it.bookId + 1 } ?: 0

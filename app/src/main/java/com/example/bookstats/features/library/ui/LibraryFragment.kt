@@ -39,7 +39,7 @@ class LibraryFragment : Fragment() {
         bookAdapter = BookAdapter(onBookClick = {
             viewModel.moreDetails(
                 id = it,
-                navigate =  {findNavController().navigate(R.id.action_libraryFragment_to_more_details)})
+                navigate = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
         })
         binding.buttonAddBook.setOnClickListener {
             findNavController().navigate(R.id.action_libraryFragment_to_bookCreationFragment)
@@ -58,14 +58,26 @@ class LibraryFragment : Fragment() {
             viewModel.uiState.collect { state ->
                 with(state) {
                     bookAdapter.setData(bookList.mapToBookItem())
+                    if (lastBook != null) {
+                        binding.lastBookContainer.visibility = View.VISIBLE
+                        binding.lastBookTextView.visibility = View.VISIBLE
+                        binding.lastBook.bookImage.setImageResource(R.drawable.image_place_holder)
+                        binding.lastBookContainer.setOnClickListener {
+                            viewModel.moreDetails(
+                                id = lastBook.id.toInt(),
+                                navigate = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
+                        }
+                    }
                 }
             }
         }
     }
+
     override fun onResume() {
         super.onResume()
         viewModel.fetchBooksFromDb()
     }
+
 
     //TEMPORARY METHOD: see BookItem.class
     private fun List<BookWithSessions>.mapToBookItem(): List<BookItem> {
@@ -74,3 +86,5 @@ class LibraryFragment : Fragment() {
         }
     }
 }
+
+
