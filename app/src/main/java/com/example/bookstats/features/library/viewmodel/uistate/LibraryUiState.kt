@@ -5,8 +5,10 @@ import com.example.bookstats.repository.BookWithSessions
 
 data class LibraryUiState(
     val isLoading: Boolean,
-    val bookList: List<BookWithSessions> = mutableListOf(),
-    val bookClicked : BookWithSessions? = null,
-    val dialogDetails: DialogDetails? = null
+    val bookList: List<BookWithSessions>,
+    val lastBook: BookWithSessions?,
+    val currentStreak: Int,
+    val bookClicked: BookWithSessions?,
+    val dialogDetails: DialogDetails?
 )
 
