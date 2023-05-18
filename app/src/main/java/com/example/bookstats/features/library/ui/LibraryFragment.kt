@@ -58,16 +58,20 @@ class LibraryFragment : Fragment() {
             viewModel.uiState.collect { state ->
                 with(state) {
                     bookAdapter.setData(bookList.mapToBookItem())
-                    if (lastBook != null) {
-                        binding.lastBookContainer.visibility = View.VISIBLE
-                        binding.lastBookTextView.visibility = View.VISIBLE
-                        binding.lastBook.bookImage.setImageResource(R.drawable.image_place_holder)
-                        binding.lastBookContainer.setOnClickListener {
-                            viewModel.moreDetails(
-                                id = lastBook.id.toInt(),
-                                navigate = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
+                    binding.apply {
+                        currentStreakValue.text = currentStreak.toString()
+                        if (lastBook != null) {
+                            lastBookContainer.visibility = View.VISIBLE
+                            lastBookTextView.visibility = View.VISIBLE
+                            lastBookItem.bookImage.setImageResource(R.drawable.image_place_holder)
+                            lastBookContainer.setOnClickListener {
+                                viewModel.moreDetails(
+                                    id = lastBook.id.toInt(),
+                                    navigate = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
+                            }
                         }
                     }
+
                 }
             }
         }

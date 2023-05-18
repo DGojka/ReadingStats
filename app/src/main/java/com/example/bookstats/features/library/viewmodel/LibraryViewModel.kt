@@ -22,7 +22,8 @@ class LibraryViewModel @Inject constructor(
     private val repository: Repository,
     private val sessionCalculator: SessionCalculator
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(LibraryUiState(isLoading = true, lastBook = null))
+    private val _uiState =
+        MutableStateFlow(LibraryUiState(true, mutableListOf(), null, 0, null, null))
     val uiState: StateFlow<LibraryUiState> = _uiState
 
     init {
@@ -35,7 +36,8 @@ class LibraryViewModel @Inject constructor(
                 _uiState.value.copy(
                     isLoading = false,
                     bookList = repository.getBooksWithSessions(),
-                    lastBook = repository.getLastBook()
+                    lastBook = repository.getLastBook(),
+                    currentStreak = repository.getCurrentStreak()
                 )
             Log.e("asd", repository.getBooksWithSessions().toString())
         }

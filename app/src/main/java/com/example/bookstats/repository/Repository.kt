@@ -12,4 +12,6 @@ interface Repository {
     suspend fun deleteBookWithSessions(bookId: Long)
 
     suspend fun getLastBook(): BookWithSessions?
+
+    suspend fun getCurrentStreak(): Int
 }

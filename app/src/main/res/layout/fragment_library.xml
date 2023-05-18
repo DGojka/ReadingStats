@@ -94,7 +94,7 @@
             app:layout_constraintTop_toBottomOf="@id/last_book_text_view">
 
             <include
-                android:id="@+id/last_book"
+                android:id="@+id/last_book_item"
                 layout="@layout/book_item"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

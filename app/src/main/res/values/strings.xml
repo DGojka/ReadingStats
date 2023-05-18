@@ -9,6 +9,7 @@
     <string name="current_streak">Current streak</string>
     <string name="last_read">Last read</string>
     <string name="streak_icon">Streak icon</string>
+    <string name="current_streak_value">%d% days</string>
 
     //Book creation
     <string name="book_name">Book name</string>

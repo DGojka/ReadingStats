@@ -5,6 +5,8 @@ import com.example.bookstats.database.entity.BookEntity
 import com.example.bookstats.database.entity.BookSessionEntity
 import com.example.bookstats.database.entity.BookWithSessionsEntity
 import com.example.bookstats.database.entity.SessionEntity
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class RepositoryImpl(private val db: AppDatabase) : Repository {
 
@@ -68,6 +70,37 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
         return db.bookWithSessionDao().getBookById(lastSession.bookParentId).mapToBookWithSession()
     }
 
+    override suspend fun getCurrentStreak(): Int {
+        val sessions = db.sessionDao().getAll()
+        if (sessions.isEmpty()) {
+            return 0
+        }
+
+        val currentDate = LocalDateTime.now().toLocalDate()
+        var isFirstDayTaken = false
+        var streak = 0
+        var lastDate: LocalDate? = null
+
+        sessions.reversed().forEach { session ->
+            val sessionDate = session.sessionStartDate.toLocalDate()
+
+            if (sessionDate == currentDate.minusDays(1) && !isFirstDayTaken) {
+                isFirstDayTaken = true
+                streak++
+                lastDate = sessionDate
+            } else if (sessionDate == currentDate || (lastDate != null && sessionDate == lastDate!!.minusDays(
+                    1
+                ))
+            ) {
+                streak++
+                lastDate = sessionDate
+            } else {
+                return@forEach
+            }
+        }
+        return streak
+    }
+
     private fun BookWithSessionsEntity.mapToBookWithSession(): BookWithSessions {
         val sessionsMapped: List<Session> = this.sessions
             .map {
@@ -90,29 +123,6 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
             ).apply { id = bookId }
         }
     }
-
-/*    private fun mapBookWithSessionsEntity(bookWithSessions: BookWithSessionsEntity): BookWithSessions {
-        val sessionsMapped: List<Session> = bookWithSessions.sessions
-            .map {
-                Session(
-                    it.sessionTimeSeconds,
-                    it.pagesRead,
-                    it.sessionStartDate,
-                    it.sessionEndDate
-                ).apply {
-                    this.id = it.sessionId
-                }
-            }
-        with(bookWithSessions.book) {
-            return BookWithSessions(
-                name,
-                bookAuthor,
-                totalPages,
-                currentPage,
-                sessionsMapped
-            ).apply { id = bookId }
-        }
-    }*/
 
     private fun generateBookId(): Long =
         db.bookDao().getAll().maxOfOrNull { it.bookId + 1 } ?: 0
