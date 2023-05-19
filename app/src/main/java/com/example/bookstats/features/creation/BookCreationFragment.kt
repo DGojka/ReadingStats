@@ -1,5 +1,6 @@
 package com.example.bookstats.features.creation
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,9 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookCreationBinding
@@ -44,6 +48,7 @@ class BookCreationFragment : Fragment() {
         initEditTextListeners()
         initSaveBookButtonListener()
         observeState()
+        initImagePicker()
     }
 
     private fun observeState() {
@@ -59,6 +64,20 @@ class BookCreationFragment : Fragment() {
                     binding.saveBookButton.isEnabled = state.saveButtonEnabled
                 }
             }
+        }
+    }
+
+    private fun initImagePicker() {
+        val pickMedia =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    Glide.with(this)
+                        .load(Uri.parse(uri.toString()))
+                        .into(binding.bookImage)
+                }
+            }
+        binding.bookImage.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
     }
 
