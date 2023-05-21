@@ -75,7 +75,6 @@ class BookCreationFragment : Fragment() {
     private fun initImagePicker() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-
                 if (uri != null) {
                     lifecycleScope.launch {
                         val bitmap = getBitmap(uri)

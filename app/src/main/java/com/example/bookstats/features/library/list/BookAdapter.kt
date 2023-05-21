@@ -13,7 +13,7 @@ class BookAdapter(private val onBookClick: (id: Int) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(book: BookItem) {
             with(binding) {
-                bookImage.setImageResource(book.bookImage)
+                bookImage.setImageBitmap(book.image)
                 root.setOnClickListener { onBookClick(book.bookId) }
             }
         }

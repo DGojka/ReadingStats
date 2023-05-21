@@ -86,7 +86,7 @@ class LibraryFragment : Fragment() {
     //TEMPORARY METHOD: see BookItem.class
     private fun List<BookWithSessions>.mapToBookItem(): List<BookItem> {
         return this.map {
-            BookItem(it.id.toInt(), R.drawable.image_place_holder, it.name)
+            BookItem(it.id.toInt(), R.drawable.image_place_holder, it.name,it.image)
         }
     }
 }
