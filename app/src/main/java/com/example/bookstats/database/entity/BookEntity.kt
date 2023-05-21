@@ -1,5 +1,6 @@
 package com.example.bookstats.database.entity
 
+import android.graphics.Bitmap
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,5 +11,6 @@ data class BookEntity(
     val bookAuthor: String,
     val totalPages: Int,
     val currentPage: Int,
-    var photoPath: String?
+    var photoPath: String?,
+    var bookImage: Bitmap
 )

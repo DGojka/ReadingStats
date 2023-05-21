@@ -1,5 +1,6 @@
 package com.example.bookstats.features.creation
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -53,12 +54,17 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
         }
     }
 
+    fun setImageBitmap(bitmap: Bitmap) {
+        val updatedUiState = _uiState.value.copy(bookImage = bitmap)
+        updateUiState(updatedUiState)
+    }
+
     private fun saveBook() {
         viewModelScope.launch(Dispatchers.IO) {
             with(_uiState.value) {
                 repository.addBookWithSessions(
                     BookWithSessions(
-                        bookName, bookAuthor, numberOfPages, 0, mutableListOf()
+                        bookName, bookAuthor, bookImage!!, numberOfPages, 0, mutableListOf()
                     )
                 )
                 Log.i(logTag, "Saved new book: $bookName")
@@ -83,4 +89,5 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
             return bookName.isNotBlank() && bookAuthor.isNotBlank() && numberOfPages > 0
         }
     }
+
 }

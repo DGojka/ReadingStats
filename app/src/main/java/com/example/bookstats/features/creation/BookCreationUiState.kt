@@ -1,9 +1,12 @@
 package com.example.bookstats.features.creation
 
+import android.graphics.Bitmap
+
 data class BookCreationUiState(
     val bookName: String = "",
     val bookAuthor: String = "",
     val numberOfPages: Int = 0,
+    val bookImage: Bitmap? = null,
     val saveButtonEnabled: Boolean = false,
     val error: Error? = null,
     val bookCreated: Boolean = false

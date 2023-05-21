@@ -1,5 +1,7 @@
 package com.example.bookstats.features.creation
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +15,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
+import coil.ImageLoader
+import coil.load
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookCreationBinding
@@ -70,10 +75,13 @@ class BookCreationFragment : Fragment() {
     private fun initImagePicker() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+
                 if (uri != null) {
-                    Glide.with(this)
-                        .load(Uri.parse(uri.toString()))
-                        .into(binding.bookImage)
+                    lifecycleScope.launch {
+                        val bitmap = getBitmap(uri)
+                        binding.bookImage.load(bitmap)
+                        viewModel.setImageBitmap(bitmap!!)
+                    }
                 }
             }
         binding.bookImage.setOnClickListener {
@@ -117,5 +125,14 @@ class BookCreationFragment : Fragment() {
 
     companion object {
         const val CREATION_ERROR = "creation_error"
+    }
+
+
+    private suspend fun getBitmap(uri: Uri): Bitmap? {
+        val loader = ImageLoader(requireContext())
+        val request = ImageRequest.Builder(requireContext()).data(uri).build()
+
+        val result = (loader.execute(request) as SuccessResult).drawable
+        return (result as BitmapDrawable).bitmap
     }
 }
