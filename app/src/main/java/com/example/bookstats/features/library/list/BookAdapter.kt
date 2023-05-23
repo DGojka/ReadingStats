@@ -5,16 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookstats.databinding.BookItemBinding
+import com.example.bookstats.repository.BookWithSessions
 
 class BookAdapter(private val onBookClick: (id: Int) -> Unit) :
-    ListAdapter<BookItem, BookAdapter.BookViewHolder>(BookDiffCallback()) {
+    ListAdapter<BookWithSessions, BookAdapter.BookViewHolder>(BookDiffCallback()) {
 
     inner class BookViewHolder(private val binding: BookItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(book: BookItem) {
+        fun bind(book: BookWithSessions) {
             with(binding) {
-                bookImage.setImageResource(book.bookImage)
-                root.setOnClickListener { onBookClick(book.bookId) }
+                bookImage.setImageBitmap(book.image)
+                root.setOnClickListener { onBookClick(book.id.toInt()) }
             }
         }
     }
@@ -29,7 +30,7 @@ class BookAdapter(private val onBookClick: (id: Int) -> Unit) :
         )
     }
 
-    fun setData(data: List<BookItem>?) {
+    fun setData(data: List<BookWithSessions>?) {
         submitList(data)
     }
 

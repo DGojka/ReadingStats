@@ -6,16 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".features.creation.BookCreationFragment">
 
-    <ImageView
-        android:id="@+id/book_image"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/book_image_container"
         android:layout_width="200dp"
         android:layout_height="250dp"
         android:layout_marginTop="60dp"
-        android:contentDescription="@string/book_desc_image"
-        android:src="@drawable/image_place_holder"
+        app:cardCornerRadius="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/book_image"
+            android:layout_width="200dp"
+            android:layout_height="250dp"
+            android:contentDescription="@string/book_desc_image"
+            android:scaleType="centerCrop"
+            android:src="@drawable/add_book_image"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/book_name"
@@ -27,7 +38,7 @@
         android:layout_marginEnd="24dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/book_image">
+        app:layout_constraintTop_toBottomOf="@id/book_image_container">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/book_name_editText"
@@ -41,7 +52,9 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/book_name">
@@ -50,9 +63,9 @@
             android:id="@+id/book_author_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/book_author"
             android:windowSoftInputMode="adjustPan"
-            app:textInputLayoutFocusedRectEnabled="false"
-            android:hint="@string/book_author" />
+            app:textInputLayoutFocusedRectEnabled="false" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -60,8 +73,9 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        app:layout_constraintBottom_toTopOf="@id/save_book_button"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/book_author">
@@ -81,9 +95,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="64dp"
         android:text="@string/book_save"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

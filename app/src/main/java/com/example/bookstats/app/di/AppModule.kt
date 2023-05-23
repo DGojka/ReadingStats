@@ -21,7 +21,7 @@ class AppModule(private val app: Application) {
             app.applicationContext,
             AppDatabase::class.java,
             AppDatabase.NAME
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Singleton

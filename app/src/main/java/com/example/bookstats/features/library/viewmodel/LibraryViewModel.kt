@@ -26,10 +26,6 @@ class LibraryViewModel @Inject constructor(
         MutableStateFlow(LibraryUiState(true, mutableListOf(), null, 0, null, null))
     val uiState: StateFlow<LibraryUiState> = _uiState
 
-    init {
-        fetchBooksFromDb()
-    }
-
     fun fetchBooksFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value =

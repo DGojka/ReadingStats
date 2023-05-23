@@ -44,6 +44,7 @@ dependencies {
     implementation dagger
     implementation glide
     implementation room
+    implementation coil
 
     kapt roomKapt
     kapt daggerAnnotationProcessor
