@@ -22,6 +22,7 @@ import coil.request.SuccessResult
 import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookCreationBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -79,7 +80,11 @@ class BookCreationFragment : Fragment() {
                     lifecycleScope.launch {
                         val bitmap = getBitmap(uri)
                         binding.bookImage.load(bitmap)
-                        viewModel.setImageBitmap(bitmap!!)
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            viewModel.setImageBitmap(bitmap!!)
+                        }
+
+
                     }
                 }
             }

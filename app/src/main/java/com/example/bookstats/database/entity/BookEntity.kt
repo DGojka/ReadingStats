@@ -11,6 +11,5 @@ data class BookEntity(
     val bookAuthor: String,
     val totalPages: Int,
     val currentPage: Int,
-    var photoPath: String?,
-    var bookImage: Bitmap
+    val bookImage: Bitmap
 )

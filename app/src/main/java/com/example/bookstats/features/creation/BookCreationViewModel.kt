@@ -1,6 +1,7 @@
 package com.example.bookstats.features.creation
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+
 
 class BookCreationViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
     private val _uiState = MutableStateFlow(BookCreationUiState())
@@ -55,24 +58,46 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
     }
 
     fun setImageBitmap(bitmap: Bitmap) {
-        val updatedUiState = _uiState.value.copy(bookImage = bitmap)
+        val updatedUiState = _uiState.value.copy(bookImage = compressBitmap(bitmap))
         updateUiState(updatedUiState)
     }
 
     private fun saveBook() {
         viewModelScope.launch(Dispatchers.IO) {
             with(_uiState.value) {
-                repository.addBookWithSessions(
-                    BookWithSessions(
-                        bookName, bookAuthor, bookImage!!, numberOfPages, 0, mutableListOf()
+                if (bookImage != null) {
+                    repository.addBookWithSessions(
+                        BookWithSessions(
+                            bookName, bookAuthor, bookImage, numberOfPages, 0, mutableListOf()
+                        )
                     )
-                )
-                Log.i(logTag, "Saved new book: $bookName")
-                _uiState.value = copy(bookCreated = true)
+                    Log.i(logTag, "Saved new book: $bookName")
+                    _uiState.value = copy(bookCreated = true)
+                }
             }
 
         }
     }
+
+    private fun compressBitmap(bitmap: Bitmap): Bitmap {
+        val stream = ByteArrayOutputStream()
+        var currQuality = 100
+        bitmap.compress(Bitmap.CompressFormat.JPEG, currQuality, stream)
+        var currSize = stream.toByteArray().size
+        val scaledBitmap = scaleBitmap(bitmap)
+        while (currSize >= MAX_BITMAP_SIZE_BYTES) {
+            stream.reset()
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, currQuality, stream)
+            currSize = stream.toByteArray().size
+            currQuality -= 1
+        }
+
+        val compressedBytes = stream.toByteArray()
+        return BitmapFactory.decodeByteArray(compressedBytes, 0, compressedBytes.size)
+    }
+
+    private fun scaleBitmap(bitmap: Bitmap): Bitmap =
+        Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true)
 
     private fun showError(reason: Error.Reason) {
         _uiState.value =
@@ -86,8 +111,14 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
 
     private fun isSaveButtonEnabled(state: BookCreationUiState): Boolean {
         with(state) {
-            return bookName.isNotBlank() && bookAuthor.isNotBlank() && numberOfPages > 0
+            return bookName.isNotBlank() && bookAuthor.isNotBlank() && numberOfPages > 0 && bookImage != null
         }
+    }
+
+    companion object {
+        private const val IMAGE_HEIGHT = 924
+        private const val IMAGE_WIDTH = 640
+        private const val MAX_BITMAP_SIZE_BYTES = 4194304
     }
 
 }

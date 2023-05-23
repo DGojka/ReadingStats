@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import coil.load
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
@@ -63,7 +64,7 @@ class LibraryFragment : Fragment() {
                         if (lastBook != null) {
                             lastBookContainer.visibility = View.VISIBLE
                             lastBookTextView.visibility = View.VISIBLE
-                            lastBookItem.bookImage.setImageResource(R.drawable.image_place_holder)
+                            lastBookItem.bookImage.load(lastBook.image)
                             lastBookContainer.setOnClickListener {
                                 viewModel.moreDetails(
                                     id = lastBook.id.toInt(),
@@ -86,7 +87,7 @@ class LibraryFragment : Fragment() {
     //TEMPORARY METHOD: see BookItem.class
     private fun List<BookWithSessions>.mapToBookItem(): List<BookItem> {
         return this.map {
-            BookItem(it.id.toInt(), R.drawable.image_place_holder, it.name,it.image)
+            BookItem(it.id.toInt(), R.drawable.image_place_holder, it.name, it.image)
         }
     }
 }
