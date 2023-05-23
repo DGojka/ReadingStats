@@ -14,10 +14,8 @@ import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentLibraryBinding
 import com.example.bookstats.features.library.list.BookAdapter
-import com.example.bookstats.features.library.list.BookItem
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
-import com.example.bookstats.repository.BookWithSessions
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,7 +56,7 @@ class LibraryFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 with(state) {
-                    bookAdapter.setData(bookList.mapToBookItem())
+                    bookAdapter.setData(bookList)
                     binding.apply {
                         currentStreakValue.text = currentStreak.toString()
                         if (lastBook != null) {
@@ -81,14 +79,6 @@ class LibraryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.fetchBooksFromDb()
-    }
-
-
-    //TEMPORARY METHOD: see BookItem.class
-    private fun List<BookWithSessions>.mapToBookItem(): List<BookItem> {
-        return this.map {
-            BookItem(it.id.toInt(), R.drawable.image_place_holder, it.name, it.image)
-        }
     }
 }
 
