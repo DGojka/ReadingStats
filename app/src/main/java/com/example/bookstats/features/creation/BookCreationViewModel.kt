@@ -58,22 +58,21 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
     }
 
     fun setImageBitmap(bitmap: Bitmap) {
-        val updatedUiState = _uiState.value.copy(bookImage = compressBitmap(bitmap))
+        val compressedBitmap = compressBitmap(bitmap)
+        val updatedUiState = _uiState.value.copy(image = compressedBitmap)
         updateUiState(updatedUiState)
     }
 
     private fun saveBook() {
         viewModelScope.launch(Dispatchers.IO) {
             with(_uiState.value) {
-                if (bookImage != null) {
                     repository.addBookWithSessions(
                         BookWithSessions(
-                            bookName, bookAuthor, bookImage, numberOfPages, 0, mutableListOf()
+                            bookName, bookAuthor, image!!, numberOfPages, 0, mutableListOf()
                         )
                     )
                     Log.i(logTag, "Saved new book: $bookName")
                     _uiState.value = copy(bookCreated = true)
-                }
             }
 
         }
@@ -82,9 +81,10 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
     private fun compressBitmap(bitmap: Bitmap): Bitmap {
         val stream = ByteArrayOutputStream()
         var currQuality = 100
-        bitmap.compress(Bitmap.CompressFormat.JPEG, currQuality, stream)
-        var currSize = stream.toByteArray().size
         val scaledBitmap = scaleBitmap(bitmap)
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, currQuality, stream)
+        var currSize = stream.toByteArray().size
+
         while (currSize >= MAX_BITMAP_SIZE_BYTES) {
             stream.reset()
             scaledBitmap.compress(Bitmap.CompressFormat.JPEG, currQuality, stream)
@@ -111,7 +111,7 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
 
     private fun isSaveButtonEnabled(state: BookCreationUiState): Boolean {
         with(state) {
-            return bookName.isNotBlank() && bookAuthor.isNotBlank() && numberOfPages > 0 && bookImage != null
+            return bookName.isNotBlank() && bookAuthor.isNotBlank() && numberOfPages > 0 && image != null
         }
     }
 

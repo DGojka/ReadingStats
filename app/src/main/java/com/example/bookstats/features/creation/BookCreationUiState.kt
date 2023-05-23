@@ -6,7 +6,7 @@ data class BookCreationUiState(
     val bookName: String = "",
     val bookAuthor: String = "",
     val numberOfPages: Int = 0,
-    val bookImage: Bitmap? = null,
+    val image: Bitmap? = null,
     val saveButtonEnabled: Boolean = false,
     val error: Error? = null,
     val bookCreated: Boolean = false

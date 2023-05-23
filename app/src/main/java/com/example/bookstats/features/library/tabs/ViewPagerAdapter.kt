@@ -60,7 +60,7 @@ class ViewPagerAdapter(
             generalBookInfo = GeneralBookInfo(
                 bookName = name,
                 bookAuthor = author,
-                bookImage = "", //TODO: Implement
+                image = image,
                 avgReadingTime = viewModel.getAvgReadingTime(sessions),
                 avgPagesPerHour = viewModel.getAvgPagesPerHour(sessions),
                 avgMinutesPerPage = viewModel.getAvgMinPerPage(sessions),

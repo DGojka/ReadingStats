@@ -67,7 +67,10 @@ class BookCreationFragment : Fragment() {
                     if (error != null) {
                         handleError(error.reason)
                     }
-                    binding.saveBookButton.isEnabled = state.saveButtonEnabled
+                    binding.apply {
+                        saveBookButton.isEnabled = saveButtonEnabled
+                        bookImage.load(image)
+                    }
                 }
             }
         }
@@ -79,12 +82,9 @@ class BookCreationFragment : Fragment() {
                 if (uri != null) {
                     lifecycleScope.launch {
                         val bitmap = getBitmap(uri)
-                        binding.bookImage.load(bitmap)
                         lifecycleScope.launch(Dispatchers.IO) {
                             viewModel.setImageBitmap(bitmap!!)
                         }
-
-
                     }
                 }
             }
