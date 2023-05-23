@@ -69,7 +69,9 @@ class BookCreationFragment : Fragment() {
                     }
                     binding.apply {
                         saveBookButton.isEnabled = saveButtonEnabled
-                        bookImage.load(image)
+                        if (image != null) {
+                            bookImage.load(image)
+                        }
                     }
                 }
             }
