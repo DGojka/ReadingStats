@@ -66,13 +66,13 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
     private fun saveBook() {
         viewModelScope.launch(Dispatchers.IO) {
             with(_uiState.value) {
-                    repository.addBookWithSessions(
-                        BookWithSessions(
-                            bookName, bookAuthor, image!!, numberOfPages, 0, mutableListOf()
-                        )
+                repository.addBookWithSessions(
+                    BookWithSessions(
+                        bookName, bookAuthor, image!!, numberOfPages, 0, mutableListOf()
                     )
-                    Log.i(logTag, "Saved new book: $bookName")
-                    _uiState.value = copy(bookCreated = true)
+                )
+                Log.i(logTag, "Saved new book: $bookName")
+                _uiState.value = copy(bookCreated = true)
             }
 
         }
@@ -112,6 +112,26 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
     private fun isSaveButtonEnabled(state: BookCreationUiState): Boolean {
         with(state) {
             return bookName.isNotBlank() && bookAuthor.isNotBlank() && numberOfPages > 0 && image != null
+        }
+    }
+
+    fun importBookByISBN(isbn: String, onResponseGetBitmap: suspend (url: String) -> Bitmap) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val book = repository.getBookByISBN(isbn)
+            with(book) {
+                if (this != null) {
+                    if (imageLinks != null) {
+                        val bitmap = onResponseGetBitmap(imageLinks.thumbnail.toString())
+                        _uiState.value = _uiState.value.copy(
+                            bookAuthor = authors[0],
+                            bookName = title,
+                            numberOfPages = pageCount,
+                            image = null,
+                            saveButtonEnabled = true
+                        )
+                    }
+                }
+            }
         }
     }
 

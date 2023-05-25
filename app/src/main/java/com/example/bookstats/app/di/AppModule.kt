@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.bookstats.database.AppDatabase
 import com.example.bookstats.features.library.managers.SessionCalculator
 import com.example.bookstats.features.library.managers.SessionCalculatorImpl
+import com.example.bookstats.network.ApiService
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.RepositoryImpl
 import dagger.Module
@@ -26,8 +27,8 @@ class AppModule(private val app: Application) {
 
     @Singleton
     @Provides
-    fun provideRepository(database: AppDatabase): Repository {
-        return RepositoryImpl(database)
+    fun provideRepository(database: AppDatabase, apiService: ApiService): Repository {
+        return RepositoryImpl(database, apiService)
     }
 
     @Singleton

@@ -1,14 +1,17 @@
 package com.example.bookstats.repository
 
+import android.util.Log
 import com.example.bookstats.database.AppDatabase
 import com.example.bookstats.database.entity.BookEntity
 import com.example.bookstats.database.entity.BookSessionEntity
 import com.example.bookstats.database.entity.BookWithSessionsEntity
 import com.example.bookstats.database.entity.SessionEntity
+import com.example.bookstats.network.ApiService
+import com.example.bookstats.network.VolumeInfo
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class RepositoryImpl(private val db: AppDatabase) : Repository {
+class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiService) : Repository {
 
     override suspend fun getBooksWithSessions(): List<BookWithSessions> {
         return db.bookWithSessionDao().getBooks().map {
@@ -22,7 +25,8 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
     override suspend fun addBookWithSessions(book: BookWithSessions) {
         val bookId = generateBookId()
         with(book) {
-            db.bookDao().add(BookEntity(bookId, name, author, totalPages, currentPage,bookImage = image))
+            db.bookDao()
+                .add(BookEntity(bookId, name, author, totalPages, currentPage, bookImage = image))
         }
     }
 
@@ -100,6 +104,37 @@ class RepositoryImpl(private val db: AppDatabase) : Repository {
         }
         return streak
     }
+
+    override suspend fun getBookByISBN(isbn: String): VolumeInfo? {
+        val response = apiService.getBookByISBN("isbn:$isbn")
+        return if (response.isSuccessful) {
+            val bookResponse = response.body()?.items?.get(0)
+    /*            val title = bookResponse?.bookFromApiDetails?.title
+                Log.e("asd", bookResponse?.bookFromApiDetails.toString())*/
+            Log.e("asd", bookResponse.toString())
+            Log.e("asd", bookResponse?.volumeInfo?.title.toString())
+            bookResponse?.volumeInfo
+        } else {
+            Log.e("error", response.errorBody().toString())
+            null
+            //TODO: implement
+        }
+    }
+
+/*    private fun loadBitmapFromUrl(url: String, callback: (Bitmap?) -> Unit) {
+        Glide.with(context)
+            .asBitmap()
+            .load(url)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    callback(resource)
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    callback(null)
+                }
+            })
+    }*/
 
     private fun BookWithSessionsEntity.mapToBookWithSession(): BookWithSessions {
         val sessionsMapped: List<Session> = this.sessions

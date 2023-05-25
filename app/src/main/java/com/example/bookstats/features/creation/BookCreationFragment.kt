@@ -2,7 +2,6 @@ package com.example.bookstats.features.creation
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -33,6 +32,7 @@ class BookCreationFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: BookCreationViewModelFactory
     private lateinit var viewModel: BookCreationViewModel
+    private var updateEditTextAfterImportingBookFromISBN = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +55,15 @@ class BookCreationFragment : Fragment() {
         initSaveBookButtonListener()
         observeState()
         initImagePicker()
+        binding.tempIsbn.setOnClickListener {
+            viewModel.importBookByISBN(
+                "9788380082113",
+                onResponseGetBitmap = {
+                    updateEditTextAfterImportingBookFromISBN = true
+                    getBitmap(it)!!
+                })
+
+        }
     }
 
     private fun observeState() {
@@ -72,6 +81,12 @@ class BookCreationFragment : Fragment() {
                         if (image != null) {
                             bookImage.load(image)
                         }
+                        if (updateEditTextAfterImportingBookFromISBN) {
+                            bookNameEditText.setText(state.bookName)
+                            bookAuthorEditText.setText(state.bookAuthor)
+                            bookPageNumberEditText.setText(state.numberOfPages.toString())
+                            updateEditTextAfterImportingBookFromISBN = false
+                        }
                     }
                 }
             }
@@ -83,7 +98,7 @@ class BookCreationFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
                     lifecycleScope.launch {
-                        val bitmap = getBitmap(uri)
+                        val bitmap = getBitmap(uri.toString())
                         lifecycleScope.launch(Dispatchers.IO) {
                             viewModel.setImageBitmap(bitmap!!)
                         }
@@ -128,17 +143,16 @@ class BookCreationFragment : Fragment() {
             viewModel.createBook()
         }
     }
-
-    companion object {
-        const val CREATION_ERROR = "creation_error"
-    }
-
-
-    private suspend fun getBitmap(uri: Uri): Bitmap? {
+    private suspend fun getBitmap(uri: String): Bitmap? {
         val loader = ImageLoader(requireContext())
         val request = ImageRequest.Builder(requireContext()).data(uri).build()
 
         val result = (loader.execute(request) as SuccessResult).drawable
         return (result as BitmapDrawable).bitmap
     }
+
+    companion object {
+        const val CREATION_ERROR = "creation_error"
+    }
+
 }
