@@ -109,10 +109,6 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
         val response = apiService.getBookByISBN("isbn:$isbn")
         return if (response.isSuccessful) {
             val bookResponse = response.body()?.items?.get(0)
-    /*            val title = bookResponse?.bookFromApiDetails?.title
-                Log.e("asd", bookResponse?.bookFromApiDetails.toString())*/
-            Log.e("asd", bookResponse.toString())
-            Log.e("asd", bookResponse?.volumeInfo?.title.toString())
             bookResponse?.volumeInfo
         } else {
             Log.e("error", response.errorBody().toString())
@@ -120,21 +116,6 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
             //TODO: implement
         }
     }
-
-/*    private fun loadBitmapFromUrl(url: String, callback: (Bitmap?) -> Unit) {
-        Glide.with(context)
-            .asBitmap()
-            .load(url)
-            .into(object : SimpleTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    callback(resource)
-                }
-
-                override fun onLoadFailed(errorDrawable: Drawable?) {
-                    callback(null)
-                }
-            })
-    }*/
 
     private fun BookWithSessionsEntity.mapToBookWithSession(): BookWithSessions {
         val sessionsMapped: List<Session> = this.sessions

@@ -120,20 +120,21 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
             val book = repository.getBookByISBN(isbn)
             with(book) {
                 if (this != null) {
-                    if (imageLinks != null) {
-                        val bitmap = onResponseGetBitmap(imageLinks.thumbnail.toString())
-                        _uiState.value = _uiState.value.copy(
-                            bookAuthor = authors[0],
-                            bookName = title,
-                            numberOfPages = pageCount,
-                            image = null,
-                            saveButtonEnabled = true
-                        )
-                    }
+                    val bitmap = onResponseGetBitmap(getImageUrl(isbn))
+                    _uiState.value = _uiState.value.copy(
+                        bookAuthor = authors[0],
+                        bookName = title,
+                        numberOfPages = pageCount,
+                        image = bitmap,
+                        saveButtonEnabled = true
+                    )
                 }
             }
         }
     }
+
+    private fun getImageUrl(isbn: String) =
+        "https://covers.openlibrary.org/b/isbn/$isbn-L.jpg"
 
     companion object {
         private const val IMAGE_HEIGHT = 924

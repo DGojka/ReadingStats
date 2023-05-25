@@ -12,6 +12,7 @@
 
     <ImageView
         android:id="@+id/book_image"
+        android:minWidth="200dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/book_desc_image"

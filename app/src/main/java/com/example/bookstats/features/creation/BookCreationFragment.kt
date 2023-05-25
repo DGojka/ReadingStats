@@ -143,6 +143,7 @@ class BookCreationFragment : Fragment() {
             viewModel.createBook()
         }
     }
+
     private suspend fun getBitmap(uri: String): Bitmap? {
         val loader = ImageLoader(requireContext())
         val request = ImageRequest.Builder(requireContext()).data(uri).build()
@@ -154,5 +155,4 @@ class BookCreationFragment : Fragment() {
     companion object {
         const val CREATION_ERROR = "creation_error"
     }
-
 }
