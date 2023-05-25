@@ -1,5 +1,8 @@
 package com.example.bookstats.repository
 
+import com.example.bookstats.network.VolumeInfo
+
+
 interface Repository {
     suspend fun getBooksWithSessions(): List<BookWithSessions>
 
@@ -14,4 +17,6 @@ interface Repository {
     suspend fun getLastBook(): BookWithSessions?
 
     suspend fun getCurrentStreak(): Int
+
+    suspend fun getBookByISBN(isbn: String) : VolumeInfo?
 }

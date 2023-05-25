@@ -63,4 +63,10 @@ ext {
 
     coilVersion = "2.1.0"
     coil = ["io.coil-kt:coil:$coilVersion"]
+
+    retrofitVersion = "2.9.0"
+    retrofit = [
+            "com.squareup.retrofit2:retrofit:$retrofitVersion",
+            "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    ]
 }
