@@ -120,7 +120,15 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
             val book = repository.getBookByISBN(isbn)
             with(book) {
                 if (this != null) {
-                    val bitmap = onResponseGetBitmap(getImageUrl(isbn))
+                    var bitmap = onResponseGetBitmap(getImageUrl(isbn))
+                    if (bitmap.width <= 1 && bitmap.height <= 1) {
+                        if (imageLinks != null) {
+                            bitmap =
+                                onResponseGetBitmap(imageLinks.thumbnail!!.replace("http", "https"))
+                        } else {
+                            //TODO: implement placeholder
+                        }
+                    }
                     _uiState.value = _uiState.value.copy(
                         bookAuthor = authors[0],
                         bookName = title,

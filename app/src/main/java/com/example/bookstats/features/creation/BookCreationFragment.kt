@@ -1,5 +1,7 @@
 package com.example.bookstats.features.creation
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -21,6 +23,7 @@ import coil.request.SuccessResult
 import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentBookCreationBinding
+import com.example.bookstats.features.scanner.ScannerActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,6 +51,22 @@ class BookCreationFragment : Fragment() {
         _binding = null
     }
 
+    private val scanActivityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val isbn = data?.getStringExtra(ISBN)
+                isbn?.let {
+                    viewModel.importBookByISBN(
+                        isbn,
+                        onResponseGetBitmap = {
+                            updateEditTextAfterImportingBookFromISBN = true
+                            getBitmap(it)!!
+                        })
+                }
+            }
+        }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[BookCreationViewModel::class.java]
@@ -55,15 +74,7 @@ class BookCreationFragment : Fragment() {
         initSaveBookButtonListener()
         observeState()
         initImagePicker()
-        binding.tempIsbn.setOnClickListener {
-            viewModel.importBookByISBN(
-                "9788380082113",
-                onResponseGetBitmap = {
-                    updateEditTextAfterImportingBookFromISBN = true
-                    getBitmap(it)!!
-                })
-
-        }
+        initScannerButton()
     }
 
     private fun observeState() {
@@ -138,6 +149,13 @@ class BookCreationFragment : Fragment() {
         }
     }
 
+    private fun initScannerButton() {
+        binding.scanIsbnButton.setOnClickListener {
+            val scanIntent = Intent(requireContext(), ScannerActivity::class.java)
+            scanActivityResultLauncher.launch(scanIntent)
+        }
+    }
+
     private fun initSaveBookButtonListener() {
         binding.saveBookButton.setOnClickListener {
             viewModel.createBook()
@@ -154,5 +172,6 @@ class BookCreationFragment : Fragment() {
 
     companion object {
         const val CREATION_ERROR = "creation_error"
+        const val ISBN = "ISBN"
     }
 }
