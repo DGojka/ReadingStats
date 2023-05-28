@@ -69,4 +69,6 @@ ext {
             "com.squareup.retrofit2:retrofit:$retrofitVersion",
             "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     ]
+    zxingVersion = "3.4.1"
+    zXing = ["com.google.zxing:core:$zxingVersion"]
 }

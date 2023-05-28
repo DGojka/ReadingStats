@@ -46,6 +46,10 @@ dependencies {
     implementation room
     implementation coil
     implementation retrofit
+    implementation zXing
+    implementation("com.journeyapps:zxing-android-embedded:3.5.0") {
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
 
     kapt roomKapt
     kapt daggerAnnotationProcessor
