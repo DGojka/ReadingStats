@@ -14,6 +14,8 @@ import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
+import com.example.bookstats.features.realtimesessions.TimerBroadcastListener
+import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.features.realtimesessions.viewmodel.Error
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
@@ -21,13 +23,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class RealTimeSessionFragment : Fragment() {
+class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
     private var _binding: FragmentRealTimeSessionBinding? = null
     private val binding get() = _binding!!
 
     @Inject
     lateinit var viewModelFactory: RealTimeSessionsViewModelFactory
     private lateinit var viewModel: RealTimeSessionsViewModel
+
+    @Inject
+    lateinit var currentBookDb: CurrentBookDb
+
     private lateinit var pagesReadDialog: AlertDialog
 
     override fun onCreateView(
@@ -88,7 +94,7 @@ class RealTimeSessionFragment : Fragment() {
 
     private fun initStopButton() {
         binding.stop.setOnClickListener {
-            viewModel.stopSession()
+            viewModel.pauseTimer()
             pagesReadDialog.show()
         }
     }
@@ -127,12 +133,14 @@ class RealTimeSessionFragment : Fragment() {
         with(dialogBinding) {
             dialogBinding.save.setOnClickListener {
                 if (pagesReadTextView.text.toString().isNotEmpty()) {
+                    viewModel.stopSession()
                     viewModel.saveSession(
-                        bookId = requireArguments().getString("id")!!.toLong(),
+                        bookId = currentBookDb.getCurrentBookId(),
                         newCurrentPage = pagesReadTextView.text.toString().toInt()
                     ) {
                         pagesReadDialog.dismiss()
                         findNavController().popBackStack()
+
                     }
                 }
             }
@@ -144,5 +152,9 @@ class RealTimeSessionFragment : Fragment() {
         super.onDestroyView()
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.VISIBLE
+    }
+
+    override fun onTimerBroadcastReceiver(currentMs: Float) {
+        viewModel.setCurrentMs(currentMs)
     }
 }
