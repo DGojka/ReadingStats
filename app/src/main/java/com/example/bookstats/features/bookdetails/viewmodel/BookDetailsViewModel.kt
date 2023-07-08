@@ -133,19 +133,25 @@ class BookDetailsViewModel @Inject constructor(
     }
 
     private fun isAllFieldsFilled(): Boolean {
-        with(_uiState.value.dialogDetails) {
-            if (this != null) {
-                return readingSessionDate != null && currentPage != null && sessionCalculator.calculateSeconds(
-                    hoursRead,
-                    minutesRead
-                ) > 0 && sessionCalculator.isNewCurrentPageGreaterThanOld(
-                    newCurrentPage = currentPage,
-                    oldCurrentPage = _uiState.value.book!!.currentPage
-                )
-            }
-            return false
+        with(_uiState.value.dialogDetails!!) {
+            return isReadingSessionDateValid(readingSessionDate) && isCurrentPageValid(currentPage) && isReadingTimeValid(
+                this
+            )
         }
     }
+
+    private fun isReadingSessionDateValid(date: LocalDate?): Boolean = date != null
+
+    private fun isCurrentPageValid(currentPage: Int?): Boolean {
+        return currentPage != null && sessionCalculator.isNewCurrentPageGreaterThanOld(
+            newCurrentPage = currentPage,
+            oldCurrentPage = _uiState.value.book?.currentPage!!
+        )
+    }
+
+    private fun isReadingTimeValid(dialogDetails: DialogDetails?): Boolean =
+        dialogDetails?.let { sessionCalculator.calculateSeconds(it.hoursRead, it.minutesRead) > 0 }
+            ?: false
 
     private suspend fun saveSessionByDialog(dialogDetails: DialogDetails) {
         dialogDetails.apply {
