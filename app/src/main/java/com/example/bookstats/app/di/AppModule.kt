@@ -6,7 +6,7 @@ import androidx.room.Room
 import com.example.bookstats.database.AppDatabase
 import com.example.bookstats.features.library.managers.SessionCalculator
 import com.example.bookstats.features.library.managers.SessionCalculatorImpl
-import com.example.bookstats.features.realtimesessions.TimerServiceHelper
+import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.network.ApiService
 import com.example.bookstats.repository.Repository

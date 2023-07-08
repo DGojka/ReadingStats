@@ -1,9 +1,10 @@
-package com.example.bookstats.features.realtimesessions
+package com.example.bookstats.features.realtimesessions.timer.helpers
 
 import android.app.ActivityManager
 import android.content.*
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.bookstats.features.realtimesessions.timer.TimerService
 import javax.inject.Inject
 
 class TimerServiceHelper @Inject constructor(

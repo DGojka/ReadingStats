@@ -1,4 +1,4 @@
-package com.example.bookstats.features.realtimesessions
+package com.example.bookstats.features.realtimesessions.timer
 
 import android.app.*
 import android.content.Context
@@ -11,7 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
-import com.example.bookstats.features.realtimesessions.TimerServiceHelper.Companion.STOP_SERVICE
+import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper.Companion.STOP_SERVICE
+import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceBinder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

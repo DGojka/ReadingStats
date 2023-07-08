@@ -15,7 +15,7 @@ import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
-import com.example.bookstats.features.realtimesessions.TimerBroadcastListener
+import com.example.bookstats.features.realtimesessions.timer.helpers.TimerBroadcastListener
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.features.realtimesessions.viewmodel.Error
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel

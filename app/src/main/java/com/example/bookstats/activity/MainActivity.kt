@@ -6,7 +6,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
-import com.example.bookstats.features.realtimesessions.TimerServiceHelper
+import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import javax.inject.Inject
 
