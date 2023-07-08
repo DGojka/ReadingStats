@@ -17,5 +17,9 @@ interface SessionCalculator {
 
     fun calculatePagesReadInSession(newCurrentPage: Int, oldCurrentPage: Int): Int
 
-    fun isNewCurrentPageGreaterThanOld(newCurrentPage: Int, oldCurrentPage: Int) : Boolean
+    fun isNewCurrentPageGreaterThanOld(newCurrentPage: Int, oldCurrentPage: Int): Boolean
+
+    fun getPagesPerHourInSession(session: Session): String
+
+    fun getMinPerPageInSession(session: Session): String
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +15,8 @@ import com.example.bookstats.R
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
+import com.example.bookstats.features.realtimesessions.TimerBroadcastListener
+import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.features.realtimesessions.viewmodel.Error
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
@@ -21,14 +24,26 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class RealTimeSessionFragment : Fragment() {
+class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
     private var _binding: FragmentRealTimeSessionBinding? = null
     private val binding get() = _binding!!
 
     @Inject
     lateinit var viewModelFactory: RealTimeSessionsViewModelFactory
     private lateinit var viewModel: RealTimeSessionsViewModel
-    private lateinit var pagesReadDialog: AlertDialog
+
+    @Inject
+    lateinit var currentBookDb: CurrentBookDb
+
+    private lateinit var endSessionDialog: AlertDialog
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            viewModel.pauseTimer()
+            viewModel.endSessionWithoutSaving()
+            findNavController().popBackStack()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +54,7 @@ class RealTimeSessionFragment : Fragment() {
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.GONE
         _binding = FragmentRealTimeSessionBinding.inflate(inflater, container, false)
+       requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
         return binding.root
     }
 
@@ -88,8 +104,8 @@ class RealTimeSessionFragment : Fragment() {
 
     private fun initStopButton() {
         binding.stop.setOnClickListener {
-            viewModel.stopSession()
-            pagesReadDialog.show()
+            viewModel.pauseTimer()
+            endSessionDialog.show()
         }
     }
 
@@ -127,22 +143,29 @@ class RealTimeSessionFragment : Fragment() {
         with(dialogBinding) {
             dialogBinding.save.setOnClickListener {
                 if (pagesReadTextView.text.toString().isNotEmpty()) {
+                    viewModel.stopSession()
                     viewModel.saveSession(
-                        bookId = requireArguments().getString("id")!!.toLong(),
+                        bookId = currentBookDb.getCurrentBookId(),
                         newCurrentPage = pagesReadTextView.text.toString().toInt()
                     ) {
-                        pagesReadDialog.dismiss()
+                        endSessionDialog.dismiss()
                         findNavController().popBackStack()
                     }
                 }
             }
         }
-        pagesReadDialog = dialogBuilder.create()
+        endSessionDialog = dialogBuilder.create()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.VISIBLE
+       onBackPressedCallback.remove()
     }
+
+    override fun onTimerBroadcastReceiver(currentMs: Float) {
+        viewModel.setCurrentMs(currentMs)
+    }
+
 }

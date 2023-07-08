@@ -1,10 +1,13 @@
 package com.example.bookstats.app.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.example.bookstats.database.AppDatabase
 import com.example.bookstats.features.library.managers.SessionCalculator
 import com.example.bookstats.features.library.managers.SessionCalculatorImpl
+import com.example.bookstats.features.realtimesessions.TimerServiceHelper
+import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.network.ApiService
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.RepositoryImpl
@@ -35,5 +38,23 @@ class AppModule(private val app: Application) {
     @Provides
     fun provideSessionCalculator(): SessionCalculator {
         return SessionCalculatorImpl()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAppContext(): Context {
+        return app.applicationContext
+    }
+
+    @Singleton
+    @Provides
+    fun provideTimerServiceHelper(context: Context): TimerServiceHelper {
+        return TimerServiceHelper(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCurrentBookDb(context: Context): CurrentBookDb {
+        return CurrentBookDb(context)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.bookstats.app.di
 
+import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.features.creation.BookCreationFragment
 import com.example.bookstats.features.library.ui.BookDetailsFragment
 import com.example.bookstats.features.library.ui.LibraryFragment
@@ -17,4 +18,6 @@ interface AppComponent {
     fun inject(fragment: BookDetailsFragment)
 
     fun inject(realTimeSessionFragment: RealTimeSessionFragment)
+
+    fun inject(mainActivity: MainActivity)
 }

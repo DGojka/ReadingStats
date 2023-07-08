@@ -19,6 +19,7 @@ import com.example.bookstats.features.library.managers.SessionDialogManager
 import com.example.bookstats.features.library.tabs.ViewPagerAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
+import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
@@ -33,6 +34,9 @@ class BookDetailsFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: LibraryViewModelFactory
     private val viewModel by viewModels<LibraryViewModel>({ activity as MainActivity }) { viewModelFactory }
+
+    @Inject
+    lateinit var currentBookDb: CurrentBookDb
 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var bookIdBundle: Bundle = Bundle()
@@ -70,6 +74,7 @@ class BookDetailsFragment : Fragment() {
                 with(state) {
                     bookClicked?.let { book ->
                         bookIdBundle.putString("id", book.id.toString())
+                        currentBookDb.updateCurrentBookId(book.id)
                         viewPagerAdapter.updateBookInfo(book)
                         viewPagerAdapter.updateSessionsList(
                             viewModel.mapSessionsToSessionListItem(

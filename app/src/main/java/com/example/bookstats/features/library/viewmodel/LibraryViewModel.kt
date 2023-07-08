@@ -125,11 +125,13 @@ class LibraryViewModel @Inject constructor(
             with(it) {
                 SessionListItem(
                     date = sessionStartDate.toLocalDate()
-                        .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-                    pagesRead.toString(),
-                    sessionCalculator.convertSecondsToMinutesAndSeconds(sessionTimeSeconds),
-                    sessionCalculator.getAvgMinPerPage(sessions),
-                    sessionCalculator.getAvgPagesPerHour(sessions)
+                        .format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
+                    pagesRead = pagesRead.toString(),
+                    readTime = sessionCalculator.convertSecondsToMinutesAndSeconds(
+                        sessionTimeSeconds
+                    ),
+                    avgMinPerPage = sessionCalculator.getMinPerPageInSession(it),
+                    sessionCalculator.getPagesPerHourInSession(it)
                 )
             }
         }
@@ -183,4 +185,7 @@ class LibraryViewModel @Inject constructor(
         }
     }
 
+    companion object {
+        private const val DATE_FORMAT = "dd.MM.yyyy"
+    }
 }
