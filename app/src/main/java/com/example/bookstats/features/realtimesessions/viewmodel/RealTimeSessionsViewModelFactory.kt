@@ -2,7 +2,7 @@ package com.example.bookstats.features.realtimesessions.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.bookstats.features.library.managers.SessionCalculator
+import com.example.bookstats.features.bookdetails.managers.SessionCalculator
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
 import com.example.bookstats.repository.Repository
 import javax.inject.Inject

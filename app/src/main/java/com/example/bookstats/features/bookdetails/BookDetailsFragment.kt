@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.ui
+package com.example.bookstats.features.bookdetails
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,8 +15,8 @@ import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
-import com.example.bookstats.features.library.managers.SessionDialogManager
-import com.example.bookstats.features.library.tabs.ViewPagerAdapter
+import com.example.bookstats.features.bookdetails.managers.SessionDialogManager
+import com.example.bookstats.features.bookdetails.tabs.ViewPagerAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb

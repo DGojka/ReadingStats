@@ -12,7 +12,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
-import com.example.bookstats.features.library.managers.SessionCalculator
+import com.example.bookstats.features.bookdetails.managers.SessionCalculator
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceBinder
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper.Companion.STOP_SERVICE
 import kotlinx.coroutines.CoroutineScope

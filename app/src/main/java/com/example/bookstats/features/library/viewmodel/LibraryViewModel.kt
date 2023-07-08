@@ -3,9 +3,9 @@ package com.example.bookstats.features.library.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookstats.features.library.managers.SessionCalculator
-import com.example.bookstats.features.library.managers.helpers.DialogDetails
-import com.example.bookstats.features.library.tabs.sessions.SessionListItem
+import com.example.bookstats.features.bookdetails.managers.SessionCalculator
+import com.example.bookstats.features.bookdetails.managers.helpers.DialogDetails
+import com.example.bookstats.features.bookdetails.tabs.sessions.SessionListItem
 import com.example.bookstats.features.library.viewmodel.uistate.LibraryUiState
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.Session

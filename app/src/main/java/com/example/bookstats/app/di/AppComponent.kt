@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
 import com.example.bookstats.features.creation.BookCreationFragment
-import com.example.bookstats.features.library.ui.BookDetailsFragment
+import com.example.bookstats.features.bookdetails.BookDetailsFragment
 import com.example.bookstats.features.library.ui.LibraryFragment
 import com.example.bookstats.features.realtimesessions.timer.TimerService
 import com.example.bookstats.features.realtimesessions.ui.RealTimeSessionFragment

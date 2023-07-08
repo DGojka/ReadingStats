@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookstats.features.library.managers.SessionCalculator
+import com.example.bookstats.features.bookdetails.managers.SessionCalculator
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.Session
