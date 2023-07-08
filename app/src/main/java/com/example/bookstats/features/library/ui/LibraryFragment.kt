@@ -16,7 +16,6 @@ import com.example.bookstats.databinding.FragmentLibraryBinding
 import com.example.bookstats.features.library.list.BookAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
-import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,9 +29,6 @@ class LibraryFragment : Fragment() {
     lateinit var viewModelFactory: LibraryViewModelFactory
     private val viewModel by viewModels<LibraryViewModel>({ activity as MainActivity }) { viewModelFactory }
 
-    @Inject
-    lateinit var currentBookDb: CurrentBookDb
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,10 +37,9 @@ class LibraryFragment : Fragment() {
 
         _binding = FragmentLibraryBinding.inflate(inflater, container, false)
         bookAdapter = BookAdapter(onBookClick = {
-            currentBookDb.updateCurrentBookId(it.toLong())
-            viewModel.moreDetails(
+            viewModel.initBookMoreDetails(
                 id = it,
-                navigate = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
+                onInitialized = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
         })
         binding.buttonAddBook.setOnClickListener {
             findNavController().navigate(R.id.action_libraryFragment_to_bookCreationFragment)
@@ -70,9 +65,9 @@ class LibraryFragment : Fragment() {
                             lastBookTextView.visibility = View.VISIBLE
                             lastBookItem.bookImage.load(lastBook.image)
                             lastBookContainer.setOnClickListener {
-                                viewModel.moreDetails(
+                                viewModel.initBookMoreDetails(
                                     id = lastBook.id.toInt(),
-                                    navigate = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
+                                    onInitialized = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
                             }
                         }
                     }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.library.viewmodel.uistate.LibraryUiState
+import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,10 +14,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: Repository,
+    private val currentBookDb: CurrentBookDb
 ) : ViewModel() {
     private val _uiState =
-        MutableStateFlow(LibraryUiState(true, mutableListOf(), null, 0, null, null))
+        MutableStateFlow(LibraryUiState(true, mutableListOf(), null, 0))
     val uiState: StateFlow<LibraryUiState> = _uiState
 
     fun fetchBooksFromDb() {
@@ -32,13 +34,11 @@ class LibraryViewModel @Inject constructor(
         }
     }
 
-    fun moreDetails(id: Int, navigate: () -> Unit) {
+    fun initBookMoreDetails(id: Int, onInitialized: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            _uiState.value = _uiState.value.copy(
-                bookClicked = repository.getBookWithSessionsById(id = id.toLong())
-            )
+            currentBookDb.updateCurrentBookId(id.toLong())
             withContext(Dispatchers.Main) {
-                navigate()
+                onInitialized()
             }
         }
     }
