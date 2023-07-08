@@ -34,6 +34,7 @@
     <string name="reading_percentage">Reading percentage</string>
     <string name="delete_book">Delete book</string>
     <string name="add_session_button">Add session</string>
+    <string name="book_successfully_deleted">Book successfully deleted!</string>
     //general tab
     <string name="avg_read_time">Avg: read time</string>
     <string name="pages_h">pages/h</string>

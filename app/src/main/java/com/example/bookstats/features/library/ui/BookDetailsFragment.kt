@@ -39,7 +39,6 @@ class BookDetailsFragment : Fragment() {
     lateinit var currentBookDb: CurrentBookDb
 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
-    private var bookIdBundle: Bundle = Bundle()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,10 +49,7 @@ class BookDetailsFragment : Fragment() {
         viewPagerAdapter = ViewPagerAdapter(
             viewModel,
             onStartSessionClick = {
-                findNavController().navigate(
-                    R.id.action_bookDetailsFragment_to_sessionFragment,
-                    bookIdBundle
-                )
+                findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
             })
         viewModel.refreshBookClicked()
         initViewPager()
@@ -73,7 +69,6 @@ class BookDetailsFragment : Fragment() {
             viewModel.uiState.collect { state ->
                 with(state) {
                     bookClicked?.let { book ->
-                        bookIdBundle.putString("id", book.id.toString())
                         currentBookDb.updateCurrentBookId(book.id)
                         viewPagerAdapter.updateBookInfo(book)
                         viewPagerAdapter.updateSessionsList(
@@ -137,7 +132,11 @@ class BookDetailsFragment : Fragment() {
         binding.delete.setOnClickListener {
             viewModel.deleteBook(navigate = {
                 findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
-                Toast.makeText(requireContext(), "Book successfully deleted!", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    R.string.book_successfully_deleted,
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             })
         }
