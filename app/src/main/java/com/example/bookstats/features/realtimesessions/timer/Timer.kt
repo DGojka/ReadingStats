@@ -1,4 +1,4 @@
-package com.example.bookstats.features.realtimesessions
+package com.example.bookstats.features.realtimesessions.timer
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -32,6 +32,11 @@ class Timer {
 
     fun pause() {
         paused = true
+    }
+
+    fun reset() {
+        flow.value = 0F
+        currentMs = 0
     }
 
     companion object {

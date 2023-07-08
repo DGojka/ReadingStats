@@ -1,20 +1,21 @@
-package com.example.bookstats.features.realtimesessions
+package com.example.bookstats.features.realtimesessions.timer.helpers
 
 import android.app.ActivityManager
 import android.content.*
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.bookstats.features.realtimesessions.timer.TimerService
 import javax.inject.Inject
 
 class TimerServiceHelper @Inject constructor(
     private val context: Context
 ) {
     private lateinit var timerUpdateReceiver: BroadcastReceiver
-    private lateinit var binder : TimerService.TimerServiceBinder
+    private lateinit var binder : TimerService.TimerServiceBinderImpl
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            binder = service as TimerService.TimerServiceBinder
+            binder = service as TimerService.TimerServiceBinderImpl
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -53,7 +54,7 @@ class TimerServiceHelper @Inject constructor(
 
     fun stopService(){
         val intent = Intent(context, TimerService::class.java)
-        intent.action = "STOP_SERVICE"
+        intent.action = STOP_SERVICE
         context.unbindService(serviceConnection)
         context.stopService(intent)
     }
@@ -71,5 +72,6 @@ class TimerServiceHelper @Inject constructor(
 
     companion object {
         const val TIMER_UPDATE_ACTION = "TIMER_ACTION"
+        const val STOP_SERVICE = "STOP_SERVICE"
     }
 }

@@ -32,7 +32,7 @@
             android:name="com.example.bookstats.features.scanner.ScannerActivity"
          />
         <service
-            android:name="com.example.bookstats.features.realtimesessions.TimerService"
+            android:name="com.example.bookstats.features.realtimesessions.timer.TimerService"
             android:enabled="true"
             android:exported="false" />
     </application>

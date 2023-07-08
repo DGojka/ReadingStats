@@ -11,11 +11,12 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
-import com.example.bookstats.app.ReadingStatsApp
+import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentLibraryBinding
 import com.example.bookstats.features.library.list.BookAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
 import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
+import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,13 +30,18 @@ class LibraryFragment : Fragment() {
     lateinit var viewModelFactory: LibraryViewModelFactory
     private val viewModel by viewModels<LibraryViewModel>({ activity as MainActivity }) { viewModelFactory }
 
+    @Inject
+    lateinit var currentBookDb: CurrentBookDb
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        (activity?.application as ReadingStatsApp).appComponent.inject(this)
+        appComponent.inject(this)
+
         _binding = FragmentLibraryBinding.inflate(inflater, container, false)
         bookAdapter = BookAdapter(onBookClick = {
+            currentBookDb.updateCurrentBookId(it.toLong())
             viewModel.moreDetails(
                 id = it,
                 navigate = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })

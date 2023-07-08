@@ -12,11 +12,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
-import com.example.bookstats.app.ReadingStatsApp
+import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
-import com.example.bookstats.features.realtimesessions.TimerBroadcastListener
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
+import com.example.bookstats.features.realtimesessions.timer.helpers.TimerBroadcastListener
 import com.example.bookstats.features.realtimesessions.viewmodel.Error
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
@@ -50,7 +50,7 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        (activity?.application as ReadingStatsApp).appComponent.inject(this)
+        appComponent.inject(this)
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.GONE
         _binding = FragmentRealTimeSessionBinding.inflate(inflater, container, false)
