@@ -45,27 +45,34 @@ class TimerService : Service() {
         }
     }
 
-    fun stopTimer(){
+    fun stopTimer() {
         timer!!.pause()
     }
 
-    fun startTimer(){
+    fun startTimer() {
         timer!!.start()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        timer = Timer()
-        timer!!.start()
-        CoroutineScope(Dispatchers.IO).launch {
-            timer!!.flow.collect { currentMs ->
-                val timerIntent = Intent("TIMER_ACTION")
-                timerIntent.putExtra("CURRENT_MS", currentMs)
-                startForeground(notificationId, createNotification(currentMs))
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(timerIntent)
-                sendBroadcast(timerIntent)
-                updateNotification(currentMs)
+        if (intent?.action.equals("STOP_SERVICE")) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+            return START_NOT_STICKY
+        } else {
+            timer = Timer()
+            timer!!.start()
+            CoroutineScope(Dispatchers.IO).launch {
+                timer!!.flow.collect { currentMs ->
+                    val timerIntent = Intent("TIMER_ACTION")
+                    timerIntent.putExtra("CURRENT_MS", currentMs)
+                    startForeground(notificationId, createNotification(currentMs))
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(timerIntent)
+                    sendBroadcast(timerIntent)
+                    updateNotification(currentMs)
+                }
             }
         }
+
         return START_STICKY
     }
 
@@ -89,8 +96,8 @@ class TimerService : Service() {
             .setColor(ContextCompat.getColor(this, R.color.dark_violet))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
-            .setSound(null) // Wyłącz dźwięk notyfikacji
-            .setOnlyAlertOnce(true) // Wyświetl powiadomienie tylko raz
+            .setSound(null)
+            .setOnlyAlertOnce(true)
 
         return notificationBuilder!!.build()
     }

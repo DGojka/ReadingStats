@@ -53,8 +53,9 @@ class TimerServiceHelper @Inject constructor(
 
     fun stopService(){
         val intent = Intent(context, TimerService::class.java)
-        context.stopService(intent)
+        intent.action = "STOP_SERVICE"
         context.unbindService(serviceConnection)
+        context.stopService(intent)
     }
 
     fun unregisterTimerUpdateReceiver(receiver: BroadcastReceiver) {

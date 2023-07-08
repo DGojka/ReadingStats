@@ -63,8 +63,12 @@ class RealTimeSessionsViewModel @Inject constructor(
         sessionEndDate = LocalDateTime.now()
     }
 
-    fun saveSession(bookId: Long, newCurrentPage: Int, navigate: () -> Unit) {
+    fun endSessionWithoutSaving(){
+        timerServiceHelper.unregisterTimerUpdateReceiver(timerUpdateReceiver)
         timerServiceHelper.stopService()
+    }
+
+    fun saveSession(bookId: Long, newCurrentPage: Int, navigate: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val book = repository.getBookWithSessionsById(bookId)
             if (sessionCalculator.isNewCurrentPageGreaterThanOld(
@@ -73,6 +77,7 @@ class RealTimeSessionsViewModel @Inject constructor(
                 )
                 && book.totalPages >= newCurrentPage
             ) {
+                timerServiceHelper.stopService()
                 repository.addSessionToTheBook(
                     bookId,
                     Session(

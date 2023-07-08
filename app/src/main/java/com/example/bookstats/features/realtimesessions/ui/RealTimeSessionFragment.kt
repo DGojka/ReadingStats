@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -34,7 +35,15 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
     @Inject
     lateinit var currentBookDb: CurrentBookDb
 
-    private lateinit var pagesReadDialog: AlertDialog
+    private lateinit var endSessionDialog: AlertDialog
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            viewModel.pauseTimer()
+            viewModel.endSessionWithoutSaving()
+            findNavController().popBackStack()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,6 +54,7 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.GONE
         _binding = FragmentRealTimeSessionBinding.inflate(inflater, container, false)
+       requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
         return binding.root
     }
 
@@ -95,7 +105,7 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
     private fun initStopButton() {
         binding.stop.setOnClickListener {
             viewModel.pauseTimer()
-            pagesReadDialog.show()
+            endSessionDialog.show()
         }
     }
 
@@ -138,23 +148,24 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
                         bookId = currentBookDb.getCurrentBookId(),
                         newCurrentPage = pagesReadTextView.text.toString().toInt()
                     ) {
-                        pagesReadDialog.dismiss()
+                        endSessionDialog.dismiss()
                         findNavController().popBackStack()
-
                     }
                 }
             }
         }
-        pagesReadDialog = dialogBuilder.create()
+        endSessionDialog = dialogBuilder.create()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.VISIBLE
+       onBackPressedCallback.remove()
     }
 
     override fun onTimerBroadcastReceiver(currentMs: Float) {
         viewModel.setCurrentMs(currentMs)
     }
+
 }
