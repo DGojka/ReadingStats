@@ -7,18 +7,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.bookstats.R
-import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.bookdetails.managers.SessionDialogManager
 import com.example.bookstats.features.bookdetails.tabs.ViewPagerAdapter
-import com.example.bookstats.features.library.viewmodel.LibraryViewModel
-import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
+import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
+import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModelFactory
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -32,8 +31,8 @@ class BookDetailsFragment : Fragment() {
     private val binding get() = _binding!!
 
     @Inject
-    lateinit var viewModelFactory: LibraryViewModelFactory
-    private val viewModel by viewModels<LibraryViewModel>({ activity as MainActivity }) { viewModelFactory }
+    lateinit var viewModelFactory: BookDetailsViewModelFactory
+    private lateinit var viewModel: BookDetailsViewModel
 
     @Inject
     lateinit var currentBookDb: CurrentBookDb
@@ -45,12 +44,13 @@ class BookDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         appComponent.inject(this)
+        viewModel = ViewModelProvider(this, viewModelFactory)[BookDetailsViewModel::class.java]
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
         viewPagerAdapter = ViewPagerAdapter(
-            viewModel,
-            onStartSessionClick = {
-                findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
-            })
+            viewModel
+        ) {
+            findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
+        }
         viewModel.refreshBookClicked()
         initViewPager()
         return binding.root
@@ -68,7 +68,7 @@ class BookDetailsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 with(state) {
-                    bookClicked?.let { book ->
+                    book?.let { book ->
                         currentBookDb.updateCurrentBookId(book.id)
                         viewPagerAdapter.updateBookInfo(book)
                         viewPagerAdapter.updateSessionsList(
@@ -130,7 +130,7 @@ class BookDetailsFragment : Fragment() {
 
     private fun initDeleteButton() {
         binding.delete.setOnClickListener {
-            viewModel.deleteBook(navigate = {
+            viewModel.deleteBook(onDelete = {
                 findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
                 Toast.makeText(
                     requireContext(),

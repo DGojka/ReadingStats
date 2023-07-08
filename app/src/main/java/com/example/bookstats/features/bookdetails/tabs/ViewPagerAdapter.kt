@@ -11,11 +11,11 @@ import com.example.bookstats.features.bookdetails.tabs.general.helpers.GeneralBo
 import com.example.bookstats.features.bookdetails.tabs.general.viewholders.GeneralTabViewHolder
 import com.example.bookstats.features.bookdetails.tabs.sessions.SessionListItem
 import com.example.bookstats.features.bookdetails.tabs.sessions.SessionsTabViewHolder
-import com.example.bookstats.features.library.viewmodel.LibraryViewModel
+import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.repository.BookWithSessions
 
 class ViewPagerAdapter(
-    private val viewModel: LibraryViewModel,
+    private val viewModel: BookDetailsViewModel,
     private val onStartSessionClick: () -> Unit
 ) :
     RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {
