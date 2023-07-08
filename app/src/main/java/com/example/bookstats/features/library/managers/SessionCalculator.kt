@@ -3,6 +3,8 @@ package com.example.bookstats.features.library.managers
 import com.example.bookstats.repository.Session
 
 interface SessionCalculator {
+    fun getHourMinAndSec(currentMs : Float) : String
+
     fun getAvgReadingTime(sessions: List<Session>): String
 
     fun getTotalReadTime(sessions: List<Session>): String

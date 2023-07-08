@@ -34,6 +34,11 @@ class Timer {
         paused = true
     }
 
+    fun reset() {
+        flow.value = 0F
+        currentMs = 0
+    }
+
     companion object {
         private const val DELAY_VALUE = 500
     }

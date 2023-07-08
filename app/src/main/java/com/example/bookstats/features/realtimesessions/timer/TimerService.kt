@@ -11,6 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
+import com.example.bookstats.app.ReadingStatsApp
+import com.example.bookstats.features.library.managers.SessionCalculator
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper.Companion.STOP_SERVICE
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceBinder
 import kotlinx.coroutines.CoroutineScope
@@ -19,9 +21,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TimerService : Service() {
-    private var timer: Timer? = null
-
-    private val notificationId = 1
 
     private var notificationBuilder: NotificationCompat.Builder? = null
     private val notificationManager: NotificationManagerCompat by lazy {
@@ -29,7 +28,10 @@ class TimerService : Service() {
     }
 
     @Inject
-    lateinit var context: Context
+    lateinit var sessionCalculator: SessionCalculator
+
+    @Inject
+    lateinit var timer: Timer
 
     inner class TimerServiceBinderImpl : Binder(),
         TimerServiceBinder {
@@ -43,27 +45,33 @@ class TimerService : Service() {
     }
 
     fun stopTimer() {
-        timer?.pause()
+        timer.pause()
     }
 
     fun startTimer() {
-        timer?.start()
+        timer.start()
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        (application as ReadingStatsApp).appComponent.inject(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action.equals(STOP_SERVICE)) {
+            timer.reset()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
             return START_NOT_STICKY
         }
 
         timer = Timer()
-        timer!!.start()
+        timer.start()
         CoroutineScope(Dispatchers.IO).launch {
-            timer!!.flow.collect { currentMs ->
+            timer.flow.collect { currentMs ->
                 val timerIntent = Intent(TIMER_ACTION)
                 timerIntent.putExtra(CURRENT_MS, currentMs)
-                startForeground(notificationId, createNotification(currentMs))
+                startForeground(NOTIFICATION_ID, createNotification(currentMs))
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(timerIntent)
                 sendBroadcast(timerIntent)
                 updateNotification(currentMs)
@@ -87,7 +95,7 @@ class TimerService : Service() {
 
         notificationBuilder = NotificationCompat.Builder(this, TIMER_CHANNEL)
             .setContentTitle(SESSION)
-            .setContentText(CURRENT_TIME + currentMs)
+            .setContentText(CURRENT_TIME + sessionCalculator.getHourMinAndSec(currentMs = currentMs))
             .setSmallIcon(R.drawable.app_icon)
             .setContentIntent(pendingIntent)
             .setColor(ContextCompat.getColor(this, R.color.dark_violet))
@@ -100,8 +108,8 @@ class TimerService : Service() {
     }
 
     private fun updateNotification(currentMs: Float) {
-        notificationBuilder?.setContentText(CURRENT_TIME + currentMs)
-        notificationManager.notify(notificationId, notificationBuilder?.build()!!)
+        notificationBuilder?.setContentText(CURRENT_TIME + sessionCalculator.getHourMinAndSec(currentMs = currentMs))
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder?.build()!!)
     }
 
     private fun createNotificationChannel() {
@@ -111,11 +119,6 @@ class TimerService : Service() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
-    }
-
-    override fun onDestroy() {
-        timer = null
-        super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -130,5 +133,6 @@ class TimerService : Service() {
         const val REALTIME_SESSIONS_FRAGMENT = "RealTimeSessionsFragment"
         const val SESSION = "Session"
         const val CURRENT_TIME = "Current Time: "
+        const val NOTIFICATION_ID = 1
     }
 }

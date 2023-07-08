@@ -4,6 +4,9 @@ import com.example.bookstats.repository.Session
 
 class SessionCalculatorImpl : SessionCalculator {
 
+    override fun getHourMinAndSec(currentMs: Float): String =
+        (currentMs.toInt() / 1000).toHoursMinutesAndSec()
+
     override fun getAvgReadingTime(sessions: List<Session>): String =
         calculateAvgReadingTime(sessions).toHoursMinutesAndSec()
 
