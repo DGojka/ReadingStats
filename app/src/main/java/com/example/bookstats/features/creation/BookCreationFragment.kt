@@ -21,7 +21,7 @@ import coil.load
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.example.bookstats.R
-import com.example.bookstats.app.ReadingStatsApp
+import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookCreationBinding
 import com.example.bookstats.features.scanner.ScannerActivity
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +41,7 @@ class BookCreationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        (activity?.application as ReadingStatsApp).appComponent.inject(this)
+        appComponent.inject(this)
         _binding = FragmentBookCreationBinding.inflate(inflater, container, false)
         return binding.root
     }

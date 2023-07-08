@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
-import com.example.bookstats.app.ReadingStatsApp
+import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.library.managers.SessionDialogManager
 import com.example.bookstats.features.library.tabs.ViewPagerAdapter
@@ -45,7 +45,7 @@ class BookDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        (activity?.application as ReadingStatsApp).appComponent.inject(this)
+        appComponent.inject(this)
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
         viewPagerAdapter = ViewPagerAdapter(
             viewModel,

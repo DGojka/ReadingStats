@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
-import com.example.bookstats.app.ReadingStatsApp
+import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentLibraryBinding
 import com.example.bookstats.features.library.list.BookAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
@@ -33,7 +33,8 @@ class LibraryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        (activity?.application as ReadingStatsApp).appComponent.inject(this)
+        appComponent.inject(this)
+
         _binding = FragmentLibraryBinding.inflate(inflater, container, false)
         bookAdapter = BookAdapter(onBookClick = {
             viewModel.moreDetails(
