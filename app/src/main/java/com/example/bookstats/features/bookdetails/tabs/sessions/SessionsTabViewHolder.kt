@@ -6,6 +6,6 @@ import com.example.bookstats.databinding.TabSessionsBinding
 class SessionsTabViewHolder(private val binding: TabSessionsBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(sessionList: List<SessionListItem>) {
-        binding.recyclerView.adapter = SessionAdapter(sessionList = sessionList)
+        binding.recyclerView.adapter = SessionAdapter(sessionList = sessionList.asReversed())
     }
 }
