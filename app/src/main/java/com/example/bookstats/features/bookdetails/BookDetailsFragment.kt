@@ -12,13 +12,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.bookstats.R
+import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
+import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.bookdetails.managers.SessionDialogManager
 import com.example.bookstats.features.bookdetails.tabs.ViewPagerAdapter
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModelFactory
-import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
@@ -34,9 +35,6 @@ class BookDetailsFragment : Fragment() {
     lateinit var viewModelFactory: BookDetailsViewModelFactory
     private lateinit var viewModel: BookDetailsViewModel
 
-    @Inject
-    lateinit var currentBookDb: CurrentBookDb
-
     private lateinit var viewPagerAdapter: ViewPagerAdapter
 
     override fun onCreateView(
@@ -44,13 +42,10 @@ class BookDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         appComponent.inject(this)
+
         viewModel = ViewModelProvider(this, viewModelFactory)[BookDetailsViewModel::class.java]
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
-        viewPagerAdapter = ViewPagerAdapter(
-            viewModel
-        ) {
-            findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
-        }
+        initViewPagerAdapter()
         viewModel.refreshBookClicked()
         initViewPager()
         return binding.root
@@ -69,7 +64,6 @@ class BookDetailsFragment : Fragment() {
             viewModel.uiState.collect { state ->
                 with(state) {
                     book?.let { book ->
-                        currentBookDb.updateCurrentBookId(book.id)
                         viewPagerAdapter.updateBookInfo(book)
                         viewPagerAdapter.updateSessionsList(
                             viewModel.mapSessionsToSessionListItem(
@@ -86,6 +80,14 @@ class BookDetailsFragment : Fragment() {
         binding.bookProgressbar.progress = viewModel.getBookPercentage()
         binding.percentageTextView.text =
             getString(R.string.book_percentage, viewModel.getBookPercentage())
+    }
+
+    private fun initViewPagerAdapter() {
+        viewPagerAdapter = ViewPagerAdapter(
+            viewModel
+        ) {
+            findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
+        }
     }
 
     private fun initViewPager() {
@@ -140,6 +142,16 @@ class BookDetailsFragment : Fragment() {
                     .show()
             })
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hideBottomNavigationView() //temp?
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showBottomNavigationView()
     }
 
     companion object {

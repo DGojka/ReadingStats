@@ -12,15 +12,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
+import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
+import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
-import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerBroadcastListener
 import com.example.bookstats.features.realtimesessions.viewmodel.Error
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,16 +32,11 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
     lateinit var viewModelFactory: RealTimeSessionsViewModelFactory
     private lateinit var viewModel: RealTimeSessionsViewModel
 
-    @Inject
-    lateinit var currentBookDb: CurrentBookDb
-
     private lateinit var endSessionDialog: AlertDialog
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            viewModel.pauseTimer()
-            viewModel.endSessionWithoutSaving()
-            findNavController().popBackStack()
+            exitWithoutSaving()
         }
     }
 
@@ -51,10 +46,12 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         savedInstanceState: Bundle?
     ): View {
         appComponent.inject(this)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
-            View.GONE
+        hideBottomNavigationView()
         _binding = FragmentRealTimeSessionBinding.inflate(inflater, container, false)
-       requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            onBackPressedCallback
+        )
         return binding.root
     }
 
@@ -63,9 +60,16 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         viewModel = ViewModelProvider(this, viewModelFactory)[RealTimeSessionsViewModel::class.java]
         viewModel.startSession()
         initStopButton()
+        initBackButton()
         initPauseResumeButton()
         initShowPagesDialog()
         observeState()
+    }
+
+    private fun initBackButton() {
+        binding.backButton.setOnClickListener {
+            exitWithoutSaving()
+        }
     }
 
     private fun observeState() {
@@ -145,7 +149,6 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
                 if (pagesReadTextView.text.toString().isNotEmpty()) {
                     viewModel.stopSession()
                     viewModel.saveSession(
-                        bookId = currentBookDb.getCurrentBookId(),
                         newCurrentPage = pagesReadTextView.text.toString().toInt()
                     ) {
                         endSessionDialog.dismiss()
@@ -157,11 +160,16 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         endSessionDialog = dialogBuilder.create()
     }
 
+    private fun exitWithoutSaving(){
+        viewModel.pauseTimer()
+        viewModel.endSessionWithoutSaving()
+        findNavController().popBackStack()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
-            View.VISIBLE
-       onBackPressedCallback.remove()
+        showBottomNavigationView()
+        onBackPressedCallback.remove()
     }
 
     override fun onTimerBroadcastReceiver(currentMs: Float) {

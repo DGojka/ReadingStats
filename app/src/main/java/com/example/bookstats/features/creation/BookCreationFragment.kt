@@ -21,6 +21,8 @@ import coil.load
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.example.bookstats.R
+import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
+import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookCreationBinding
 import com.example.bookstats.features.scanner.ScannerActivity
@@ -70,6 +72,7 @@ class BookCreationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[BookCreationViewModel::class.java]
+        hideBottomNavigationView()
         initEditTextListeners()
         initSaveBookButtonListener()
         observeState()
@@ -168,6 +171,11 @@ class BookCreationFragment : Fragment() {
 
         val result = (loader.execute(request) as SuccessResult).drawable
         return (result as BitmapDrawable).bitmap
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showBottomNavigationView()
     }
 
     companion object {
