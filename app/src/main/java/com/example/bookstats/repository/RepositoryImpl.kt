@@ -8,7 +8,6 @@ import com.example.bookstats.database.entity.BookWithSessionsEntity
 import com.example.bookstats.database.entity.SessionEntity
 import com.example.bookstats.network.ApiService
 import com.example.bookstats.network.VolumeInfo
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiService) : Repository {
@@ -79,27 +78,22 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
         if (sessions.isEmpty()) {
             return 0
         }
-
-        val currentDate = LocalDateTime.now().toLocalDate()
-        var isFirstDayTaken = false
+        val date = LocalDateTime.now().toLocalDate().minusDays(1)
         var streak = 0
-        var lastDate: LocalDate? = null
+        var isFirstDayTaken = false
+        var lastDate = date
 
-        sessions.reversed().forEach { session ->
-            val sessionDate = session.sessionStartDate.toLocalDate()
-
-            if (sessionDate == currentDate.minusDays(1) && !isFirstDayTaken) {
+        for (session in sessions.asReversed()) {
+            if (!isFirstDayTaken && date.plusDays(1) == session.sessionStartDate.toLocalDate()) {
+                streak++
                 isFirstDayTaken = true
+                continue
+            }
+            if (lastDate == session.sessionStartDate.toLocalDate()) {
                 streak++
-                lastDate = sessionDate
-            } else if (sessionDate == currentDate || (lastDate != null && sessionDate == lastDate!!.minusDays(
-                    1
-                ))
-            ) {
-                streak++
-                lastDate = sessionDate
-            } else {
-                return@forEach
+                lastDate = lastDate.minusDays(1)
+            } else if (lastDate.plusDays(1) != session.sessionStartDate.toLocalDate()) {
+                break
             }
         }
         return streak

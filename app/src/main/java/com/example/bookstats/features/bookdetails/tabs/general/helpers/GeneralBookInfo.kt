@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.tabs.general.helpers
+package com.example.bookstats.features.bookdetails.tabs.general.helpers
 
 import android.graphics.Bitmap
 

@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookstats.features.library.managers.SessionCalculator
+import com.example.bookstats.features.bookdetails.managers.SessionCalculator
+import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
+import com.example.bookstats.features.realtimesessions.timer.TimerService.Companion.CURRENT_MS
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.Session
@@ -20,6 +22,7 @@ import javax.inject.Inject
 class RealTimeSessionsViewModel @Inject constructor(
     private val repository: Repository,
     private val sessionCalculator: SessionCalculator,
+    private val bookDb: CurrentBookDb,
     private val timerServiceHelper: TimerServiceHelper
 ) :
     ViewModel() {
@@ -32,7 +35,7 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     private val timerUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val currentMs = intent?.getFloatExtra("CURRENT_MS", 0f) ?: 0F
+            val currentMs = intent?.getFloatExtra(CURRENT_MS, 0f) ?: 0F
             _uiState.value = _uiState.value.copy(currentMs = currentMs)
         }
     }
@@ -63,14 +66,14 @@ class RealTimeSessionsViewModel @Inject constructor(
         sessionEndDate = LocalDateTime.now()
     }
 
-    fun endSessionWithoutSaving(){
+    fun endSessionWithoutSaving() {
         timerServiceHelper.unregisterTimerUpdateReceiver(timerUpdateReceiver)
         timerServiceHelper.stopService()
     }
 
-    fun saveSession(bookId: Long, newCurrentPage: Int, navigate: () -> Unit) {
+    fun saveSession(newCurrentPage: Int, navigate: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            val book = repository.getBookWithSessionsById(bookId)
+            val book = repository.getBookWithSessionsById(bookDb.getCurrentBookId())
             if (sessionCalculator.isNewCurrentPageGreaterThanOld(
                     newCurrentPage = newCurrentPage,
                     oldCurrentPage = book.currentPage
@@ -79,7 +82,7 @@ class RealTimeSessionsViewModel @Inject constructor(
             ) {
                 timerServiceHelper.stopService()
                 repository.addSessionToTheBook(
-                    bookId,
+                    bookDb.getCurrentBookId(),
                     Session(
                         sessionTimeSeconds = (uiState.value.currentMs / 1000).toInt(),
                         pagesRead = sessionCalculator.calculatePagesReadInSession(

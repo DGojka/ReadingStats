@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.tabs.sessions
+package com.example.bookstats.features.bookdetails.tabs.sessions
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

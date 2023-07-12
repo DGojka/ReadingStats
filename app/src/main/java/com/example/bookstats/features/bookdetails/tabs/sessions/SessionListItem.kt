@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.tabs.sessions
+package com.example.bookstats.features.bookdetails.tabs.sessions
 
 data class SessionListItem(
     var date: String,

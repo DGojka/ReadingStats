@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.managers
+package com.example.bookstats.features.bookdetails.managers
 
 import com.example.bookstats.repository.Session
 

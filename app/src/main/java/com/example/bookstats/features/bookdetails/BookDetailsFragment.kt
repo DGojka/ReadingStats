@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.ui
+package com.example.bookstats.features.bookdetails
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.bookstats.R
-import com.example.bookstats.activity.MainActivity
+import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
+import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
-import com.example.bookstats.features.library.managers.SessionDialogManager
-import com.example.bookstats.features.library.tabs.ViewPagerAdapter
-import com.example.bookstats.features.library.viewmodel.LibraryViewModel
-import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
-import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
+import com.example.bookstats.features.bookdetails.managers.SessionDialogManager
+import com.example.bookstats.features.bookdetails.tabs.ViewPagerAdapter
+import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
+import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModelFactory
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
@@ -32,11 +32,8 @@ class BookDetailsFragment : Fragment() {
     private val binding get() = _binding!!
 
     @Inject
-    lateinit var viewModelFactory: LibraryViewModelFactory
-    private val viewModel by viewModels<LibraryViewModel>({ activity as MainActivity }) { viewModelFactory }
-
-    @Inject
-    lateinit var currentBookDb: CurrentBookDb
+    lateinit var viewModelFactory: BookDetailsViewModelFactory
+    private lateinit var viewModel: BookDetailsViewModel
 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
 
@@ -45,12 +42,10 @@ class BookDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         appComponent.inject(this)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[BookDetailsViewModel::class.java]
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
-        viewPagerAdapter = ViewPagerAdapter(
-            viewModel,
-            onStartSessionClick = {
-                findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
-            })
+        initViewPagerAdapter()
         viewModel.refreshBookClicked()
         initViewPager()
         return binding.root
@@ -68,8 +63,7 @@ class BookDetailsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 with(state) {
-                    bookClicked?.let { book ->
-                        currentBookDb.updateCurrentBookId(book.id)
+                    book?.let { book ->
                         viewPagerAdapter.updateBookInfo(book)
                         viewPagerAdapter.updateSessionsList(
                             viewModel.mapSessionsToSessionListItem(
@@ -86,6 +80,14 @@ class BookDetailsFragment : Fragment() {
         binding.bookProgressbar.progress = viewModel.getBookPercentage()
         binding.percentageTextView.text =
             getString(R.string.book_percentage, viewModel.getBookPercentage())
+    }
+
+    private fun initViewPagerAdapter() {
+        viewPagerAdapter = ViewPagerAdapter(
+            viewModel
+        ) {
+            findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
+        }
     }
 
     private fun initViewPager() {
@@ -130,7 +132,7 @@ class BookDetailsFragment : Fragment() {
 
     private fun initDeleteButton() {
         binding.delete.setOnClickListener {
-            viewModel.deleteBook(navigate = {
+            viewModel.deleteBook(onDelete = {
                 findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
                 Toast.makeText(
                     requireContext(),
@@ -140,6 +142,16 @@ class BookDetailsFragment : Fragment() {
                     .show()
             })
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hideBottomNavigationView() //temp?
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showBottomNavigationView()
     }
 
     companion object {

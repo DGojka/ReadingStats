@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.managers.helpers
+package com.example.bookstats.features.bookdetails.managers.helpers
 
 import java.time.LocalDate
 

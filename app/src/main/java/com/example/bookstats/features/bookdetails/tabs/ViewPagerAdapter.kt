@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.tabs
+package com.example.bookstats.features.bookdetails.tabs
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,15 +7,15 @@ import androidx.viewbinding.ViewBinding
 import com.example.bookstats.databinding.TabGeneralBinding
 import com.example.bookstats.databinding.TabSessionsBinding
 import com.example.bookstats.databinding.TabSettingsBinding
-import com.example.bookstats.features.library.tabs.general.helpers.GeneralBookInfo
-import com.example.bookstats.features.library.tabs.general.viewholders.GeneralTabViewHolder
-import com.example.bookstats.features.library.tabs.sessions.SessionListItem
-import com.example.bookstats.features.library.tabs.sessions.SessionsTabViewHolder
-import com.example.bookstats.features.library.viewmodel.LibraryViewModel
+import com.example.bookstats.features.bookdetails.tabs.general.helpers.GeneralBookInfo
+import com.example.bookstats.features.bookdetails.tabs.general.viewholders.GeneralTabViewHolder
+import com.example.bookstats.features.bookdetails.tabs.sessions.SessionListItem
+import com.example.bookstats.features.bookdetails.tabs.sessions.SessionsTabViewHolder
+import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.repository.BookWithSessions
 
 class ViewPagerAdapter(
-    private val viewModel: LibraryViewModel,
+    private val viewModel: BookDetailsViewModel,
     private val onStartSessionClick: () -> Unit
 ) :
     RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {

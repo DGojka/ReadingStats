@@ -1,4 +1,4 @@
-package com.example.bookstats.features.library.managers
+package com.example.bookstats.features.bookdetails.managers
 
 import android.app.AlertDialog
 import android.view.LayoutInflater
@@ -7,12 +7,12 @@ import android.widget.NumberPicker
 import androidx.core.widget.addTextChangedListener
 import com.example.bookstats.R
 import com.example.bookstats.databinding.AddingSessionDialogBinding
-import com.example.bookstats.features.library.viewmodel.LibraryViewModel
+import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import java.time.LocalDate
 
 class SessionDialogManager(
     private val layoutInflater: LayoutInflater,
-    private val viewModel: LibraryViewModel
+    private val viewModel: BookDetailsViewModel
 ) {
     private var dialogBinding = AddingSessionDialogBinding.inflate(layoutInflater)
 
