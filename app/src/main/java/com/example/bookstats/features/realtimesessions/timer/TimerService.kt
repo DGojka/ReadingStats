@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.bookstats.R
@@ -21,11 +20,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TimerService : Service() {
-
-    private var notificationBuilder: NotificationCompat.Builder? = null
-    private val notificationManager: NotificationManagerCompat by lazy {
-        NotificationManagerCompat.from(applicationContext)
-    }
 
     @Inject
     lateinit var sessionCalculator: SessionCalculator
@@ -64,24 +58,22 @@ class TimerService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
-
         timer = Timer()
         timer.start()
+        startForeground(NOTIFICATION_ID, createNotification())
         CoroutineScope(Dispatchers.IO).launch {
             timer.flow.collect { currentMs ->
                 val timerIntent = Intent(TIMER_ACTION)
                 timerIntent.putExtra(CURRENT_MS, currentMs)
-                startForeground(NOTIFICATION_ID, createNotification(currentMs))
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(timerIntent)
                 sendBroadcast(timerIntent)
-                updateNotification(currentMs)
             }
         }
 
         return START_STICKY
     }
 
-    private fun createNotification(currentMs: Float): Notification {
+    private fun createNotification(): Notification {
         createNotificationChannel()
 
         val notificationIntent = Intent(this, MainActivity::class.java)
@@ -93,9 +85,9 @@ class TimerService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        notificationBuilder = NotificationCompat.Builder(this, TIMER_CHANNEL)
-            .setContentTitle(SESSION)
-            .setContentText(CURRENT_TIME + sessionCalculator.getHourMinAndSec(currentMs = currentMs))
+       val notificationBuilder = NotificationCompat.Builder(this, TIMER_CHANNEL)
+            .setContentTitle(applicationContext.resources.getString(R.string.session))
+            .setContentText(applicationContext.resources.getString(R.string.session_in_progress))
             .setSmallIcon(R.drawable.app_icon)
             .setContentIntent(pendingIntent)
             .setColor(ContextCompat.getColor(this, R.color.dark_violet))
@@ -104,16 +96,10 @@ class TimerService : Service() {
             .setSound(null)
             .setOnlyAlertOnce(true)
 
-        return notificationBuilder!!.build()
+        return notificationBuilder.build()
     }
-
-    private fun updateNotification(currentMs: Float) {
-        notificationBuilder?.setContentText(CURRENT_TIME + sessionCalculator.getHourMinAndSec(currentMs = currentMs))
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder?.build()!!)
-    }
-
     private fun createNotificationChannel() {
-        val importance = NotificationManager.IMPORTANCE_HIGH
+        val importance = NotificationManager.IMPORTANCE_LOW
         val channel = NotificationChannel(TIMER_CHANNEL, TIMER_CHANNEL, importance)
 
         val notificationManager =
@@ -131,8 +117,6 @@ class TimerService : Service() {
         const val TIMER_ACTION = "TIMER_ACTION"
         const val FRAGMENT_TAG = "FRAGMENT_TAG"
         const val REALTIME_SESSIONS_FRAGMENT = "RealTimeSessionsFragment"
-        const val SESSION = "Session"
-        const val CURRENT_TIME = "Current Time: "
         const val NOTIFICATION_ID = 1
     }
 }

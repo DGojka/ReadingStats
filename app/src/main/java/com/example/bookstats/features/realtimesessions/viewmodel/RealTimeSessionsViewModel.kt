@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.bookdetails.managers.SessionCalculator
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
+import com.example.bookstats.features.realtimesessions.timer.TimerService.Companion.CURRENT_MS
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.Session
@@ -34,7 +35,7 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     private val timerUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val currentMs = intent?.getFloatExtra("CURRENT_MS", 0f) ?: 0F
+            val currentMs = intent?.getFloatExtra(CURRENT_MS, 0f) ?: 0F
             _uiState.value = _uiState.value.copy(currentMs = currentMs)
         }
     }

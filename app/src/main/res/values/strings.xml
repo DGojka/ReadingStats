@@ -60,6 +60,8 @@
     <string name="current_page_in_this_session">Type the page you stopped reading on</string>
     <string name="page_is_too_high">Current page is higher than book total pages</string>
     <string name="page_must_be_higher">Current page must be higher than %s</string>
+    <string name="session">Session</string>
+    <string name="session_in_progress">Session in progress… Focus on reading book.</string>
 
     <string name="temp">temp</string>
 </resources>
