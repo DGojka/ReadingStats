@@ -26,7 +26,7 @@ class AppModule(private val app: Application) {
             app.applicationContext,
             AppDatabase::class.java,
             AppDatabase.NAME
-        ).fallbackToDestructiveMigration().build()
+        ).addMigrations(AppDatabase.MIGRATION_5_6).build()
     }
 
     @Singleton
@@ -61,7 +61,7 @@ class AppModule(private val app: Application) {
 
     @Singleton
     @Provides
-    fun provideTimer(): Timer{
+    fun provideTimer(): Timer {
         return Timer()
     }
 }
