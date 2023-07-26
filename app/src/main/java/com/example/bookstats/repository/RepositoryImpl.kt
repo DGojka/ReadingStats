@@ -111,6 +111,13 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
         }
     }
 
+    override suspend fun deleteAllBooks() {
+        val allBooks = getBooksWithSessions()
+        allBooks.forEach {
+            deleteBookWithSessions(it.id)
+        }
+    }
+
     private fun BookWithSessionsEntity.mapToBookWithSession(): BookWithSessions {
         val sessionsMapped: List<Session> = this.sessions
             .map {

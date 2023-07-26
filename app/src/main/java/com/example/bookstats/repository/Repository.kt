@@ -19,4 +19,6 @@ interface Repository {
     suspend fun getCurrentStreak(): Int
 
     suspend fun getBookByISBN(isbn: String) : VolumeInfo?
+
+    suspend fun deleteAllBooks()
 }

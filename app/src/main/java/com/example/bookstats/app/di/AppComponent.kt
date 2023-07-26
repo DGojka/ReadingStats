@@ -5,6 +5,7 @@ import android.app.Service
 import androidx.fragment.app.Fragment
 import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.ReadingStatsApp
+import com.example.bookstats.features.AchievementsFragment
 import com.example.bookstats.features.creation.BookCreationFragment
 import com.example.bookstats.features.bookdetails.BookDetailsFragment
 import com.example.bookstats.features.library.ui.LibraryFragment
@@ -31,6 +32,8 @@ interface AppComponent {
     fun inject(realTimeSessionFragment: RealTimeSessionFragment)
 
     fun inject(summaryFragment: SummaryFragment)
+
+    fun inject(achievementsFragment: AchievementsFragment)
 
     companion object {
         val Activity.appComponent: AppComponent
