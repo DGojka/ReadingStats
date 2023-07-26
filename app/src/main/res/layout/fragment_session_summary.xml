@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_violet">
+
+    <TextView
+        android:id="@+id/session_ended"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:text="@string/session_ended"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/read_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40sp"
+        android:layout_marginBottom="60dp"
+        android:text="@string/read_time"
+        android:textColor="@color/whisper"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/read_time_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:textColor="@color/violet"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="@id/read_time"
+        app:layout_constraintRight_toRightOf="@id/read_time"
+        app:layout_constraintTop_toBottomOf="@id/read_time"
+        tools:text="28 min" />
+
+    <TextView
+        android:id="@+id/pages_read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40sp"
+        android:layout_marginBottom="60dp"
+        android:text="@string/pages_read"
+        android:textColor="@color/whisper"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pages_read_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:textColor="@color/violet"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="@id/pages_read"
+        app:layout_constraintRight_toRightOf="@id/pages_read"
+        app:layout_constraintTop_toBottomOf="@id/pages_read"
+        tools:text="87" />
+
+    <TextView
+        android:id="@+id/avg_pages_hour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="@string/pages_h"
+        android:textColor="@color/whisper"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/read_time"
+        app:layout_constraintRight_toRightOf="@id/read_time"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/avg_pages_hour_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/violet"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="@id/avg_pages_hour"
+        app:layout_constraintRight_toRightOf="@id/avg_pages_hour"
+        app:layout_constraintTop_toBottomOf="@id/avg_pages_hour"
+        tools:text="46" />
+
+    <TextView
+        android:id="@+id/avg_min_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="@string/min_page"
+        android:textColor="@color/whisper"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/pages_read"
+        app:layout_constraintRight_toRightOf="@id/pages_read"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/avg_min_page_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/violet"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="@id/avg_min_page"
+        app:layout_constraintRight_toRightOf="@id/avg_min_page"
+        app:layout_constraintTop_toBottomOf="@id/avg_min_page"
+        tools:text="1.24" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/black"
+        android:text="@string/finish_summary"
+        android:id="@+id/finish_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+    </Button>
+</androidx.constraintlayout.widget.ConstraintLayout>

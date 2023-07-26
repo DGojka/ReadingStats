@@ -1,6 +1,6 @@
 package com.example.bookstats.features.bookdetails.tabs.sessions
 
-data class SessionListItem(
+data class SessionDetails(
     var date: String,
     var pagesRead: String,
     var readTime: String,

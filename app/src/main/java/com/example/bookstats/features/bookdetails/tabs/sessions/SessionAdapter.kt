@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookstats.databinding.SessionListItemBinding
 
-class SessionAdapter(private var sessionList: List<SessionListItem>) :
+class SessionAdapter(private var sessionList: List<SessionDetails>) :
     RecyclerView.Adapter<SessionAdapter.SessionViewHolder>() {
 
     inner class SessionViewHolder(private val binding: SessionListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(session: SessionListItem) {
+        fun bind(session: SessionDetails) {
             with(binding) {
                 session.apply {
                     pagesReadValue.text = pagesRead

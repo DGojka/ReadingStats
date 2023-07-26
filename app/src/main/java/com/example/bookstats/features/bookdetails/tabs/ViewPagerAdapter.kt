@@ -9,7 +9,7 @@ import com.example.bookstats.databinding.TabSessionsBinding
 import com.example.bookstats.databinding.TabSettingsBinding
 import com.example.bookstats.features.bookdetails.tabs.general.helpers.GeneralBookInfo
 import com.example.bookstats.features.bookdetails.tabs.general.viewholders.GeneralTabViewHolder
-import com.example.bookstats.features.bookdetails.tabs.sessions.SessionListItem
+import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
 import com.example.bookstats.features.bookdetails.tabs.sessions.SessionsTabViewHolder
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.repository.BookWithSessions
@@ -20,7 +20,7 @@ class ViewPagerAdapter(
 ) :
     RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {
     private var generalBookInfo = GeneralBookInfo()
-    private var sessionsList: List<SessionListItem> = mutableListOf()
+    private var sessionsList: List<SessionDetails> = mutableListOf()
 
     inner class ViewHolder(viewBinding: ViewBinding) : RecyclerView.ViewHolder(viewBinding.root)
 
@@ -70,7 +70,7 @@ class ViewPagerAdapter(
         }
     }
 
-    fun updateSessionsList(sessions: List<SessionListItem>) {
+    fun updateSessionsList(sessions: List<SessionDetails>) {
         sessionsList = sessions
         notifyDataSetChanged()
     }
