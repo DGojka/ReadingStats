@@ -68,8 +68,7 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
             with(_uiState.value) {
                 repository.addBookWithSessions(
                     BookWithSessions(
-                        bookName, bookAuthor, image!!, numberOfPages, 0, mutableListOf()
-                    )
+                        bookName, bookAuthor, image!!, numberOfPages, 0, mutableListOf(), mutableListOf())
                 )
                 Log.i(logTag, "Saved new book: $bookName")
                 _uiState.value = copy(bookCreated = true)

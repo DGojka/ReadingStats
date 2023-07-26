@@ -8,6 +8,7 @@ data class BookWithSessions(
     val image: Bitmap,
     val totalPages: Int,
     val currentPage: Int,
+    val filters: List<String>,
     val sessions: List<Session>
 ) {
     var id: Long = 0

@@ -25,7 +25,17 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
         val bookId = generateBookId()
         with(book) {
             db.bookDao()
-                .add(BookEntity(bookId, name, author, totalPages, currentPage, bookImage = image))
+                .add(
+                    BookEntity(
+                        bookId,
+                        name,
+                        author,
+                        totalPages,
+                        currentPage,
+                        bookImage = image,
+                        filters = filters
+                    )
+                )
         }
     }
 
@@ -39,7 +49,8 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
                     bookAuthor,
                     totalPages,
                     currentPage + session.pagesRead,
-                    bookImage
+                    bookImage,
+                    filters
                 )
             )
         }
@@ -130,6 +141,7 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
                 bookImage,
                 totalPages,
                 currentPage,
+                filters,
                 sessionsMapped
             ).apply { id = bookId }
         }
