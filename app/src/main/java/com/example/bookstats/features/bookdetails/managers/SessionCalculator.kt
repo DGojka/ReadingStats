@@ -1,5 +1,6 @@
 package com.example.bookstats.features.bookdetails.managers
 
+import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
 import com.example.bookstats.repository.Session
 
 interface SessionCalculator {
@@ -24,4 +25,6 @@ interface SessionCalculator {
     fun getPagesPerHourInSession(session: Session): String
 
     fun getMinPerPageInSession(session: Session): String
+
+    fun calculateSessionDetails(session: Session): SessionDetails
 }

@@ -66,7 +66,7 @@ class BookDetailsFragment : Fragment() {
                     book?.let { book ->
                         viewPagerAdapter.updateBookInfo(book)
                         viewPagerAdapter.updateSessionsList(
-                            viewModel.mapSessionsToSessionListItem(
+                            viewModel.mapSessionsToSessionDetails(
                                 book.sessions
                             )
                         )

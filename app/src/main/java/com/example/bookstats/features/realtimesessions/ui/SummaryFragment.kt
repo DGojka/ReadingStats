@@ -43,14 +43,14 @@ class SummaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeState()
         binding.finishButton.setOnClickListener {
-            findNavController().popBackStack(R.id.bookDetailsFragment,false)
+            findNavController().popBackStack(R.id.bookDetailsFragment, false)
         }
     }
 
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                with(viewModel.mapSessionsToSessionListItem(session = state.session!!)){
+                with(viewModel.getSessionDetails(session = state.session!!)) {
                     binding.avgMinPageValue.text = avgMinPerPage
                     binding.pagesReadValue.text = pagesRead
                     binding.avgPagesHourValue.text = avgPagesPerHour

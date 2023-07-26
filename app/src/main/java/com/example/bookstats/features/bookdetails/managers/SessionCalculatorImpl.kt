@@ -1,6 +1,8 @@
 package com.example.bookstats.features.bookdetails.managers
 
+import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
 import com.example.bookstats.repository.Session
+import java.time.format.DateTimeFormatter
 
 class SessionCalculatorImpl : SessionCalculator {
 
@@ -35,6 +37,20 @@ class SessionCalculatorImpl : SessionCalculator {
         val totalMinutes = hours * 60 + minutes
         return totalMinutes * 60
     }
+
+    override fun calculateSessionDetails(session: Session): SessionDetails =
+        with(session) {
+            SessionDetails(
+                date = sessionStartDate.toLocalDate()
+                    .format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
+                pagesRead = pagesRead.toString(),
+                readTime = convertSecondsToMinutesAndSeconds(
+                    sessionTimeSeconds
+                ),
+                avgMinPerPage = getMinPerPageInSession(this),
+                getPagesPerHourInSession(this)
+            )
+        }
 
     override fun convertSecondsToMinutesAndSeconds(sessionTimeSeconds: Int): String =
         sessionTimeSeconds.toHoursMinutesAndSec()
@@ -107,5 +123,6 @@ class SessionCalculatorImpl : SessionCalculator {
         private const val MINUTE_IN_SECONDS = 60
         private const val HOUR_IN_SECONDS = 3600
         private const val DECIMAL_FORMAT = "%.2f"
+        private const val DATE_FORMAT = "dd.MM.yyyy"
     }
 }

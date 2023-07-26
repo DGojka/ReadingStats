@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.bookdetails.managers.SessionCalculator
 import com.example.bookstats.features.bookdetails.managers.helpers.DialogDetails
-import com.example.bookstats.features.bookdetails.tabs.sessions.SessionListItem
+import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
 import com.example.bookstats.features.bookdetails.viewmodel.uistate.BookDetailsUiState
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.repository.Repository
@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class BookDetailsViewModel @Inject constructor(
@@ -104,20 +103,9 @@ class BookDetailsViewModel @Inject constructor(
     fun getAvgPagesPerHour(sessions: List<Session>): String =
         sessionCalculator.getAvgPagesPerHour(sessions)
 
-    fun mapSessionsToSessionListItem(sessions: List<Session>): List<SessionListItem> =
+    fun mapSessionsToSessionDetails(sessions: List<Session>): List<SessionDetails> =
         sessions.map {
-            with(it) {
-                SessionListItem(
-                    date = sessionStartDate.toLocalDate()
-                        .format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
-                    pagesRead = pagesRead.toString(),
-                    readTime = sessionCalculator.convertSecondsToMinutesAndSeconds(
-                        sessionTimeSeconds
-                    ),
-                    avgMinPerPage = sessionCalculator.getMinPerPageInSession(it),
-                    sessionCalculator.getPagesPerHourInSession(it)
-                )
-            }
+            sessionCalculator.calculateSessionDetails(it)
         }
 
     fun refreshBookClicked() {
@@ -173,9 +161,5 @@ class BookDetailsViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    companion object {
-        const val DATE_FORMAT = "dd.MM.yyyy"
     }
 }

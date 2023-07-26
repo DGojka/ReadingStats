@@ -6,8 +6,7 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.bookdetails.managers.SessionCalculator
-import com.example.bookstats.features.bookdetails.tabs.sessions.SessionListItem
-import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
+import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.features.realtimesessions.timer.TimerService.Companion.CURRENT_MS
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class RealTimeSessionsViewModel @Inject constructor(
@@ -95,7 +93,7 @@ class RealTimeSessionsViewModel @Inject constructor(
                         sessionEndDate = sessionEndDate
                     )
                 )
-                if(_uiState.value.session!=null){
+                if (_uiState.value.session != null) {
                     repository.addSessionToTheBook(
                         bookDb.getCurrentBookId(),
                         _uiState.value.session!!
@@ -127,18 +125,7 @@ class RealTimeSessionsViewModel @Inject constructor(
         )
     }
 
-    fun mapSessionsToSessionListItem(session: Session): SessionListItem =
-        with(session) {
-            SessionListItem(
-                date = sessionStartDate.toLocalDate()
-                    .format(DateTimeFormatter.ofPattern(BookDetailsViewModel.DATE_FORMAT)),
-                pagesRead = pagesRead.toString(),
-                readTime = sessionCalculator.convertSecondsToMinutesAndSeconds(
-                    sessionTimeSeconds
-                ),
-                avgMinPerPage = sessionCalculator.getMinPerPageInSession(this),
-                sessionCalculator.getPagesPerHourInSession(this)
-            )
-        }
+    fun getSessionDetails(session: Session): SessionDetails =
+        sessionCalculator.calculateSessionDetails(session)
 
 }
