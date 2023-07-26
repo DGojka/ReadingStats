@@ -50,10 +50,22 @@
     <fragment
         android:id="@+id/sessionFragment"
         android:name="com.example.bookstats.features.realtimesessions.ui.RealTimeSessionFragment"
-        tools:layout="@layout/fragment_real_time_session"
-        >
+        tools:layout="@layout/fragment_real_time_session">
         <action
             android:id="@+id/action_to_bookDetailsFragment"
+            app:destination="@id/bookDetailsFragment" />
+        <action
+            android:id="@+id/realtimesession_to_summary"
+            app:destination="@id/summaryFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="com.example.bookstats.features.realtimesessions.ui.SummaryFragment"
+        tools:layout="@layout/fragment_session_summary">
+        <action
+            android:id="@+id/action_summary_to_bookDetailsFragment"
             app:destination="@id/bookDetailsFragment" />
     </fragment>
 

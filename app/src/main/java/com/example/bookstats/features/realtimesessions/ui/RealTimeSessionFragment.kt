@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
+import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
-import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
@@ -30,7 +30,7 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
 
     @Inject
     lateinit var viewModelFactory: RealTimeSessionsViewModelFactory
-    private lateinit var viewModel: RealTimeSessionsViewModel
+    private val viewModel by viewModels<RealTimeSessionsViewModel>({ activity as MainActivity }) { viewModelFactory }
 
     private lateinit var endSessionDialog: AlertDialog
 
@@ -57,7 +57,6 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[RealTimeSessionsViewModel::class.java]
         viewModel.startSession()
         initStopButton()
         initBackButton()
@@ -152,7 +151,7 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
                         newCurrentPage = pagesReadTextView.text.toString().toInt()
                     ) {
                         endSessionDialog.dismiss()
-                        findNavController().popBackStack()
+                        findNavController().navigate(R.id.realtimesession_to_summary)
                     }
                 }
             }
@@ -168,7 +167,6 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        showBottomNavigationView()
         onBackPressedCallback.remove()
     }
 

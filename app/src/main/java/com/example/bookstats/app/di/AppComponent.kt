@@ -10,6 +10,7 @@ import com.example.bookstats.features.bookdetails.BookDetailsFragment
 import com.example.bookstats.features.library.ui.LibraryFragment
 import com.example.bookstats.features.realtimesessions.timer.TimerService
 import com.example.bookstats.features.realtimesessions.ui.RealTimeSessionFragment
+import com.example.bookstats.features.realtimesessions.ui.SummaryFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -28,6 +29,8 @@ interface AppComponent {
     fun inject(fragment: BookDetailsFragment)
 
     fun inject(realTimeSessionFragment: RealTimeSessionFragment)
+
+    fun inject(summaryFragment: SummaryFragment)
 
     companion object {
         val Activity.appComponent: AppComponent
