@@ -170,6 +170,18 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         onBackPressedCallback.remove()
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.pauseTimer()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(viewModel.isSessionStarted()){
+            viewModel.resumeTimerState()
+        }
+    }
+
     override fun onTimerBroadcastReceiver(currentMs: Float) {
         viewModel.setCurrentMs(currentMs)
     }

@@ -11,7 +11,7 @@ class TimerServiceHelper @Inject constructor(
     private val context: Context
 ) {
     private lateinit var timerUpdateReceiver: BroadcastReceiver
-    private lateinit var binder : TimerService.TimerServiceBinderImpl
+    private lateinit var binder: TimerService.TimerServiceBinderImpl
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -22,16 +22,16 @@ class TimerServiceHelper @Inject constructor(
         }
     }
 
-    fun pause(){
+    fun pause() {
         binder.pauseTimer()
     }
 
-    fun resume(){
+    fun resume() {
         binder.resumeTimer()
     }
 
     fun registerTimerUpdateReceiver(receiver: BroadcastReceiver) {
-        if(!isServiceRunning()){
+        if (!isServiceRunning()) {
             startService()
         }
         timerUpdateReceiver = receiver
@@ -52,7 +52,7 @@ class TimerServiceHelper @Inject constructor(
         return false
     }
 
-    fun stopService(){
+    fun stopService() {
         val intent = Intent(context, TimerService::class.java)
         intent.action = STOP_SERVICE
         context.unbindService(serviceConnection)
@@ -63,10 +63,18 @@ class TimerServiceHelper @Inject constructor(
         LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
     }
 
-    private fun startService(){
+    private fun startService() {
         val intent = Intent(context, TimerService::class.java)
         context.startForegroundService(intent)
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    fun preserveTimerState() {
+        TODO("Not yet implemented")
+    }
+
+    fun setTime(timeElapsedSeconds: Float) {
+        binder.setTime(timeElapsedSeconds)
     }
 
 

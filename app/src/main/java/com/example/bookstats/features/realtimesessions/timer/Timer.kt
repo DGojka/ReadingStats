@@ -39,6 +39,11 @@ class Timer {
         currentMs = 0
     }
 
+    fun setTime(seconds: Float){
+        flow.value = seconds
+        currentMs = (seconds * 1000).toInt()
+    }
+
     companion object {
         private const val DELAY_VALUE = 500
     }

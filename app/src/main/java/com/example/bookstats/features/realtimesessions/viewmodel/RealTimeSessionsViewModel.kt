@@ -3,6 +3,7 @@ package com.example.bookstats.features.realtimesessions.viewmodel
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.bookdetails.managers.SessionCalculator
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Duration
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -32,11 +34,14 @@ class RealTimeSessionsViewModel @Inject constructor(
     val uiState: StateFlow<RealTimeSessionsUiState> = _uiState
     private lateinit var sessionStartDate: LocalDateTime
     private lateinit var sessionEndDate: LocalDateTime
+    private lateinit var lastPauseDate: LocalDateTime
     private var isPaused = true
+    private var timeElapsedSeconds = 0F
 
     private val timerUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val currentMs = intent?.getFloatExtra(CURRENT_MS, 0f) ?: 0F
+            timeElapsedSeconds = currentMs/1000
             _uiState.value = _uiState.value.copy(currentMs = currentMs)
         }
     }
@@ -54,6 +59,7 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     fun pauseTimer() {
         timerServiceHelper.pause()
+        lastPauseDate = LocalDateTime.now()
         isPaused = true
     }
 
@@ -127,5 +133,20 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     fun getSessionDetails(session: Session): SessionDetails =
         sessionCalculator.calculateSessionDetails(session)
+
+    fun resumeTimerState() {
+        val currentTime = LocalDateTime.now()
+        val timeFromLastPauseInSeconds = Duration.between(lastPauseDate, currentTime)
+        Log.e("timefromlast", timeFromLastPauseInSeconds.toString())
+        timeElapsedSeconds += timeFromLastPauseInSeconds.seconds
+        Log.e("alltime", timeElapsedSeconds.toString())
+        timerServiceHelper.setTime(timeElapsedSeconds)
+        setCurrentMs(timeElapsedSeconds*1000)
+        resumeTimer()
+    }
+
+    fun isSessionStarted(): Boolean {
+        return ::lastPauseDate.isInitialized
+    }
 
 }
