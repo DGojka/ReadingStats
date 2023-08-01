@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -30,15 +31,19 @@ class TimerService : Service() {
     inner class TimerServiceBinderImpl : Binder(),
         TimerServiceBinder {
         override fun pauseTimer() {
-            stopTimer()
+            this@TimerService.pauseTimer()
         }
 
         override fun resumeTimer() {
             startTimer()
         }
+
+        override fun setTime(seconds: Float) {
+            timer.setTime(seconds)
+        }
     }
 
-    fun stopTimer() {
+    fun pauseTimer() {
         timer.pause()
     }
 
@@ -58,12 +63,12 @@ class TimerService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
-        timer = Timer()
         timer.start()
         startForeground(NOTIFICATION_ID, createNotification())
         CoroutineScope(Dispatchers.IO).launch {
             timer.flow.collect { currentMs ->
                 val timerIntent = Intent(TIMER_ACTION)
+                Log.e("currenttime", (currentMs / 1000).toString())
                 timerIntent.putExtra(CURRENT_MS, currentMs)
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(timerIntent)
                 sendBroadcast(timerIntent)
@@ -85,7 +90,7 @@ class TimerService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-       val notificationBuilder = NotificationCompat.Builder(this, TIMER_CHANNEL)
+        val notificationBuilder = NotificationCompat.Builder(this, TIMER_CHANNEL)
             .setContentTitle(applicationContext.resources.getString(R.string.session))
             .setContentText(applicationContext.resources.getString(R.string.session_in_progress))
             .setSmallIcon(R.drawable.app_icon)
@@ -98,6 +103,7 @@ class TimerService : Service() {
 
         return notificationBuilder.build()
     }
+
     private fun createNotificationChannel() {
         val importance = NotificationManager.IMPORTANCE_LOW
         val channel = NotificationChannel(TIMER_CHANNEL, TIMER_CHANNEL, importance)
