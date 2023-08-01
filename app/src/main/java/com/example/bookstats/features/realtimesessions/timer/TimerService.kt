@@ -63,13 +63,12 @@ class TimerService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
-        timer = Timer()
         timer.start()
         startForeground(NOTIFICATION_ID, createNotification())
         CoroutineScope(Dispatchers.IO).launch {
             timer.flow.collect { currentMs ->
                 val timerIntent = Intent(TIMER_ACTION)
-                Log.e("currenttime",(currentMs/1000).toString())
+                Log.e("currenttime", (currentMs / 1000).toString())
                 timerIntent.putExtra(CURRENT_MS, currentMs)
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(timerIntent)
                 sendBroadcast(timerIntent)

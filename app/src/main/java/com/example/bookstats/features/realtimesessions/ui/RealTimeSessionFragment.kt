@@ -160,7 +160,7 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
     }
 
     private fun exitWithoutSaving(){
-        viewModel.pauseTimer()
+     //   viewModel.pauseTimer()
         viewModel.endSessionWithoutSaving()
         findNavController().popBackStack()
     }
@@ -172,14 +172,14 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
 
     override fun onPause() {
         super.onPause()
-        viewModel.pauseTimer()
+        if(!viewModel.isSessionEnded()){
+            viewModel.pauseTimer()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        if(viewModel.isSessionStarted()){
             viewModel.resumeTimerState()
-        }
     }
 
     override fun onTimerBroadcastReceiver(currentMs: Float) {

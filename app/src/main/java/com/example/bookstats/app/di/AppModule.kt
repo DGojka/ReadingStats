@@ -8,6 +8,7 @@ import com.example.bookstats.features.bookdetails.managers.SessionCalculator
 import com.example.bookstats.features.bookdetails.managers.SessionCalculatorImpl
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
+import com.example.bookstats.features.realtimesessions.helpers.ElapsedTimeDb
 import com.example.bookstats.features.realtimesessions.timer.Timer
 import com.example.bookstats.network.ApiService
 import com.example.bookstats.repository.Repository
@@ -63,5 +64,11 @@ class AppModule(private val app: Application) {
     @Provides
     fun provideTimer(): Timer {
         return Timer()
+    }
+
+    @Singleton
+    @Provides
+    fun provideElapsedTimeDb(context: Context): ElapsedTimeDb {
+        return ElapsedTimeDb(context = context)
     }
 }

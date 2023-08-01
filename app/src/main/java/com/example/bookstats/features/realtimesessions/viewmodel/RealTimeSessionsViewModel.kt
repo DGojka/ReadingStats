@@ -3,12 +3,12 @@ package com.example.bookstats.features.realtimesessions.viewmodel
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.bookdetails.managers.SessionCalculator
 import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
+import com.example.bookstats.features.realtimesessions.helpers.ElapsedTimeDb
 import com.example.bookstats.features.realtimesessions.timer.TimerService.Companion.CURRENT_MS
 import com.example.bookstats.features.realtimesessions.timer.helpers.TimerServiceHelper
 import com.example.bookstats.repository.Repository
@@ -26,6 +26,7 @@ class RealTimeSessionsViewModel @Inject constructor(
     private val repository: Repository,
     private val sessionCalculator: SessionCalculator,
     private val bookDb: CurrentBookDb,
+    private val elapsedTimeDb: ElapsedTimeDb,
     private val timerServiceHelper: TimerServiceHelper
 ) :
     ViewModel() {
@@ -34,14 +35,12 @@ class RealTimeSessionsViewModel @Inject constructor(
     val uiState: StateFlow<RealTimeSessionsUiState> = _uiState
     private lateinit var sessionStartDate: LocalDateTime
     private lateinit var sessionEndDate: LocalDateTime
-    private lateinit var lastPauseDate: LocalDateTime
     private var isPaused = true
-    private var timeElapsedSeconds = 0F
 
     private val timerUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val currentMs = intent?.getFloatExtra(CURRENT_MS, 0f) ?: 0F
-            timeElapsedSeconds = currentMs/1000
+            elapsedTimeDb.updateElapsedTime(currentMs / 1000)
             _uiState.value = _uiState.value.copy(currentMs = currentMs)
         }
     }
@@ -59,7 +58,7 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     fun pauseTimer() {
         timerServiceHelper.pause()
-        lastPauseDate = LocalDateTime.now()
+        elapsedTimeDb.saveLastPause(LocalDateTime.now())
         isPaused = true
     }
 
@@ -70,10 +69,14 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     fun stopSession() {
         pauseTimer()
+        timerServiceHelper.setTime(0F)
+        elapsedTimeDb.saveLastPause(null)
         sessionEndDate = LocalDateTime.now()
+        elapsedTimeDb.updateElapsedTime(0F)
     }
 
     fun endSessionWithoutSaving() {
+        stopSession()
         timerServiceHelper.unregisterTimerUpdateReceiver(timerUpdateReceiver)
         timerServiceHelper.stopService()
     }
@@ -136,17 +139,21 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     fun resumeTimerState() {
         val currentTime = LocalDateTime.now()
-        val timeFromLastPauseInSeconds = Duration.between(lastPauseDate, currentTime)
-        Log.e("timefromlast", timeFromLastPauseInSeconds.toString())
-        timeElapsedSeconds += timeFromLastPauseInSeconds.seconds
-        Log.e("alltime", timeElapsedSeconds.toString())
-        timerServiceHelper.setTime(timeElapsedSeconds)
-        setCurrentMs(timeElapsedSeconds*1000)
-        resumeTimer()
+
+        val lastPause = elapsedTimeDb.getLastPauseTime()
+
+        if (lastPause != null) {
+            val timeFromLastPauseInSeconds = Duration.between(lastPause, currentTime)
+            var timeElapsedSeconds = elapsedTimeDb.getElapsedTime()
+            timeElapsedSeconds += timeFromLastPauseInSeconds.seconds
+            timerServiceHelper.setTime(timeElapsedSeconds)
+            setCurrentMs(timeElapsedSeconds * 1000)
+            resumeTimer()
+        }
     }
 
-    fun isSessionStarted(): Boolean {
-        return ::lastPauseDate.isInitialized
+    fun isSessionEnded(): Boolean {
+        return ::sessionEndDate.isInitialized
     }
 
 }
