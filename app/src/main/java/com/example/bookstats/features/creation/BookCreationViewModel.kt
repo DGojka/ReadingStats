@@ -40,6 +40,11 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
         updateUiState(updatedUiState)
     }
 
+    fun setStartingPage(startingPage: Int) {
+        val updatedUiState = _uiState.value.copy(startingPage = startingPage)
+        updateUiState(updatedUiState)
+    }
+
     fun createBook() {
         viewModelScope.launch {
             with(_uiState.value) {
@@ -68,7 +73,15 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
             with(_uiState.value) {
                 repository.addBookWithSessions(
                     BookWithSessions(
-                        bookName, bookAuthor, image!!, numberOfPages, 0, mutableListOf(), mutableListOf())
+                        bookName,
+                        bookAuthor,
+                        image!!,
+                        numberOfPages,
+                        startingPage,
+                        startingPage,
+                        mutableListOf(),
+                        mutableListOf()
+                    )
                 )
                 Log.i(logTag, "Saved new book: $bookName")
                 _uiState.value = copy(bookCreated = true)

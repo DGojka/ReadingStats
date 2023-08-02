@@ -7,6 +7,7 @@ data class BookWithSessions(
     val author: String,
     val image: Bitmap,
     val totalPages: Int,
+    val startingPage: Int = 0,
     val currentPage: Int,
     val filters: List<String>,
     val sessions: List<Session>

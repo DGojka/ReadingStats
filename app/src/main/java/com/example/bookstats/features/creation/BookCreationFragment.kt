@@ -150,6 +150,9 @@ class BookCreationFragment : Fragment() {
         binding.bookPageNumberEditText.addTextChangedListener {
             viewModel.setNumberOfPages(if (it.toString().isNotEmpty()) it.toString().toInt() else 0)
         }
+        binding.startingPageEditText.addTextChangedListener {
+            viewModel.setStartingPage(if(it.toString().isNotEmpty()) it.toString().toInt() else 0)
+        }
     }
 
     private fun initScannerButton() {

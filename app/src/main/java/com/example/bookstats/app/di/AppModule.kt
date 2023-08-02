@@ -27,7 +27,7 @@ class AppModule(private val app: Application) {
             app.applicationContext,
             AppDatabase::class.java,
             AppDatabase.NAME
-        ).addMigrations(AppDatabase.MIGRATION_5_6).build()
+        ).addMigrations(AppDatabase.MIGRATION_5_6, AppDatabase.MIGRATION_6_7).build()
     }
 
     @Singleton

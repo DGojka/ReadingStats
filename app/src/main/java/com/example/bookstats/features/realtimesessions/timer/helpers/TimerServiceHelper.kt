@@ -69,10 +69,7 @@ class TimerServiceHelper @Inject constructor(
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
-    fun preserveTimerState() {
-        TODO("Not yet implemented")
-    }
-
+    @Throws(UninitializedPropertyAccessException::class)
     fun setTime(timeElapsedSeconds: Float) {
         binder.setTime(timeElapsedSeconds)
     }
