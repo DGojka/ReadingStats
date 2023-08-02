@@ -51,9 +51,9 @@ class RealTimeSessionsViewModel @Inject constructor(
     }
 
     fun startSession() {
+        timerServiceHelper.registerTimerUpdateReceiver(timerUpdateReceiver)
         isPaused = false
         sessionStartDate = LocalDateTime.now()
-        timerServiceHelper.registerTimerUpdateReceiver(timerUpdateReceiver)
     }
 
     fun pauseTimer() {
@@ -143,12 +143,17 @@ class RealTimeSessionsViewModel @Inject constructor(
         val lastPause = elapsedTimeDb.getLastPauseTime()
 
         if (lastPause != null) {
-            val timeFromLastPauseInSeconds = Duration.between(lastPause, currentTime)
-            var timeElapsedSeconds = elapsedTimeDb.getElapsedTime()
-            timeElapsedSeconds += timeFromLastPauseInSeconds.seconds
-            timerServiceHelper.setTime(timeElapsedSeconds)
-            setCurrentMs(timeElapsedSeconds * 1000)
-            resumeTimer()
+            try {
+                val timeFromLastPauseInSeconds = Duration.between(lastPause, currentTime)
+                var timeElapsedSeconds = elapsedTimeDb.getElapsedTime()
+                timeElapsedSeconds += timeFromLastPauseInSeconds.seconds
+                timerServiceHelper.setTime(timeElapsedSeconds)
+                setCurrentMs(timeElapsedSeconds * 1000)
+                resumeTimer()
+            } catch (e: UninitializedPropertyAccessException) {
+                elapsedTimeDb.saveLastPause(null)
+            }
+
         }
     }
 
