@@ -31,6 +31,7 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
                         name,
                         author,
                         totalPages,
+                        startingPage,
                         currentPage,
                         bookImage = image,
                         filters = filters
@@ -49,6 +50,7 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
                     bookAuthor,
                     totalPages,
                     currentPage + session.pagesRead,
+                    startingPage,
                     bookImage,
                     filters
                 )
@@ -140,6 +142,7 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
                 bookAuthor,
                 bookImage,
                 totalPages,
+                startingPage,
                 currentPage,
                 filters,
                 sessionsMapped

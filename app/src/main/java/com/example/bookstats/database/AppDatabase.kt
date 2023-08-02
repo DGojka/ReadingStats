@@ -17,7 +17,7 @@ import com.example.bookstats.database.entity.SessionEntity
 
 @Database(
     entities = [BookEntity::class, SessionEntity::class, BookSessionEntity::class],
-    version = 6
+    version = 7
 )
 @TypeConverters(DateConverter::class, BitmapConverter::class, ListStringConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -32,6 +32,12 @@ abstract class AppDatabase : RoomDatabase() {
         val MIGRATION_5_6: Migration = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE book ADD COLUMN filters TEXT NOT NULL DEFAULT '[]'")
+            }
+        }
+        val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Perform the necessary SQL queries to add the new 'startingPage' column to the 'book' table
+                database.execSQL("ALTER TABLE book ADD COLUMN startingPage INTEGER NOT NULL DEFAULT 0")
             }
         }
     }

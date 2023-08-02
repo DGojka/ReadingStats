@@ -10,6 +10,7 @@ data class BookEntity(
     val name: String,
     val bookAuthor: String,
     val totalPages: Int,
+    val startingPage: Int,
     val currentPage: Int,
     val bookImage: Bitmap,
     val filters: List<String>
