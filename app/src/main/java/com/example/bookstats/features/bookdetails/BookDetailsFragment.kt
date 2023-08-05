@@ -1,6 +1,7 @@
 package com.example.bookstats.features.bookdetails
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigatio
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.bookdetails.managers.SessionDialogManager
+import com.example.bookstats.features.bookdetails.tabs.TabListener
 import com.example.bookstats.features.bookdetails.tabs.ViewPagerAdapter
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModelFactory
@@ -84,10 +86,27 @@ class BookDetailsFragment : Fragment() {
 
     private fun initViewPagerAdapter() {
         viewPagerAdapter = ViewPagerAdapter(
-            viewModel
-        ) {
-            findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
-        }
+            viewModel,
+            object : TabListener.GeneralTabListener {
+                override fun onSessionStart() {
+                    findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
+                }
+            },
+            object : TabListener.SettingsTabListener {
+                override fun onDeleteBook() {
+                    viewModel.deleteBook { findNavController().navigate(R.id.libraryFragment) }
+                }
+
+                override fun onAddSession() {
+                    Log.e("asd","Session add")
+                }
+
+                override fun onEditBook() {
+                    Log.e("asd","Edit book")
+                }
+
+            }
+        )
     }
 
     private fun initViewPager() {

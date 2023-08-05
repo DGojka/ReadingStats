@@ -115,7 +115,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/continue_reading">
+            android:id="@+id/delete_book">
 
             <TextView
                 android:id="@+id/delete_book_text_view"
