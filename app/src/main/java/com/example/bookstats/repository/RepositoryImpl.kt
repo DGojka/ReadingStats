@@ -124,6 +124,24 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
         }
     }
 
+    override suspend fun editBookWithSessions(bookId: Long, bookWithSessions: BookWithSessions) {
+        with(bookWithSessions) {
+            db.bookDao().update(
+                BookEntity(
+                    bookId,
+                    name,
+                    author,
+                    totalPages,
+                    startingPage,
+                    currentPage,
+                    image,
+                    filters
+                )
+            )
+        }
+
+    }
+
     private fun BookWithSessionsEntity.mapToBookWithSession(): BookWithSessions {
         val sessionsMapped: List<Session> = this.sessions
             .map {

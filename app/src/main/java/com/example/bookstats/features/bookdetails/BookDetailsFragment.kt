@@ -1,7 +1,6 @@
 package com.example.bookstats.features.bookdetails
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +21,7 @@ import com.example.bookstats.features.bookdetails.tabs.TabListener
 import com.example.bookstats.features.bookdetails.tabs.ViewPagerAdapter
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModelFactory
+import com.example.bookstats.features.creation.BookCreationFragment.Companion.EDITED_BOOK_ID
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
@@ -98,11 +98,18 @@ class BookDetailsFragment : Fragment() {
                 }
 
                 override fun onAddSession() {
-                    Log.e("asd","Session add")
+                    TODO("not implemented")
                 }
 
                 override fun onEditBook() {
-                    Log.e("asd","Edit book")
+                    var editedBookId: Long? = null
+                    viewModel.editBook { editedBookId = it }
+                    if (editedBookId != null) {
+                        val bundle = Bundle().apply {
+                            putLong(EDITED_BOOK_ID, editedBookId!!)
+                        }
+                        findNavController().navigate(R.id.bookCreationFragment, bundle)
+                    }
                 }
 
             }

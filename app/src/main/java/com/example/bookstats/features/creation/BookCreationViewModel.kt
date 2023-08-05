@@ -86,7 +86,6 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
                 Log.i(logTag, "Saved new book: $bookName")
                 _uiState.value = copy(bookCreated = true)
             }
-
         }
     }
 
@@ -155,6 +154,44 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
 
     private fun getImageUrl(isbn: String) =
         "https://covers.openlibrary.org/b/isbn/$isbn-L.jpg"
+
+    fun editBook(editedBookId: Long, onImportComplete: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val editedBook = repository.getBookWithSessionsById(editedBookId)
+            with(editedBook) {
+                _uiState.value = _uiState.value.copy(
+                    bookName = name,
+                    bookAuthor = author,
+                    numberOfPages = totalPages,
+                    startingPage = startingPage,
+                    image = image
+                )
+            }
+            onImportComplete()
+        }
+    }
+
+    fun saveChanges(bookId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            with(_uiState.value) {
+                repository.editBookWithSessions(
+                    bookId,
+                    BookWithSessions(
+                        bookName,
+                        bookAuthor,
+                        image!!,
+                        numberOfPages,
+                        startingPage,
+                        startingPage,
+                        mutableListOf(),
+                        mutableListOf()
+                    )
+                )
+                Log.i(logTag, "Saved new book: $bookName")
+                _uiState.value = copy(bookCreated = true)
+            }
+        }
+    }
 
     companion object {
         private const val IMAGE_HEIGHT = 924
