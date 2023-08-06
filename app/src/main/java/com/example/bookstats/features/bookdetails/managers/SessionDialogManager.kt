@@ -1,20 +1,44 @@
 package com.example.bookstats.features.bookdetails.managers
 
 import android.app.AlertDialog
+import android.app.Dialog
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.NumberPicker
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.example.bookstats.R
+import com.example.bookstats.activity.MainActivity
+import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.AddingSessionDialogBinding
+import com.example.bookstats.features.bookdetails.SessionTimeBottomSheetDialog
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
+import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModelFactory
 import java.time.LocalDate
+import javax.inject.Inject
 
-class SessionDialogManager(
-    private val layoutInflater: LayoutInflater,
-    private val viewModel: BookDetailsViewModel
-) {
-    private var dialogBinding = AddingSessionDialogBinding.inflate(layoutInflater)
+class SessionDialogManager : DialogFragment(){
+    private lateinit var dialogBinding: AddingSessionDialogBinding
+    @Inject
+    lateinit var viewModelFactory: BookDetailsViewModelFactory
+    private val viewModel by viewModels<BookDetailsViewModel>({ activity as MainActivity }) { viewModelFactory }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val layoutInflater = requireActivity().layoutInflater
+        appComponent.inject(this)
+        dialogBinding = AddingSessionDialogBinding.inflate(layoutInflater)
+        val dialogBuilder = AlertDialog.Builder(layoutInflater.context)
+            .setView(dialogBinding.root)
+            .setTitle(R.string.add_session)
+
+        initSubmitButton(dialogBuilder)
+        initDateControls()
+        initCurrentPage()
+        initTimeControls()
+        return dialogBuilder.create()
+    }
 
     fun showAddSessionDialog() {
         dialogBinding = AddingSessionDialogBinding.inflate(layoutInflater)
@@ -97,8 +121,11 @@ class SessionDialogManager(
                 editTextHour.setText(HOURS_MIN_VALUE.toString())
                 viewModel.setDialogDetails(hoursRead = 0)
                 setOnClickListener {
-                    visibility = View.INVISIBLE
-                    hoursNumberPicker.visibility = View.VISIBLE
+                    val sessionTimeBottomSheetDialog = SessionTimeBottomSheetDialog()
+                    sessionTimeBottomSheetDialog.show(childFragmentManager,"asd")
+                //    sessionTimeBottomSheetDialog.show(supportFragment)
+                  /*  visibility = View.INVISIBLE
+                    hoursNumberPicker.visibility = View.VISIBLE*/
                 }
             }
             editTextMinutes.apply {
@@ -111,7 +138,9 @@ class SessionDialogManager(
             }
         }
     }
-
+    override fun getTheme(): Int {
+              return R.style.CustomDialogStyle // Ustawienie nowego stylu dla dialogu
+   }
     private fun initNumberPickers() {
         with(dialogBinding) {
             hoursNumberPicker.apply {

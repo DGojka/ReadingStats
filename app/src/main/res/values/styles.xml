@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><!-- res/values/styles.xml -->
+<resources>
+
+    <!-- ... (istniejące style) ... -->
+
+    <!-- Styl dla zaokrąglonego Bottom Sheet Dialogu -->
+    <style name="BottomSheetDialogStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="CustomDialogStyle" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@drawable/add_session_bg</item>
+        <!-- Add any other customizations to the dialog window here if needed -->
+    </style>
+
+
+</resources>

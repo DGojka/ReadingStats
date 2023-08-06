@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/add_session_bg"
     android:orientation="vertical"
+    android:elevation="16dp"
     android:padding="16dp">
 
     <TextView
@@ -17,10 +19,9 @@
         android:id="@+id/edit_text_current_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/current_page"
-        android:inputType="number"
         android:autofillHints="@string_current_page"
-        />
+        android:hint="@string/current_page"
+        android:inputType="number" />
 
     <TextView
         android:id="@+id/text_view_start_date"

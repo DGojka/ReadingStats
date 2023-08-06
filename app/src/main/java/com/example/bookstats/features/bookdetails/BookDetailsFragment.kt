@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.bookstats.R
+import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
 import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
@@ -35,7 +37,7 @@ class BookDetailsFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: BookDetailsViewModelFactory
-    private lateinit var viewModel: BookDetailsViewModel
+    private val viewModel by viewModels<BookDetailsViewModel>({ activity as MainActivity }) { viewModelFactory }
 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
 
@@ -45,7 +47,7 @@ class BookDetailsFragment : Fragment() {
     ): View {
         appComponent.inject(this)
 
-        viewModel = ViewModelProvider(this, viewModelFactory)[BookDetailsViewModel::class.java]
+//        viewModel = ViewModelProvider(this, viewModelFactory)[BookDetailsViewModel::class.java]
         _binding = FragmentBookDetailsBinding.inflate(inflater, container, false)
         initViewPagerAdapter()
         viewModel.refreshBookClicked()
@@ -98,7 +100,9 @@ class BookDetailsFragment : Fragment() {
                 }
 
                 override fun onAddSession() {
-                    TODO("not implemented")
+                    val sessionDialog = SessionDialogManager()
+                    SessionDialogManager().show(childFragmentManager,"SessionDialogFragmentTag")
+                  //  SessionDialogManager(layoutInflater, viewModel).showAddSessionDialog()
                 }
 
                 override fun onEditBook() {
@@ -152,7 +156,7 @@ class BookDetailsFragment : Fragment() {
 
     private fun initSessionDialogManager() {
         binding.addSession.setOnClickListener {
-            SessionDialogManager(layoutInflater, viewModel).showAddSessionDialog()
+       //     SessionDialogManager(layoutInflater, viewModel).showAddSessionDialog()
         }
     }
 
