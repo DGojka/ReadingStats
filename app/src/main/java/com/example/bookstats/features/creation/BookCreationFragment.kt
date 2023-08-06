@@ -37,7 +37,8 @@ class BookCreationFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: BookCreationViewModelFactory
     private lateinit var viewModel: BookCreationViewModel
-    private var updateEditTextAfterImportingBookFromISBN = false
+    private var updateEditTextAfterImportingBook = false
+    private var editedBookId: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,7 +63,7 @@ class BookCreationFragment : Fragment() {
                     viewModel.importBookByISBN(
                         isbn,
                         onResponseGetBitmap = {
-                            updateEditTextAfterImportingBookFromISBN = true
+                            updateEditTextAfterImportingBook = true
                             getBitmap(it)!!
                         })
                 }
@@ -72,6 +73,12 @@ class BookCreationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[BookCreationViewModel::class.java]
+        editedBookId = arguments?.getLong(EDITED_BOOK_ID)
+        if (editedBookId != null) {
+            viewModel.editBook(editedBookId!!) {
+                updateEditTextAfterImportingBook = true
+            }
+        }
         hideBottomNavigationView()
         initEditTextListeners()
         initSaveBookButtonListener()
@@ -95,11 +102,11 @@ class BookCreationFragment : Fragment() {
                         if (image != null) {
                             bookImage.load(image)
                         }
-                        if (updateEditTextAfterImportingBookFromISBN) {
+                        if (updateEditTextAfterImportingBook) {
                             bookNameEditText.setText(state.bookName)
                             bookAuthorEditText.setText(state.bookAuthor)
                             bookPageNumberEditText.setText(state.numberOfPages.toString())
-                            updateEditTextAfterImportingBookFromISBN = false
+                            updateEditTextAfterImportingBook = false
                         }
                     }
                 }
@@ -151,7 +158,7 @@ class BookCreationFragment : Fragment() {
             viewModel.setNumberOfPages(if (it.toString().isNotEmpty()) it.toString().toInt() else 0)
         }
         binding.startingPageEditText.addTextChangedListener {
-            viewModel.setStartingPage(if(it.toString().isNotEmpty()) it.toString().toInt() else 0)
+            viewModel.setStartingPage(if (it.toString().isNotEmpty()) it.toString().toInt() else 0)
         }
     }
 
@@ -163,8 +170,16 @@ class BookCreationFragment : Fragment() {
     }
 
     private fun initSaveBookButtonListener() {
+        if (isBookBeingEdited()) {
+            binding.saveBookButton.text = resources.getString(R.string.edit_book)
+        }
         binding.saveBookButton.setOnClickListener {
-            viewModel.createBook()
+            if (isBookBeingEdited()) {
+                viewModel.saveChanges(bookId = editedBookId!!)
+            } else {
+                viewModel.createBook()
+            }
+
         }
     }
 
@@ -181,8 +196,11 @@ class BookCreationFragment : Fragment() {
         showBottomNavigationView()
     }
 
+    private fun isBookBeingEdited(): Boolean = editedBookId != null
+
     companion object {
         const val CREATION_ERROR = "creation_error"
         const val ISBN = "ISBN"
+        const val EDITED_BOOK_ID = "editedBookId"
     }
 }

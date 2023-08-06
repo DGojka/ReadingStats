@@ -18,5 +18,7 @@ interface Repository {
 
     suspend fun getCurrentStreak(): Int
 
-    suspend fun getBookByISBN(isbn: String) : VolumeInfo?
+    suspend fun getBookByISBN(isbn: String): VolumeInfo?
+
+    suspend fun editBookWithSessions(bookId: Long, bookWithSessions: BookWithSessions)
 }

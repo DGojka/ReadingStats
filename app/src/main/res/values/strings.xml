@@ -27,7 +27,7 @@
     <string name="hours">Hours</string>
     <string name="minutes">Minutes</string>
     <string name="add">Add</string>
-    <string name="add_session">Add new session</string>
+    <string name="add_session">Add session</string>
     <string name="scan_isbn">Scan ISBN code</string>
 
     //book details
@@ -68,4 +68,9 @@
     <string name="temp">temp</string>
     <string name="first_page">First page number</string>
     <string name="_0">0</string>
+    <string name="edit_book">Edit book</string>
+    <string name="click_to_edit_book">Click here to edit the book!</string>
+    <string name="add_session_manually">Click here to manually add a session</string>
+    <string name="delete_book_description">Click here to delete this book.
+        You cannot undo that!</string>
 </resources>

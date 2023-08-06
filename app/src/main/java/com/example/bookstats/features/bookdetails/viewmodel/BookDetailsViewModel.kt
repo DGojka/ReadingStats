@@ -162,4 +162,8 @@ class BookDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    fun editBook(onEdit: (bookId: Long) -> Unit) {
+        onEdit(currentBookDb.getCurrentBookId())
+    }
 }

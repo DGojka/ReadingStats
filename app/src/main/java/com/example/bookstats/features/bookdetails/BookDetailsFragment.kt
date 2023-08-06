@@ -17,9 +17,11 @@ import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigatio
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
 import com.example.bookstats.features.bookdetails.managers.SessionDialogManager
+import com.example.bookstats.features.bookdetails.tabs.TabListener
 import com.example.bookstats.features.bookdetails.tabs.ViewPagerAdapter
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModelFactory
+import com.example.bookstats.features.creation.BookCreationFragment.Companion.EDITED_BOOK_ID
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
@@ -84,10 +86,34 @@ class BookDetailsFragment : Fragment() {
 
     private fun initViewPagerAdapter() {
         viewPagerAdapter = ViewPagerAdapter(
-            viewModel
-        ) {
-            findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
-        }
+            viewModel,
+            object : TabListener.GeneralTabListener {
+                override fun onSessionStart() {
+                    findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
+                }
+            },
+            object : TabListener.SettingsTabListener {
+                override fun onDeleteBook() {
+                    viewModel.deleteBook { findNavController().navigate(R.id.libraryFragment) }
+                }
+
+                override fun onAddSession() {
+                    TODO("not implemented")
+                }
+
+                override fun onEditBook() {
+                    var editedBookId: Long? = null
+                    viewModel.editBook { editedBookId = it }
+                    if (editedBookId != null) {
+                        val bundle = Bundle().apply {
+                            putLong(EDITED_BOOK_ID, editedBookId!!)
+                        }
+                        findNavController().navigate(R.id.bookCreationFragment, bundle)
+                    }
+                }
+
+            }
+        )
     }
 
     private fun initViewPager() {
