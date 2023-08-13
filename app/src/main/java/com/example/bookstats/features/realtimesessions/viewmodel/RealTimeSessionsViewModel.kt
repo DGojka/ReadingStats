@@ -3,6 +3,7 @@ package com.example.bookstats.features.realtimesessions.viewmodel
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.bookdetails.managers.SessionCalculator
@@ -69,10 +70,7 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     fun stopSession() {
         pauseTimer()
-        timerServiceHelper.setTime(0F)
-        elapsedTimeDb.saveLastPause(null)
         sessionEndDate = LocalDateTime.now()
-        elapsedTimeDb.updateElapsedTime(0F)
     }
 
     fun endSessionWithoutSaving() {
@@ -90,6 +88,7 @@ class RealTimeSessionsViewModel @Inject constructor(
                 )
                 && book.totalPages >= newCurrentPage
             ) {
+                Log.e("asd",(uiState.value.currentMs).toString())
                 timerServiceHelper.stopService()
                 _uiState.value = _uiState.value.copy(
                     session = Session(
@@ -111,7 +110,9 @@ class RealTimeSessionsViewModel @Inject constructor(
                         showSummary()
                     }
                 }
-
+                timerServiceHelper.setTime(0F)
+                elapsedTimeDb.saveLastPause(null)
+                elapsedTimeDb.updateElapsedTime(0F)
             } else {
                 val errorReason = if (book.totalPages < newCurrentPage) {
                     Error.Reason.NewPageIsGreaterThanTotalBookPages
