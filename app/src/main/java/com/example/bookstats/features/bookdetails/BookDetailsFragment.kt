@@ -56,7 +56,7 @@ class BookDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initSessionDialogManager()
-        initPercentage()
+        updateBookPercentage()
         observeState()
         initDeleteButton()
     }
@@ -72,13 +72,14 @@ class BookDetailsFragment : Fragment() {
                                 book.sessions
                             )
                         )
+                        updateBookPercentage()
                     }
                 }
             }
         }
     }
 
-    private fun initPercentage() {
+    private fun updateBookPercentage() {
         binding.bookProgressbar.progress = viewModel.getBookPercentage()
         binding.percentageTextView.text =
             getString(R.string.book_percentage, viewModel.getBookPercentage())

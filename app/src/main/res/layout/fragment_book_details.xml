@@ -22,6 +22,7 @@
             android:layout_height="180dp"
             android:indeterminateOnly="false"
             tools:progress="60"
+            android:progress="0"
             android:progressDrawable="@drawable/circle"
             android:rotation="-90"
             app:layout_constraintBottom_toTopOf="@id/reading_percentage_text_view"
