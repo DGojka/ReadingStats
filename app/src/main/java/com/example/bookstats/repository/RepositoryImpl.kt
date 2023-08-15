@@ -49,8 +49,8 @@ class RepositoryImpl(private val db: AppDatabase, private val apiService: ApiSer
                     name,
                     bookAuthor,
                     totalPages,
-                    currentPage + session.pagesRead,
                     startingPage,
+                    currentPage + session.pagesRead,
                     bookImage,
                     filters
                 )

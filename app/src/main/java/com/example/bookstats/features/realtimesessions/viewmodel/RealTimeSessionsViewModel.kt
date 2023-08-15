@@ -75,6 +75,7 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     fun endSessionWithoutSaving() {
         stopSession()
+        resetTimer()
         timerServiceHelper.unregisterTimerUpdateReceiver(timerUpdateReceiver)
         timerServiceHelper.stopService()
     }
@@ -110,9 +111,7 @@ class RealTimeSessionsViewModel @Inject constructor(
                         showSummary()
                     }
                 }
-                timerServiceHelper.setTime(0F)
-                elapsedTimeDb.saveLastPause(null)
-                elapsedTimeDb.updateElapsedTime(0F)
+                resetTimer()
             } else {
                 val errorReason = if (book.totalPages < newCurrentPage) {
                     Error.Reason.NewPageIsGreaterThanTotalBookPages
@@ -162,4 +161,10 @@ class RealTimeSessionsViewModel @Inject constructor(
         return ::sessionEndDate.isInitialized
     }
 
+
+    private fun resetTimer() {
+        timerServiceHelper.setTime(0F)
+        elapsedTimeDb.saveLastPause(null)
+        elapsedTimeDb.updateElapsedTime(0F)
+    }
 }

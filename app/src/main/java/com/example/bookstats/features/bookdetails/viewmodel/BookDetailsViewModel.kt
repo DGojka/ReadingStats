@@ -84,7 +84,7 @@ class BookDetailsViewModel @Inject constructor(
         with(_uiState.value) {
             if (book != null) {
                 book.apply {
-                    return ((currentPage.toFloat() / (totalPages.toFloat() - startingPage)) * 100).toInt()
+                    return (((currentPage.toFloat() - startingPage) / (totalPages.toFloat() - startingPage)) * 100).toInt()
                 }
             }
         }

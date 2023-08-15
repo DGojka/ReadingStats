@@ -106,6 +106,7 @@ class BookCreationFragment : Fragment() {
                             bookNameEditText.setText(state.bookName)
                             bookAuthorEditText.setText(state.bookAuthor)
                             bookPageNumberEditText.setText(state.numberOfPages.toString())
+                            startingPageEditText.setText(state.startingPage.toString())
                             updateEditTextAfterImportingBook = false
                         }
                     }
