@@ -89,7 +89,7 @@ class RealTimeSessionsViewModel @Inject constructor(
                 )
                 && book.totalPages >= newCurrentPage
             ) {
-                Log.e("asd",(uiState.value.currentMs).toString())
+                Log.e("asd", (uiState.value.currentMs).toString())
                 timerServiceHelper.stopService()
                 _uiState.value = _uiState.value.copy(
                     session = Session(
@@ -99,8 +99,9 @@ class RealTimeSessionsViewModel @Inject constructor(
                             book.currentPage
                         ),
                         sessionStartDate = sessionStartDate,
-                        sessionEndDate = sessionEndDate
-                    )
+                        sessionEndDate = sessionEndDate,
+                    ),
+                    error = null
                 )
                 if (_uiState.value.session != null) {
                     repository.addSessionToTheBook(
@@ -118,7 +119,6 @@ class RealTimeSessionsViewModel @Inject constructor(
                 } else {
                     Error.Reason.NewPageIsLowerThanOld(book.currentPage)
                 }
-
                 _uiState.value = _uiState.value.copy(
                     error = Error(errorReason)
                 )
