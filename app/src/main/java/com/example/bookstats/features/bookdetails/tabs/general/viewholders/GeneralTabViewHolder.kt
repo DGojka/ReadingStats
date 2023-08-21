@@ -19,6 +19,7 @@ class GeneralTabViewHolder(
                 generalAvgMinPageValue.text = avgMinutesPerPage
                 generalAvgPagesHourValue.text = avgPagesPerHour
                 generalTotalReadTimeValue.text = totalReadTime
+                bookCurrentPage.text = "$currentPage / $maxPage"
                 binding.generalTabBookImage.load(image)
             }
             continueReading.setOnClickListener {

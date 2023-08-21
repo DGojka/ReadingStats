@@ -9,5 +9,7 @@ data class GeneralBookInfo(
     val avgReadingTime: String = "",
     val avgPagesPerHour: String = "",
     val avgMinutesPerPage: String = "",
-    val totalReadTime: String = ""
+    val totalReadTime: String = "",
+    val currentPage: String = "",
+    val maxPage: String = ""
 )
