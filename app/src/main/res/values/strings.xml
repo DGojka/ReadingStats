@@ -42,6 +42,8 @@
     <string name="avg_total_read_time">Total read time</string>
     <string name="continue_reading">Continue reading!</string>
     <string name="click_to_add_reading_session">Click here to start reading session</string>
+    <string name="current_page_text">Current page: %1$s / %2$s</string>
+
     //sessions tab
     <string name="settings">settings</string>
     <string name="read_time">Read time</string>
