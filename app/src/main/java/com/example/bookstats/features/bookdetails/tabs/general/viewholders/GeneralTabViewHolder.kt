@@ -2,6 +2,7 @@ package com.example.bookstats.features.bookdetails.tabs.general.viewholders
 
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.example.bookstats.R
 import com.example.bookstats.databinding.TabGeneralBinding
 import com.example.bookstats.features.bookdetails.tabs.general.helpers.GeneralBookInfo
 
@@ -19,6 +20,8 @@ class GeneralTabViewHolder(
                 generalAvgMinPageValue.text = avgMinutesPerPage
                 generalAvgPagesHourValue.text = avgPagesPerHour
                 generalTotalReadTimeValue.text = totalReadTime
+                bookCurrentPage.text =
+                    itemView.context.getString(R.string.current_page_text, currentPage, maxPage)
                 binding.generalTabBookImage.load(image)
             }
             continueReading.setOnClickListener {

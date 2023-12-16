@@ -20,7 +20,7 @@ class ViewPagerAdapter(
     private val settingsTabListener: TabListener.SettingsTabListener
 ) :
     RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {
-    private var generalBookInfo = GeneralBookInfo()
+    private lateinit var generalBookInfo: GeneralBookInfo
     private var sessionsList: List<SessionDetails> = mutableListOf()
 
     inner class ViewHolder(viewBinding: ViewBinding) : RecyclerView.ViewHolder(viewBinding.root)
@@ -68,7 +68,9 @@ class ViewPagerAdapter(
                 avgReadingTime = viewModel.getAvgReadingTime(sessions),
                 avgPagesPerHour = viewModel.getAvgPagesPerHour(sessions),
                 avgMinutesPerPage = viewModel.getAvgMinPerPage(sessions),
-                totalReadTime = viewModel.getTotalReadTime(sessions)
+                totalReadTime = viewModel.getTotalReadTime(sessions),
+                currentPage = currentPage.toString(),
+                maxPage = totalPages.toString()
             )
             notifyDataSetChanged()
         }
