@@ -12,10 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.bookstats.R
-import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
-import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
+import com.example.bookstats.extensions.hideBottomNavigationView
+import com.example.bookstats.extensions.showBottomNavigationView
 import com.example.bookstats.features.bookdetails.managers.SessionDialogManager
 import com.example.bookstats.features.bookdetails.tabs.TabListener
 import com.example.bookstats.features.bookdetails.tabs.ViewPagerAdapter
@@ -173,7 +173,7 @@ class BookDetailsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        hideBottomNavigationView() //temp?
+        hideBottomNavigationView()
     }
 
     override fun onDestroy() {
