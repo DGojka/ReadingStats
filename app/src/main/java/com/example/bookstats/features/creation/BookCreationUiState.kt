@@ -10,7 +10,7 @@ data class BookCreationUiState(
     val image: Bitmap? = null,
     val saveButtonEnabled: Boolean = false,
     val error: Error? = null,
-    val bookCreated: Boolean = false
+    val isBookCreated: Boolean = false
 )
 
 data class Error(val reason: Reason) {

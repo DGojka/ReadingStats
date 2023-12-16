@@ -99,7 +99,7 @@ class BookDetailsFragment : Fragment() {
                 }
 
                 override fun onAddSession() {
-                    TODO("not implemented")
+                    //todo
                 }
 
                 override fun onEditBook() {
