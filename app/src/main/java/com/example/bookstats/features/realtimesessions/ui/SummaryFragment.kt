@@ -10,10 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
 import com.example.bookstats.activity.MainActivity
-import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
-import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentSessionSummaryBinding
+import com.example.bookstats.extensions.hideBottomNavigationView
+import com.example.bookstats.extensions.showBottomNavigationView
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
 import kotlinx.coroutines.launch

@@ -1,70 +1,52 @@
 package com.example.bookstats.features.library.ui
 
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.bookstats.R
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentLibraryBinding
+import com.example.bookstats.extensions.daggerViewModel
+import com.example.bookstats.extensions.viewBinding
+import com.example.bookstats.extensions.visibleOrInvisible
 import com.example.bookstats.features.library.list.BookAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
-import com.example.bookstats.features.library.viewmodel.LibraryViewModelFactory
+import com.example.bookstats.features.library.viewmodel.uistate.LibraryUiState
+import com.example.bookstats.repository.BookWithSessions
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Provider
 
-class LibraryFragment : Fragment() {
-    private var _binding: FragmentLibraryBinding? = null
-    private val binding get() = _binding!!
+class LibraryFragment : Fragment(R.layout.fragment_library) {
+
+    @Inject
+    lateinit var viewModelProvider: Provider<LibraryViewModel>
+
+    private val binding by viewBinding(FragmentLibraryBinding::bind)
+    private val viewModel by daggerViewModel { viewModelProvider }
 
     private lateinit var bookAdapter: BookAdapter
 
-    @Inject
-    lateinit var viewModelFactory: LibraryViewModelFactory
-    private lateinit var viewModel: LibraryViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         appComponent.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[LibraryViewModel::class.java]
-        _binding = FragmentLibraryBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initBookAdapter()
-        initCreateBookButton()
+        setupBookAdapter()
+        setupCreateBookButton()
         observeState()
     }
 
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                with(state) {
-                    bookAdapter.setData(bookList)
-                    binding.apply {
-                        currentStreakValue.text = currentStreak.toString()
-                        if (lastBook != null) {
-                            lastBookContainer.visibility = View.VISIBLE
-                            lastBookTextView.visibility = View.VISIBLE
-                            lastBookItem.bookImage.load(lastBook.image)
-                            lastBookContainer.setOnClickListener {
-                                viewModel.initBookMoreDetails(
-                                    id = lastBook.id.toInt(),
-                                    onInitialized = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
-                            }
-                        }
-                    }
-
-                }
+                state.bindViews()
             }
         }
     }
@@ -74,7 +56,7 @@ class LibraryFragment : Fragment() {
         viewModel.fetchBooksFromDb()
     }
 
-    private fun initBookAdapter() {
+    private fun setupBookAdapter() {
         bookAdapter = BookAdapter(onBookClick = {
             viewModel.initBookMoreDetails(
                 id = it,
@@ -83,11 +65,28 @@ class LibraryFragment : Fragment() {
         binding.bookGrid.adapter = bookAdapter
     }
 
-    private fun initCreateBookButton() {
+    private fun setupCreateBookButton() {
         binding.buttonAddBook.setOnClickListener {
             findNavController().navigate(R.id.action_libraryFragment_to_bookCreationFragment)
         }
     }
+
+    private fun LibraryUiState.bindViews(){
+        bookAdapter.submitList(bookList)
+        binding.apply {
+            currentStreakValue.text = currentStreak.toString()
+            lastBook?.let { setupLastBookViews(lastBook) }
+        }
+    }
+
+    private fun setupLastBookViews(lastBook: BookWithSessions) = binding.run {
+        lastBookContainer.visibleOrInvisible(true)
+        lastBookTextView.visibleOrInvisible(true)
+        lastBookItem.bookImage.load(lastBook.image)
+        lastBookContainer.setOnClickListener {
+            viewModel.initBookMoreDetails(
+                id = lastBook.id.toInt(),
+                onInitialized = { findNavController().navigate(R.id.action_libraryFragment_to_more_details) })
+        }
+    }
 }
-
-

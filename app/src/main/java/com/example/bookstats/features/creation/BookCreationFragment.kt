@@ -21,10 +21,10 @@ import coil.load
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.example.bookstats.R
-import com.example.bookstats.activity.MainActivity.Companion.hideBottomNavigationView
-import com.example.bookstats.activity.MainActivity.Companion.showBottomNavigationView
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookCreationBinding
+import com.example.bookstats.extensions.hideBottomNavigationView
+import com.example.bookstats.extensions.showBottomNavigationView
 import com.example.bookstats.features.scanner.ScannerActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
