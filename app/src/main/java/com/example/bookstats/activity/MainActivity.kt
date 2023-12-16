@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         navigateToSessionFragmentIfServiceIsRunning()
     }
 
-    private fun setupNavControllers(){
+    private fun setupNavControllers() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentView) as NavHostFragment
         val navController = navHostFragment.navController
@@ -35,7 +35,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateToSessionFragmentIfServiceIsRunning() {
         if (helper.isServiceRunning()) {
-            val navController = (supportFragmentManager.findFragmentById(R.id.fragmentView) as NavHostFragment).navController
+            val navController =
+                (supportFragmentManager.findFragmentById(R.id.fragmentView) as NavHostFragment).navController
             navController.navigate(R.id.sessionFragment)
         }
     }

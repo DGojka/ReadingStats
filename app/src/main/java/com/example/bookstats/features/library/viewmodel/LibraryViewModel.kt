@@ -1,6 +1,5 @@
 package com.example.bookstats.features.library.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.library.viewmodel.uistate.LibraryUiState
@@ -17,8 +16,7 @@ class LibraryViewModel @Inject constructor(
     private val repository: Repository,
     private val currentBookDb: CurrentBookDb
 ) : ViewModel() {
-    private val _uiState =
-        MutableStateFlow(LibraryUiState(true, mutableListOf(), null, 0))
+    private val _uiState = initUiState()
     val uiState: StateFlow<LibraryUiState> = _uiState
 
     fun fetchBooksFromDb() {
@@ -30,7 +28,6 @@ class LibraryViewModel @Inject constructor(
                     lastBook = repository.getLastBook(),
                     currentStreak = repository.getCurrentStreak()
                 )
-            Log.e("asd", repository.getBooksWithSessions().toString())
         }
     }
 
@@ -43,4 +40,5 @@ class LibraryViewModel @Inject constructor(
         }
     }
 
+    private fun initUiState() = MutableStateFlow(LibraryUiState(true, mutableListOf(), null, 0))
 }

@@ -10,7 +10,23 @@ fun Fragment.hideBottomNavigationView() {
         View.GONE
 }
 
-fun Fragment.showBottomNavigationView(){
+fun Fragment.showBottomNavigationView() {
     requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
         View.VISIBLE
+}
+
+fun View.visibleOrInvisible(isVisible: Boolean) {
+    val newVisibility = when (isVisible) {
+        true -> View.VISIBLE
+        false -> View.INVISIBLE
+    }
+    visibility = newVisibility
+}
+
+fun View.visibleOrGone(isVisible: Boolean) {
+    val newVisibility = when (isVisible) {
+        true -> View.VISIBLE
+        false -> View.GONE
+    }
+    visibility = newVisibility
 }
