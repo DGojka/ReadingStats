@@ -15,6 +15,7 @@ import com.example.bookstats.extensions.viewBinding
 import com.example.bookstats.extensions.visibleOrInvisible
 import com.example.bookstats.features.library.list.BookAdapter
 import com.example.bookstats.features.library.viewmodel.LibraryViewModel
+import com.example.bookstats.features.library.viewmodel.uistate.LibraryUiState
 import com.example.bookstats.repository.BookWithSessions
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,14 +46,7 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                with(state) {
-                    bookAdapter.setData(bookList)
-                    binding.apply {
-                        currentStreakValue.text = currentStreak.toString()
-                        lastBook?.let { setupLastBookViews(lastBook) }
-                    }
-
-                }
+                state.bindViews()
             }
         }
     }
@@ -74,6 +68,14 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
     private fun setupCreateBookButton() {
         binding.buttonAddBook.setOnClickListener {
             findNavController().navigate(R.id.action_libraryFragment_to_bookCreationFragment)
+        }
+    }
+
+    private fun LibraryUiState.bindViews(){
+        bookAdapter.submitList(bookList)
+        binding.apply {
+            currentStreakValue.text = currentStreak.toString()
+            lastBook?.let { setupLastBookViews(lastBook) }
         }
     }
 
