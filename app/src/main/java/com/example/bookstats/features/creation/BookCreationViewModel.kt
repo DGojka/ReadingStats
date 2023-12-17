@@ -84,7 +84,7 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
                     )
                 )
                 Log.i(logTag, "Saved new book: $bookName")
-                _uiState.value = copy(bookCreated = true)
+                _uiState.value = copy(isBookCreated = true)
             }
         }
     }
@@ -188,7 +188,7 @@ class BookCreationViewModel @Inject constructor(private val repository: Reposito
                     )
                 )
                 Log.i(logTag, "Saved new book: $bookName")
-                _uiState.value = copy(bookCreated = true)
+                _uiState.value = copy(isBookCreated = true)
             }
         }
     }
