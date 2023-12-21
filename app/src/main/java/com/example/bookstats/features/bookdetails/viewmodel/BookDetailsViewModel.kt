@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.bookdetails.managers.SessionCalculator
 import com.example.bookstats.features.bookdetails.managers.helpers.DialogDetails
-import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
+import com.example.bookstats.features.bookdetails.tabs.general.helpers.mapToGeneralBookInfo
+import com.example.bookstats.features.bookdetails.tabs.sessions.helpers.mapToSessionDetails
 import com.example.bookstats.features.bookdetails.viewmodel.uistate.BookDetailsUiState
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
+import com.example.bookstats.repository.BookWithSessions
 import com.example.bookstats.repository.Repository
 import com.example.bookstats.repository.Session
 import kotlinx.coroutines.Dispatchers
@@ -25,16 +27,24 @@ class BookDetailsViewModel @Inject constructor(
     ViewModel() {
 
     private val _uiState =
-        MutableStateFlow(BookDetailsUiState(null, null))
+        MutableStateFlow(BookDetailsUiState(null, null, null, null))
     val uiState: StateFlow<BookDetailsUiState> = _uiState
 
-    init {
+    fun init() {
         viewModelScope.launch(Dispatchers.IO) {
-            _uiState.value =
-                _uiState.value.copy(book = repository.getBookWithSessionsById(currentBookDb.getCurrentBookId()))
+            val book = repository.getBookWithSessionsById(currentBookDb.getCurrentBookId())
+            with(book) {
+                _uiState.value =
+                    _uiState.value.copy(
+                        book = this,
+                        bookInfo = mapToGeneralBookInfo(sessionCalculator),
+                        bookPercentage = getBookPercentage(book),
+                        sessionDetails = sessions.mapToSessionDetails(sessionCalculator)
+                    )
+            }
         }
     }
-
+    
     fun deleteBook(onDelete: () -> Unit) {
         with(_uiState.value) {
             if (book != null)
@@ -80,43 +90,9 @@ class BookDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getBookPercentage(): Int {
-        with(_uiState.value) {
-            if (book != null) {
-                book.apply {
-                    return (((currentPage.toFloat() - startingPage) / (totalPages.toFloat() - startingPage)) * 100).toInt()
-                }
-            }
-        }
-        return 0
-    }
-
-    fun getAvgReadingTime(sessions: List<Session>): String =
-        sessionCalculator.getAvgReadingTime(sessions)
-
-    fun getTotalReadTime(sessions: List<Session>): String =
-        sessionCalculator.getTotalReadTime(sessions)
-
-    fun getAvgMinPerPage(sessions: List<Session>): String =
-        sessionCalculator.getAvgMinPerPage(sessions)
-
-    fun getAvgPagesPerHour(sessions: List<Session>): String =
-        sessionCalculator.getAvgPagesPerHour(sessions)
-
-    fun mapSessionsToSessionDetails(sessions: List<Session>): List<SessionDetails> =
-        sessions.map {
-            sessionCalculator.calculateSessionDetails(it)
-        }
-
-    fun refreshBookClicked() {
-        viewModelScope.launch(Dispatchers.IO) {
-            with(_uiState.value) {
-                if (book != null) {
-                    _uiState.value = copy(
-                        book = repository.getBookWithSessionsById(id = book.id)
-                    )
-                }
-            }
+    private fun getBookPercentage(book: BookWithSessions): Int {
+        book.apply {
+            return (((currentPage.toFloat() - startingPage) / (totalPages.toFloat() - startingPage)) * 100).toInt()
         }
     }
 
@@ -163,7 +139,6 @@ class BookDetailsViewModel @Inject constructor(
         }
     }
 
-    fun editBook(onEdit: (bookId: Long) -> Unit) {
-        onEdit(currentBookDb.getCurrentBookId())
-    }
+    fun getCurrentBookId() = currentBookDb.getCurrentBookId()
+
 }

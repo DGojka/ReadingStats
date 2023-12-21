@@ -1,6 +1,6 @@
 package com.example.bookstats.features.bookdetails.managers
 
-import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
+import com.example.bookstats.features.bookdetails.tabs.sessions.helpers.SessionDetails
 import com.example.bookstats.repository.Session
 import java.time.format.DateTimeFormatter
 
