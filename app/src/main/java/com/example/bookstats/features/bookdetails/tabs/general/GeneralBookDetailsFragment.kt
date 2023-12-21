@@ -44,25 +44,23 @@ class GeneralBookDetailsFragment : Fragment(R.layout.tab_general) {
         }
     }
 
-    private fun bindViews(generalBookInfo: GeneralBookInfo) {
-        with(binding) {
-            generalBookInfo.apply {
-                generalTabBookName.text = bookName
-                generalTabBookAuthor.text = bookAuthor
-                generalAvgSessionTimeValue.text = avgReadingTime
-                generalAvgMinPageValue.text = avgMinutesPerPage
-                generalAvgPagesHourValue.text = avgPagesPerHour
-                generalTotalReadTimeValue.text = totalReadTime
-                bookCurrentPage.text = requireContext().getString(
-                    R.string.current_page_text,
-                    currentPage,
-                    maxPage
-                )
-                binding.generalTabBookImage.load(image)
-            }
-            continueReading.setOnClickListener {
-                findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
-            }
+    private fun bindViews(generalBookInfo: GeneralBookInfo) = binding.run {
+        generalBookInfo.apply {
+            generalTabBookName.text = bookName
+            generalTabBookAuthor.text = bookAuthor
+            generalAvgSessionTimeValue.text = avgReadingTime
+            generalAvgMinPageValue.text = avgMinutesPerPage
+            generalAvgPagesHourValue.text = avgPagesPerHour
+            generalTotalReadTimeValue.text = totalReadTime
+            bookCurrentPage.text = requireContext().getString(
+                R.string.current_page_text,
+                currentPage,
+                maxPage
+            )
+            binding.generalTabBookImage.load(image)
+        }
+        continueReading.setOnClickListener {
+            findNavController().navigate(R.id.action_bookDetailsFragment_to_sessionFragment)
         }
     }
 }

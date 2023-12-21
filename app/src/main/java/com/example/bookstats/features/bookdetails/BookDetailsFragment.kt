@@ -2,12 +2,9 @@ package com.example.bookstats.features.bookdetails
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentBookDetailsBinding
@@ -15,7 +12,6 @@ import com.example.bookstats.extensions.daggerParentActivityViewModel
 import com.example.bookstats.extensions.hideBottomNavigationView
 import com.example.bookstats.extensions.showBottomNavigationView
 import com.example.bookstats.extensions.viewBinding
-import com.example.bookstats.features.bookdetails.managers.SessionDialogManager
 import com.example.bookstats.features.bookdetails.tabs.TabsAdapter
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.features.bookdetails.viewmodel.uistate.BookDetailsUiState
@@ -36,23 +32,19 @@ class BookDetailsFragment : Fragment(R.layout.fragment_book_details) {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         appComponent.inject(this)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        asd()
+        setupViewPager()
         viewModel.init()
-        initSessionDialogManager()
         observeState()
-        initDeleteButton()
     }
 
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 updateBookPercentage(state)
-                Log.e("asd",state.toString())
             }
         }
     }
@@ -63,7 +55,7 @@ class BookDetailsFragment : Fragment(R.layout.fragment_book_details) {
             getString(R.string.book_percentage, state.bookPercentage)
     }
 
-    private fun asd() {
+    private fun setupViewPager() {
         val viewPager = binding.viewPager2
         val tabLayout = binding.tabLayout
         val adapter = TabsAdapter(requireActivity())
@@ -76,26 +68,6 @@ class BookDetailsFragment : Fragment(R.layout.fragment_book_details) {
             }
         }.attach()
         viewPager.setCurrentItem(1, false)
-    }
-
-    private fun initSessionDialogManager() {
-        binding.addSession.setOnClickListener {
-            SessionDialogManager(layoutInflater, viewModel).showAddSessionDialog()
-        }
-    }
-
-    private fun initDeleteButton() {
-        binding.delete.setOnClickListener {
-            viewModel.deleteBook(onDelete = {
-                findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
-                Toast.makeText(
-                    requireContext(),
-                    R.string.book_successfully_deleted,
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            })
-        }
     }
 
     override fun onResume() {

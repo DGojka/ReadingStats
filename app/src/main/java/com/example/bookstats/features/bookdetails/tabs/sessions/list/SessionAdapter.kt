@@ -10,7 +10,6 @@ import com.example.bookstats.features.bookdetails.tabs.sessions.helpers.SessionD
 class SessionAdapter : ListAdapter<SessionDetails, SessionAdapter.SessionViewHolder>(
     SessionDetailsDiffCallback()
 ) {
-
     inner class SessionViewHolder(val binding: SessionListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(session: SessionDetails) {
@@ -31,5 +30,4 @@ class SessionAdapter : ListAdapter<SessionDetails, SessionAdapter.SessionViewHol
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) =
         holder.bind(getItem(position))
-
 }

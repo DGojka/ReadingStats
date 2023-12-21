@@ -9,8 +9,6 @@ import com.example.bookstats.features.bookdetails.tabs.settings.BookSettingsFrag
 
 class TabsAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
-    override fun getItemCount(): Int = 3
-
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             VIEW_SETTINGS_TAB -> BookSettingsFragment()
@@ -20,9 +18,12 @@ class TabsAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         }
     }
 
+    override fun getItemCount(): Int = PAGE_COUNT
+
     companion object {
         private const val VIEW_SETTINGS_TAB = 0
         private const val VIEW_GENERAL_TAB = 1
         private const val VIEW_SESSIONS_TAB = 2
+        private const val PAGE_COUNT = 3
     }
 }
