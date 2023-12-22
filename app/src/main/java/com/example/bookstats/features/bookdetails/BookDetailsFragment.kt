@@ -12,7 +12,7 @@ import com.example.bookstats.extensions.daggerParentActivityViewModel
 import com.example.bookstats.extensions.hideBottomNavigationView
 import com.example.bookstats.extensions.showBottomNavigationView
 import com.example.bookstats.extensions.viewBinding
-import com.example.bookstats.features.bookdetails.tabs.TabsAdapter
+import com.example.bookstats.features.bookdetails.tabs.BookDetailsTabsAdapter
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.features.bookdetails.viewmodel.uistate.BookDetailsUiState
 import com.google.android.material.tabs.TabLayoutMediator
@@ -58,7 +58,7 @@ class BookDetailsFragment : Fragment(R.layout.fragment_book_details) {
     private fun setupViewPager() {
         val viewPager = binding.viewPager2
         val tabLayout = binding.tabLayout
-        val adapter = TabsAdapter(requireActivity())
+        val adapter = BookDetailsTabsAdapter(requireActivity())
         viewPager.adapter = adapter
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             when (position) {

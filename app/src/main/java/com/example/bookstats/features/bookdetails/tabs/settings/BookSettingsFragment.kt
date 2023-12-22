@@ -1,14 +1,14 @@
 package com.example.bookstats.features.bookdetails.tabs.settings
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.TabSettingsBinding
 import com.example.bookstats.extensions.daggerParentActivityViewModel
+import com.example.bookstats.extensions.showShortToast
 import com.example.bookstats.extensions.viewBinding
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
 import com.example.bookstats.features.creation.BookCreationFragment
@@ -36,12 +36,7 @@ class BookSettingsFragment : Fragment(R.layout.tab_settings) {
         deleteBook.setOnClickListener {
             viewModel.deleteBook(onDelete = {
                 findNavController().navigate(R.id.action_bookDetailsFragment_to_libraryFragment)
-                Toast.makeText(
-                    requireContext(),
-                    R.string.book_successfully_deleted,
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+                context?.showShortToast(R.string.book_successfully_deleted)
             })
         }
         addSession.setOnClickListener {

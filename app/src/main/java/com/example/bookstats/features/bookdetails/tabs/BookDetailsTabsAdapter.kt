@@ -7,7 +7,7 @@ import com.example.bookstats.features.bookdetails.tabs.general.GeneralBookDetail
 import com.example.bookstats.features.bookdetails.tabs.sessions.BookSessionsFragment
 import com.example.bookstats.features.bookdetails.tabs.settings.BookSettingsFragment
 
-class TabsAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+class BookDetailsTabsAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
