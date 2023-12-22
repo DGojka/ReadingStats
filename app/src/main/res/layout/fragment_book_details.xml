@@ -89,32 +89,9 @@
             app:tabIndicatorColor="@color/whisper"
             app:tabIndicatorGravity="stretch"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/white">
+            app:tabSelectedTextColor="@color/dark_violet">
         </com.google.android.material.tabs.TabLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/delete_book"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        android:visibility="gone"/> <!--CHANGE IT AND REMOVE IT-->
-
-    <Button
-        android:id="@+id/add_session"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_session_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"/> <!--CHANGE IT AND REMOVE IT-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>

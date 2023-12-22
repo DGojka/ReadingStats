@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstats.features.bookdetails.managers.SessionCalculator
-import com.example.bookstats.features.bookdetails.tabs.sessions.SessionDetails
+import com.example.bookstats.features.bookdetails.tabs.sessions.helpers.SessionDetails
 import com.example.bookstats.features.realtimesessions.helpers.CurrentBookDb
 import com.example.bookstats.features.realtimesessions.helpers.ElapsedTimeDb
 import com.example.bookstats.features.realtimesessions.timer.TimerService.Companion.CURRENT_MS

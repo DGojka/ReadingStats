@@ -1,13 +1,18 @@
 package com.example.bookstats.features.bookdetails.managers
 
-import android.app.AlertDialog
+/*import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.NumberPicker
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.viewModelScope
 import com.example.bookstats.R
 import com.example.bookstats.databinding.AddingSessionDialogBinding
+import com.example.bookstats.features.bookdetails.managers.helpers.DialogDetails
 import com.example.bookstats.features.bookdetails.viewmodel.BookDetailsViewModel
+import com.example.bookstats.repository.Session
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class SessionDialogManager(
@@ -155,4 +160,83 @@ class SessionDialogManager(
         private const val HOURS_MAX_VALUE = 23
         private const val MINUTES_MAX_VALUE = 59
     }
+}*/
+/*
+
+
+private fun isAllFieldsFilled(): Boolean {
+    with(_uiState.value.dialogDetails!!) {
+        return isReadingSessionDateValid(readingSessionDate) && isCurrentPageValid(currentPage) && isReadingTimeValid(
+            this
+        )
+    }
 }
+
+private fun isReadingSessionDateValid(date: LocalDate?): Boolean = date != null
+
+private fun isCurrentPageValid(currentPage: Int?): Boolean {
+    return currentPage != null && sessionCalculator.isNewCurrentPageGreaterThanOld(
+        newCurrentPage = currentPage,
+        oldCurrentPage = _uiState.value.book?.currentPage!!
+    )
+}
+
+private fun isReadingTimeValid(dialogDetails: DialogDetails?): Boolean =
+    dialogDetails?.let { sessionCalculator.calculateSeconds(it.hoursRead, it.minutesRead) > 0 }
+        ?: false
+
+private suspend fun saveSessionByDialog(dialogDetails: DialogDetails) {
+    dialogDetails.apply {
+        with(_uiState.value) {
+            repository.addSessionToTheBook(
+                bookId = _uiState.value.book!!.id,
+                Session(
+                    sessionTimeSeconds = sessionCalculator.calculateSeconds(
+                        hoursRead,
+                        minutesRead
+                    ),
+                    pagesRead = sessionCalculator.calculatePagesReadInSession(
+                        dialogDetails.currentPage!!,
+                        book?.currentPage!!
+                    ),
+                    sessionEndDate = readingSessionDate!!.atStartOfDay(),
+                    sessionStartDate = readingSessionDate.atStartOfDay()
+                )
+            )
+        }
+    }
+}
+
+fun submitDialog() {
+    if (isAllFieldsFilled()) {
+        with(_uiState.value) {
+            viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                if (book != null && dialogDetails != null) {
+                    saveSessionByDialog(dialogDetails)
+                }
+            }
+        }
+    }
+}
+
+fun setDialogDetails(
+    readingSessionDate: LocalDate? = null,
+    currentPage: Int? = null,
+    hoursRead: Int? = null,
+    minutesRead: Int? = null
+) {
+    with(_uiState.value) {
+        val currentDialogDetails = _uiState.value.dialogDetails ?: DialogDetails()
+        when {
+            currentPage != null -> _uiState.value =
+                copy(dialogDetails = currentDialogDetails.copy(currentPage = currentPage))
+            readingSessionDate != null -> _uiState.value =
+                copy(dialogDetails = currentDialogDetails.copy(readingSessionDate = readingSessionDate))
+            hoursRead != null -> _uiState.value =
+                copy(dialogDetails = currentDialogDetails.copy(hoursRead = hoursRead))
+            minutesRead != null -> _uiState.value =
+                copy(dialogDetails = currentDialogDetails.copy(minutesRead = minutesRead))
+        }
+    }
+}
+*/
