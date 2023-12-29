@@ -30,7 +30,7 @@ class RealTimeSessionsViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val _uiState = MutableStateFlow(RealTimeSessionsUiState("0", null))
+    private val _uiState = MutableStateFlow(RealTimeSessionsUiState("", null))
     val uiState: StateFlow<RealTimeSessionsUiState> = _uiState
     private lateinit var sessionStartDate: LocalDateTime
     private lateinit var sessionEndDate: LocalDateTime
@@ -39,8 +39,8 @@ class RealTimeSessionsViewModel @Inject constructor(
     private val timerUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val currentMs = intent?.getFloatExtra(CURRENT_MS, 0f) ?: 0F
-            elapsedTimeDb.updateElapsedTime(currentMs / 1000)
-            _uiState.value = _uiState.value.copy(currentTime = currentMs.toTimerText())
+            elapsedTimeDb.updateElapsedTime(currentMs / SECOND_IN_MS)
+            _uiState.value = _uiState.value.copy(currentTime = currentMs.msToTimerText())
         }
     }
 
@@ -89,7 +89,8 @@ class RealTimeSessionsViewModel @Inject constructor(
             ) {
                 timerServiceHelper.stopService()
                 val session = Session(
-                    sessionTimeSeconds = (uiState.value.currentTime.toTimerMs() / 1000).toInt(),
+                    sessionTimeSeconds = (uiState.value.currentTime.timerTextToMs()
+                        .msToSecond()).toInt(),
                     pagesRead = sessionCalculator.calculatePagesReadInSession(
                         newCurrentPage = newCurrentPage,
                         book.currentPage
@@ -123,17 +124,8 @@ class RealTimeSessionsViewModel @Inject constructor(
 
     fun isTimerPaused(): Boolean = isPaused
 
-    fun setCurrentMs(currentMs: Float?) {
-        currentMs?.let {
-            _uiState.value = _uiState.value.copy(
-                currentTime = it.toTimerText()
-            )
-        }
-    }
-
     fun resumeTimerState() {
         val currentTime = LocalDateTime.now()
-
         val lastPause = elapsedTimeDb.getLastPauseTime()
 
         if (lastPause != null) {
@@ -142,12 +134,11 @@ class RealTimeSessionsViewModel @Inject constructor(
                 var timeElapsedSeconds = elapsedTimeDb.getElapsedTime()
                 timeElapsedSeconds += timeFromLastPauseInSeconds.seconds
                 timerServiceHelper.setTime(timeElapsedSeconds)
-                setCurrentMs(timeElapsedSeconds * 1000)
+                setCurrentMs(timeElapsedSeconds * SECOND_IN_MS)
                 resumeTimer()
             } catch (e: UninitializedPropertyAccessException) {
                 elapsedTimeDb.saveLastPause(null)
             }
-
         }
     }
 
@@ -155,16 +146,24 @@ class RealTimeSessionsViewModel @Inject constructor(
         return ::sessionEndDate.isInitialized
     }
 
-    private fun Float.toTimerText(): String {
-        val totalSeconds = (this / SECOND_IN_MS).toInt()
+    private fun setCurrentMs(currentMs: Float?) {
+        currentMs?.let {
+            _uiState.value = _uiState.value.copy(
+                currentTime = it.msToTimerText()
+            )
+        }
+    }
+
+    private fun Float.msToTimerText(): String {
+        val totalSeconds = (this.msToSecond()).toInt()
         val hours = totalSeconds / HOUR_IN_SECONDS
         val minutes = (totalSeconds % HOUR_IN_SECONDS) / MINUTE_IN_SECONDS
-        val seconds = totalSeconds % HOUR_IN_SECONDS
+        val seconds = totalSeconds % MINUTE_IN_SECONDS
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
-    private fun String.toTimerMs(): Float {
+    private fun String.timerTextToMs(): Float {
         val (hours, minutes, seconds) = this.split(":").map { it.toIntOrNull() ?: 0 }
         return ((hours * HOUR_IN_SECONDS + minutes * MINUTE_IN_SECONDS + seconds) * SECOND_IN_MS).toFloat()
     }
@@ -174,6 +173,8 @@ class RealTimeSessionsViewModel @Inject constructor(
         elapsedTimeDb.saveLastPause(null)
         elapsedTimeDb.updateElapsedTime(0F)
     }
+
+    private fun Float.msToSecond() = this / SECOND_IN_MS
 
     companion object {
         private const val HOUR_IN_SECONDS = 3600

@@ -13,15 +13,13 @@ import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
 import com.example.bookstats.extensions.*
-import com.example.bookstats.features.realtimesessions.timer.helpers.TimerBroadcastListener
 import com.example.bookstats.features.realtimesessions.viewmodel.Error
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
-class RealTimeSessionFragment : Fragment(R.layout.fragment_real_time_session),
-    TimerBroadcastListener {
+class RealTimeSessionFragment : Fragment(R.layout.fragment_real_time_session){
 
     @Inject
     lateinit var viewModelProvider: Provider<RealTimeSessionsViewModel>
@@ -142,7 +140,7 @@ class RealTimeSessionFragment : Fragment(R.layout.fragment_real_time_session),
 
     override fun onPause() {
         super.onPause()
-        if (!viewModel.isSessionEnded()) {
+        if (!viewModel.isSessionEnded() && !viewModel.isTimerPaused()) {
             viewModel.pauseTimer()
         }
     }
@@ -151,9 +149,4 @@ class RealTimeSessionFragment : Fragment(R.layout.fragment_real_time_session),
         super.onResume()
         viewModel.resumeTimerState()
     }
-
-    override fun onTimerBroadcastReceiver(currentMs: Float) {
-        viewModel.setCurrentMs(currentMs)
-    }
-
 }
