@@ -140,9 +140,7 @@ class RealTimeSessionFragment : Fragment(R.layout.fragment_real_time_session){
 
     override fun onPause() {
         super.onPause()
-        if (!viewModel.isSessionEnded() && !viewModel.isTimerPaused()) {
-            viewModel.pauseTimer()
-        }
+        viewModel.saveTimerStateIfNotPaused()
     }
 
     override fun onResume() {

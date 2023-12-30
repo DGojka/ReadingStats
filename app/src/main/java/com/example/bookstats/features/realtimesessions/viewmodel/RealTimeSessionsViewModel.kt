@@ -142,8 +142,14 @@ class RealTimeSessionsViewModel @Inject constructor(
         }
     }
 
-    fun isSessionEnded(): Boolean {
-        return ::sessionEndDate.isInitialized
+    fun saveTimerStateIfNotPaused() {
+        if (isSessionEnded()) {
+            if (!isPaused) {
+                pauseTimer()
+            } else {
+                elapsedTimeDb.saveLastPause(null)
+            }
+        }
     }
 
     private fun setCurrentMs(currentMs: Float?) {
@@ -175,6 +181,10 @@ class RealTimeSessionsViewModel @Inject constructor(
     }
 
     private fun Float.msToSecond() = this / SECOND_IN_MS
+
+    private fun isSessionEnded(): Boolean {
+        return ::sessionEndDate.isInitialized
+    }
 
     companion object {
         private const val HOUR_IN_SECONDS = 3600
