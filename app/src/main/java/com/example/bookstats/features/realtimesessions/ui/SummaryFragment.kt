@@ -1,47 +1,41 @@
 package com.example.bookstats.features.realtimesessions.ui
 
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
-import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentSessionSummaryBinding
+import com.example.bookstats.extensions.daggerParentActivityViewModel
 import com.example.bookstats.extensions.hideBottomNavigationView
 import com.example.bookstats.extensions.showBottomNavigationView
+import com.example.bookstats.extensions.viewBinding
+import com.example.bookstats.features.bookdetails.tabs.sessions.helpers.SessionDetails
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
-import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Provider
 
-class SummaryFragment : Fragment() {
-
-    private var _binding: FragmentSessionSummaryBinding? = null
-    private val binding get() = _binding!!
+class SummaryFragment : Fragment(R.layout.fragment_session_summary) {
 
     @Inject
-    lateinit var viewModelFactory: RealTimeSessionsViewModelFactory
-    private val viewModel by viewModels<RealTimeSessionsViewModel>({ activity as MainActivity }) { viewModelFactory }
+    lateinit var viewModelProvider: Provider<RealTimeSessionsViewModel>
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private val binding by viewBinding(FragmentSessionSummaryBinding::bind)
+    private val viewModel by daggerParentActivityViewModel { viewModelProvider }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         appComponent.inject(this)
-        hideBottomNavigationView()
-        _binding = FragmentSessionSummaryBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeState()
+        hideBottomNavigationView()
         binding.finishButton.setOnClickListener {
             findNavController().popBackStack(R.id.bookDetailsFragment, false)
         }
@@ -50,13 +44,19 @@ class SummaryFragment : Fragment() {
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                with(viewModel.getSessionDetails(session = state.session!!)) {
-                    binding.avgMinPageValue.text = avgMinPerPage
-                    binding.pagesReadValue.text = pagesRead
-                    binding.avgPagesHourValue.text = avgPagesPerHour
-                    binding.readTimeValue.text = readTime
+                state.sessionDetails?.let {
+                    bindViews(it)
                 }
             }
+        }
+    }
+
+    private fun bindViews(sessionDetails: SessionDetails) = binding.run {
+        with(sessionDetails) {
+            avgMinPageValue.text = avgMinPerPage
+            pagesReadValue.text = pagesRead
+            avgPagesHourValue.text = avgPagesPerHour
+            readTimeValue.text = readTime
         }
     }
 

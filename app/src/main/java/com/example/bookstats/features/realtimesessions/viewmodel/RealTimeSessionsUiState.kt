@@ -1,11 +1,11 @@
 package com.example.bookstats.features.realtimesessions.viewmodel
 
-import com.example.bookstats.repository.Session
+import com.example.bookstats.features.bookdetails.tabs.sessions.helpers.SessionDetails
 
 data class RealTimeSessionsUiState(
-    val currentMs: Float,
+    val currentTime: String,
     val error: Error? = null,
-    val session: Session? = null
+    val sessionDetails: SessionDetails? = null
 )
 
 data class Error(val reason: Reason) {
