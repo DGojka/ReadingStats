@@ -1,36 +1,31 @@
 package com.example.bookstats.features.realtimesessions.ui
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.bookstats.R
-import com.example.bookstats.activity.MainActivity
 import com.example.bookstats.app.di.AppComponent.Companion.appComponent
 import com.example.bookstats.databinding.FragmentRealTimeSessionBinding
 import com.example.bookstats.databinding.PagesReadDialogBinding
-import com.example.bookstats.extensions.hideBottomNavigationView
-import com.example.bookstats.features.realtimesessions.timer.helpers.TimerBroadcastListener
+import com.example.bookstats.extensions.*
 import com.example.bookstats.features.realtimesessions.viewmodel.Error
 import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModel
-import com.example.bookstats.features.realtimesessions.viewmodel.RealTimeSessionsViewModelFactory
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Provider
 
-class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
-    private var _binding: FragmentRealTimeSessionBinding? = null
-    private val binding get() = _binding!!
+class RealTimeSessionFragment : Fragment(R.layout.fragment_real_time_session){
 
     @Inject
-    lateinit var viewModelFactory: RealTimeSessionsViewModelFactory
-    private val viewModel by viewModels<RealTimeSessionsViewModel>({ activity as MainActivity }) { viewModelFactory }
+    lateinit var viewModelProvider: Provider<RealTimeSessionsViewModel>
+
+    private val binding by viewBinding(FragmentRealTimeSessionBinding::bind)
+    private val viewModel by daggerParentActivityViewModel { viewModelProvider }
 
     private lateinit var endSessionDialog: AlertDialog
 
@@ -40,79 +35,55 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         appComponent.inject(this)
-        hideBottomNavigationView()
-        _binding = FragmentRealTimeSessionBinding.inflate(inflater, container, false)
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            onBackPressedCallback
-        )
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideBottomNavigationView()
+        setupBackButtonCallback()
         viewModel.startSession()
-        initStopButton()
-        initBackButton()
-        initPauseResumeButton()
-        initShowPagesDialog()
+        setupButtons()
+        setupEndSessionDialog()
         observeState()
-    }
-
-    private fun initBackButton() {
-        binding.backButton.setOnClickListener {
-            exitWithoutSaving()
-        }
     }
 
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                setTime(currentMs = state.currentMs)
-                with(state.error) {
-                    if (this != null) {
-                        if (reason is Error.Reason.NewPageIsLowerThanOld) {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(
-                                    R.string.page_must_be_higher,
-                                    reason.currentPage.toString()
-                                ),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        } else if (reason is Error.Reason.NewPageIsGreaterThanTotalBookPages) {
-                            Toast.makeText(
-                                requireContext(),
-                                R.string.page_is_too_high,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
+                binding.timer.text = state.currentTime
+                state.error?.let {
+                    handleError(it)
                 }
             }
         }
     }
 
-    private fun setTime(currentMs: Float) {
-        with(binding) {
-            timer.text = getTimerText(currentMs)
+    private fun handleError(error: Error) {
+        with(error) {
+            if (reason is Error.Reason.NewPageIsLowerThanOld) {
+                requireContext().showLongToast(
+                    getString(
+                        R.string.page_must_be_higher,
+                        reason.currentPage.toString()
+                    )
+                )
+            } else if (reason is Error.Reason.NewPageIsGreaterThanTotalBookPages) {
+                requireContext().showLongToast(R.string.page_is_too_high)
+            }
         }
     }
 
-    private fun initStopButton() {
-        binding.stop.setOnClickListener {
+    private fun setupButtons() = binding.run {
+        backButton.setOnClickListener {
+            exitWithoutSaving()
+        }
+        stop.setOnClickListener {
             viewModel.pauseTimer()
             endSessionDialog.show()
         }
-    }
-
-    private fun initPauseResumeButton() {
         binding.pauseOrResumeButton.setOnClickListener {
             with(viewModel) {
                 binding.pauseOrResumeButton.apply {
@@ -128,16 +99,7 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         }
     }
 
-    private fun getTimerText(currentMs: Float): CharSequence {
-        val totalSeconds = (currentMs / 1000).toInt()
-        val hours = totalSeconds / 3600
-        val minutes = (totalSeconds % 3600) / 60
-        val seconds = totalSeconds % 60
-
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
-    }
-
-    private fun initShowPagesDialog() {
+    private fun setupEndSessionDialog() {
         val dialogBinding = PagesReadDialogBinding.inflate(layoutInflater)
         val dialogBuilder = AlertDialog.Builder(layoutInflater.context)
             .setView(dialogBinding.root)
@@ -159,10 +121,16 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
         endSessionDialog = dialogBuilder.create()
     }
 
-    private fun exitWithoutSaving(){
-     //   viewModel.pauseTimer()
+    private fun exitWithoutSaving() {
         viewModel.endSessionWithoutSaving()
         findNavController().popBackStack()
+    }
+
+    private fun setupBackButtonCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            onBackPressedCallback
+        )
     }
 
     override fun onDestroyView() {
@@ -172,18 +140,11 @@ class RealTimeSessionFragment : Fragment(), TimerBroadcastListener {
 
     override fun onPause() {
         super.onPause()
-        if(!viewModel.isSessionEnded()){
-            viewModel.pauseTimer()
-        }
+        viewModel.saveTimerStateIfNotPaused()
     }
 
     override fun onResume() {
         super.onResume()
-            viewModel.resumeTimerState()
+        viewModel.resumeTimerState()
     }
-
-    override fun onTimerBroadcastReceiver(currentMs: Float) {
-        viewModel.setCurrentMs(currentMs)
-    }
-
 }
