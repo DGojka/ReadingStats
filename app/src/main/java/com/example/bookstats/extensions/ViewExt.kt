@@ -4,6 +4,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.bookstats.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.textfield.TextInputEditText
 
 fun Fragment.hideBottomNavigationView() {
     requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
@@ -30,3 +31,5 @@ fun View.visibleOrGone(isVisible: Boolean) {
     }
     visibility = newVisibility
 }
+
+fun TextInputEditText.getString(): String? = this.text.toString().ifBlank { null }

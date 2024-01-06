@@ -6,11 +6,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -38,6 +36,7 @@ class BookCreationFragment : Fragment(R.layout.fragment_book_creation) {
 
     private var updateEditTextAfterImportingBook = false
     private var editedBookId: Long? = null
+    private var bookImageBitmap: Bitmap? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -49,7 +48,6 @@ class BookCreationFragment : Fragment(R.layout.fragment_book_creation) {
 
         hideBottomNavigationView()
         notifyVmIfBookIsEdited()
-        setupEditTextListeners()
         setupSaveBookButtonListener()
         observeState()
         setupImagePicker()
@@ -74,18 +72,15 @@ class BookCreationFragment : Fragment(R.layout.fragment_book_creation) {
             findNavController().navigate(R.id.libraryFragment)
         }
         if (error != null) {
-            handleError(error.reason)
+            handleError(error)
         }
-        binding.let {
-            it.saveBookButton.isEnabled = saveButtonEnabled
-            if (image != null) {
-                it.bookImage.load(image)
-            }
-            if (updateEditTextAfterImportingBook) {
-                it.bookNameEditText.setText(bookName)
-                it.bookAuthorEditText.setText(bookAuthor)
-                it.bookPageNumberEditText.setText(numberOfPages.toString())
-                it.startingPageEditText.setText(startingPage.toString())
+        binding.run {
+            bookWithSessions?.let {
+                bookImage.load(it.image)
+                bookNameEditText.setText(it.name)
+                bookAuthorEditText.setText(it.author)
+                bookPageNumberEditText.setText(it.totalPages.toString())
+                startingPageEditText.setText(it.startingPage.toString())
                 updateEditTextAfterImportingBook = false
             }
         }
@@ -96,8 +91,10 @@ class BookCreationFragment : Fragment(R.layout.fragment_book_creation) {
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
                     lifecycleScope.launch(Dispatchers.IO) {
-                        val bitmap = getBitmap(uri.toString())
-                        viewModel.setImageBitmap(bitmap!!)
+                        getBitmap(uri.toString())?.let {
+                            bookImageBitmap = it
+                            binding.bookImage.load(it)
+                        }
                     }
                 }
             }
@@ -106,31 +103,22 @@ class BookCreationFragment : Fragment(R.layout.fragment_book_creation) {
         }
     }
 
-    private fun handleError(reason: Error.Reason) {
-        val errorMessage = when (reason) {
-            Error.Reason.MissingAuthor -> getString(R.string.creation_error_author)
-            Error.Reason.MissingBookName -> getString(R.string.creation_error_name)
-            Error.Reason.NoPages -> getString(R.string.creation_error_pages)
-            is Error.Reason.Unknown -> {
-                getString(R.string.unknown_error)
+    private fun handleError(error: Error) {
+        with(binding) {
+            error.reasons.forEach { reason ->
+                when (reason) {
+                    Error.Reason.MissingAuthor -> bookAuthor.error =
+                        getString(R.string.creation_error_author)
+                    Error.Reason.MissingBookName -> bookName.error =
+                        getString(R.string.creation_error_name)
+                    Error.Reason.NoPages -> pageNumber.error =
+                        getString(R.string.creation_error_pages)
+                    Error.Reason.MissingImage -> requireContext().showShortToast(R.string.creation_error_image)
+                    is Error.Reason.Unknown -> {
+                        requireContext().showShortToast(reason.exception.toString())
+                    }
+                }
             }
-        }
-        Log.e(CREATION_ERROR, reason.toString())
-        requireContext().showShortToast(errorMessage)
-    }
-
-    private fun setupEditTextListeners() = binding.run {
-        bookAuthorEditText.addTextChangedListener {
-            viewModel.setBookAuthor(it.toString())
-        }
-        bookNameEditText.addTextChangedListener {
-            viewModel.setBookName(it.toString())
-        }
-        bookPageNumberEditText.addTextChangedListener {
-            viewModel.setNumberOfPages(if (it.toString().isNotEmpty()) it.toString().toInt() else 0)
-        }
-        startingPageEditText.addTextChangedListener {
-            viewModel.setStartingPage(if (it.toString().isNotEmpty()) it.toString().toInt() else 0)
         }
     }
 
@@ -141,27 +129,25 @@ class BookCreationFragment : Fragment(R.layout.fragment_book_creation) {
         }
     }
 
-    private fun setupSaveBookButtonListener() {
+    private fun setupSaveBookButtonListener() = binding.run {
         if (isBookBeingEdited()) {
-            binding.saveBookButton.text = resources.getString(R.string.edit_book)
+            saveBookButton.text = resources.getString(R.string.edit_book)
         }
-        binding.saveBookButton.setOnClickListener {
-            if (isBookBeingEdited()) {
-                viewModel.saveChanges(bookId = editedBookId!!)
-            } else {
-                viewModel.createBook()
-            }
-
+        saveBookButton.setOnClickListener {
+            viewModel.createOrEditBookIfRequirementsMet(
+                BookCreationViewDetails(
+                    author = bookAuthorEditText.getString(),
+                    name = bookNameEditText.getString(),
+                    totalPages = bookPageNumberEditText.getString()?.toInt(),
+                    startingPage = startingPageEditText.getString()?.toInt(),
+                    image = bookImageBitmap
+                )
+            )
         }
     }
 
     private fun notifyVmIfBookIsEdited() {
-        editedBookId = arguments?.getLong(EDITED_BOOK_ID)
-        if (editedBookId != null) {
-            viewModel.editBook(editedBookId!!) {
-                updateEditTextAfterImportingBook = true
-            }
-        }
+        arguments?.getLong(EDITED_BOOK_ID)?.let { viewModel.notifyBookIsEdited(it) }
     }
 
     private suspend fun getBitmap(uri: String): Bitmap? {
@@ -181,7 +167,6 @@ class BookCreationFragment : Fragment(R.layout.fragment_book_creation) {
                     viewModel.importBookByISBN(
                         isbn,
                         onResponseGetBitmap = {
-                            updateEditTextAfterImportingBook = true
                             getBitmap(it)!!
                         })
                 }
@@ -191,7 +176,6 @@ class BookCreationFragment : Fragment(R.layout.fragment_book_creation) {
     private fun isBookBeingEdited(): Boolean = editedBookId != null
 
     companion object {
-        const val CREATION_ERROR = "creation_error"
         const val ISBN = "ISBN"
         const val EDITED_BOOK_ID = "editedBookId"
     }
